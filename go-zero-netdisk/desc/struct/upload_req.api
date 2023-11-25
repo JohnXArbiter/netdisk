@@ -1,0 +1,17 @@
+type (
+    checkFileReq {
+
+    }
+
+    uploadReq {
+
+    }
+
+    checkChunkReq {
+
+    }
+
+    uploadChunkReq {
+
+    }
+)

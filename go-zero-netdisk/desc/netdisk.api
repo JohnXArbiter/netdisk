@@ -1,0 +1,21 @@
+import (
+	"struct/upload_req.api"
+)
+
+@server(
+	group: upload
+	prefix: /file/upload
+)
+service netdisk-api {
+	@handler checkFile
+	post /check_file (checkFileReq) returns ()
+	
+	@handler upload
+	post / (uploadReq) returns ()
+	
+	@handler checkChunk
+	post /check_chunk (checkChunkReq) returns ()
+	
+	@handler uploadChunk
+	post /chunk (uploadChunkReq) returns ()
+}
