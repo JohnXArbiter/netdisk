@@ -1,0 +1,15 @@
+syntax = "v1"
+
+type (
+    updateUserDetailReq {
+
+    }
+
+    getUserDetailReq {
+        id int64 `path:"id"`
+    }
+
+    updateAvatarReq {
+
+    }
+)

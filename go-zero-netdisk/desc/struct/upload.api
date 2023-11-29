@@ -1,0 +1,24 @@
+type (
+    checkFileReq {
+        hash string `json:"hash"`
+    }
+
+    uploadReq {
+        fileId int64 `json:"fileId"`
+    }
+
+    checkChunkReq {
+        hash string `json:"hash"`
+        chunkSeq int64 `json:"chunkSeq"`
+    }
+
+    uploadChunkReq {
+        fileId int64 `json:"fileId"`
+    }
+)
+
+type (
+    checkFileResp {
+        status int8 `json:"status"`
+    }
+)

@@ -1,21 +1,108 @@
 import (
-	"struct/upload_req.api"
+	"struct/upload.api"
+	"struct/file.api"
+	"struct/download.api"
+	"struct/user.api"
 )
+
+service netdisk-api {
+	@handler login
+	post /login (loginReq) returns ()
+	
+	@handler register
+	post /register (registerReq) returns ()
+}
 
 @server(
 	group: upload
 	prefix: /file/upload
+	middleware: auth
 )
 service netdisk-api {
+	// 检查该用户文件是否已存在
 	@handler checkFile
-	post /check_file (checkFileReq) returns ()
+	post /check_file (checkFileReq) returns (checkFileResp)
 	
+	// 上传小文件（秒传）
 	@handler upload
 	post / (uploadReq) returns ()
 	
+	// 检查分片
 	@handler checkChunk
 	post /check_chunk (checkChunkReq) returns ()
 	
 	@handler uploadChunk
 	post /chunk (uploadChunkReq) returns ()
 }
+
+@server(
+	group: download
+	prefix: /file/download
+	middleware: auth
+)
+service netdisk-api {
+	// 检查大小
+	@handler checkSize
+	post /check_size (checkSizeReq) returns ()
+	
+	// 下载小文件
+	@handler download
+	post / (downloadReq) returns ()
+	
+	// 下载分片
+	@handler chunkDownload
+	post /chunk (chunkDownloadReq) returns ()
+}
+
+@server(
+	group: user
+	prefix: /user
+	middleware: auth
+)
+service netdisk-api {
+	@handler updateDetail
+	post /detail (updateUserDetailReq) returns ()
+	
+	@handler getDetail
+	get /detail (getUserDetailReq) returns ()
+	
+	@handler updateAvatar
+	post /avatar (updateAvatarReq) returns ()
+}
+
+@server(
+	group: file
+	prefix: /file
+	middleware: auth
+)
+service netdisk-api {
+	@handler listFile
+	get /list (listFileReq) returns ()
+	
+	@handler moveFile
+	put /move (moveFileReq) returns ()
+	
+	@handler updateFile
+	post /update (updateFileReq) returns ()
+	
+	@handler listFolder
+	get /folder_list (listFileFolderReq) returns ()
+	
+	@handler createFolder
+	post /folder_create (createFolderReq) returns ()
+	
+	@handler updateFolder
+	post /folder_update (updateFolderReq) returns ()
+	
+	@handler moveFolder
+	put /folder_move (moveFolderReq) returns ()
+}
+
+type (
+	loginReq {
+		Password string `json:"password"`
+	}
+
+	registerReq {
+	}
+)

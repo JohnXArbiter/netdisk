@@ -4,7 +4,10 @@ package handler
 import (
 	"net/http"
 
+	download "lc/netdisk/internal/handler/download"
+	file "lc/netdisk/internal/handler/file"
 	upload "lc/netdisk/internal/handler/upload"
+	user "lc/netdisk/internal/handler/user"
 	"lc/netdisk/internal/svc"
 
 	"github.com/zeromicro/go-zero/rest"
@@ -15,25 +18,135 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		[]rest.Route{
 			{
 				Method:  http.MethodPost,
-				Path:    "/check_file",
-				Handler: upload.CheckFileHandler(serverCtx),
+				Path:    "/login",
+				Handler: loginHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
-				Path:    "/",
-				Handler: upload.UploadHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/check_chunk",
-				Handler: upload.CheckChunkHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/chunk",
-				Handler: upload.UploadChunkHandler(serverCtx),
+				Path:    "/register",
+				Handler: registerHandler(serverCtx),
 			},
 		},
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.auth},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/check_file",
+					Handler: upload.CheckFileHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/",
+					Handler: upload.UploadHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/check_chunk",
+					Handler: upload.CheckChunkHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/chunk",
+					Handler: upload.UploadChunkHandler(serverCtx),
+				},
+			}...,
+		),
 		rest.WithPrefix("/file/upload"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.auth},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/check_size",
+					Handler: download.CheckSizeHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/",
+					Handler: download.DownloadHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/chunk",
+					Handler: download.ChunkDownloadHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/file/download"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.auth},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/detail",
+					Handler: user.UpdateDetailHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/detail",
+					Handler: user.GetDetailHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/avatar",
+					Handler: user.UpdateAvatarHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/user"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.auth},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/list",
+					Handler: file.ListFileHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPut,
+					Path:    "/move",
+					Handler: file.MoveFileHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/update",
+					Handler: file.UpdateFileHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/folder_list",
+					Handler: file.ListFolderHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/folder_create",
+					Handler: file.CreateFolderHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/folder_update",
+					Handler: file.UpdateFolderHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPut,
+					Path:    "/folder_move",
+					Handler: file.MoveFolderHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/file"),
 	)
 }
