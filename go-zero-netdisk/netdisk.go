@@ -4,9 +4,9 @@ import (
 	"flag"
 	"fmt"
 
-	"netdisk/internal/config"
-	"netdisk/internal/handler"
-	"netdisk/internal/svc"
+	"lc/netdisk/internal/config"
+	"lc/netdisk/internal/handler"
+	"lc/netdisk/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/rest"
