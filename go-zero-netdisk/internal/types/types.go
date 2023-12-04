@@ -10,6 +10,7 @@ type RegisterReq struct {
 
 type CheckFileReq struct {
 	Hash string `json:"hash"`
+	Size int64  `json:"size"`
 }
 
 type UploadReq struct {
@@ -26,7 +27,8 @@ type UploadChunkReq struct {
 }
 
 type CheckFileResp struct {
-	Status int8 `json:"status"`
+	FileId int64 `json:"fileId"`
+	Status int8  `json:"status"`
 }
 
 type ListFileReq struct {

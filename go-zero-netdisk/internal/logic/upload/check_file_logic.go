@@ -2,6 +2,7 @@ package upload
 
 import (
 	"context"
+	"lc/netdisk/model"
 
 	"lc/netdisk/internal/svc"
 	"lc/netdisk/internal/types"
@@ -23,8 +24,28 @@ func NewCheckFileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CheckFi
 	}
 }
 
-func (l *CheckFileLogic) CheckFile(req *types.CheckFileReq) error {
-	// todo: add your logic here and delete this line
+func (l *CheckFileLogic) CheckFile(req *types.CheckFileReq) (*types.CheckFileResp, error) {
+	var (
+		userId int64 = 123
+		xorm         = l.svcCtx.Xorm
+	)
 
-	return nil
+	fileRepository := &model.FileRepository{
+		Hash:   req.Hash,
+		UserId: userId,
+	}
+	has, err := xorm.Get(fileRepository)
+	if err != nil {
+		// TODO: log
+		return nil, err
+	}
+	if !has {
+
+	}
+
+	resp := &types.CheckFileResp{
+		FileId: 0,
+		Status: 0,
+	}
+	return resp, nil
 }

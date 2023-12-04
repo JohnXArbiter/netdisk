@@ -16,7 +16,7 @@ service netdisk-api {
 @server(
 	group: upload
 	prefix: /file/upload
-	middleware: auth
+	middleware: Auth
 )
 service netdisk-api {
 	// 检查该用户文件是否已存在
@@ -38,7 +38,7 @@ service netdisk-api {
 @server(
 	group: download
 	prefix: /file/download
-	middleware: auth
+	middleware: Auth
 )
 service netdisk-api {
 	// 检查大小
@@ -57,7 +57,7 @@ service netdisk-api {
 @server(
 	group: user
 	prefix: /user
-	middleware: auth
+	middleware: Auth
 )
 service netdisk-api {
 	@handler updateDetail
@@ -73,7 +73,7 @@ service netdisk-api {
 @server(
 	group: file
 	prefix: /file
-	middleware: auth
+	middleware: Auth
 )
 service netdisk-api {
 	@handler listFile

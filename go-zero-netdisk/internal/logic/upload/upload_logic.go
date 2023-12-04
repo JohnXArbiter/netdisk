@@ -2,7 +2,6 @@ package upload
 
 import (
 	"context"
-
 	"lc/netdisk/internal/svc"
 	"lc/netdisk/internal/types"
 
@@ -23,8 +22,14 @@ func NewUploadLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UploadLogi
 	}
 }
 
-func (l *UploadLogic) Upload(req *types.UploadReq) error {
-	// todo: add your logic here and delete this line
-
-	return nil
+func (l *UploadLogic) Upload(req *types.UploadReq, fileParam *types.FileParam) (interface{}, error) {
+	//var (
+	//	minioService = l.svcCtx.Minio.NewService()
+	//	xorm         = l.svcCtx.Xorm
+	//)
+	//
+	//xorm.Get()
+	//
+	//minioService.UploadFile()
+	return nil, nil
 }

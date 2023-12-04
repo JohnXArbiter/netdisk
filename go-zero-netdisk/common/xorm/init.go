@@ -1,15 +1,21 @@
-package common
+package xorm
 
 import (
 	_ "github.com/go-sql-driver/mysql"
 	"xorm.io/xorm"
 )
 
-type DbConf struct {
-	Dsn string
-}
+type (
+	DbConf struct {
+		Dsn string
+	}
 
-func InitXorm(conf *DbConf) *xorm.Engine {
+	Engine struct {
+		*xorm.Engine
+	}
+)
+
+func Init(conf *DbConf) *Engine {
 
 	engine, err := xorm.NewEngine("mysql", conf.Dsn)
 	//logx.Infof("[XORM CONNECTING] Init Xorm DSN: %v", conf.Dsn)
@@ -20,5 +26,9 @@ func InitXorm(conf *DbConf) *xorm.Engine {
 	if err != nil {
 		panic("[XORM ERROR] NewServiceContext ping mysql 失败" + err.Error())
 	}
-	return engine
+	return &Engine{engine}
 }
+
+//func DoWithTransaction(ctx context.Context,session *xorm.Session)  {
+//	session.
+//}

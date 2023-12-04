@@ -2,10 +2,12 @@ package config
 
 import (
 	"github.com/zeromicro/go-zero/rest"
-	"lc/netdisk/common"
+	"lc/netdisk/common/minio"
+	"lc/netdisk/common/xorm"
 )
 
 type Config struct {
 	rest.RestConf
-	Minio common.MinioConf
+	Minio minio.Conf
+	Xorm  xorm.DbConf
 }
