@@ -9,8 +9,11 @@ type RegisterReq struct {
 }
 
 type CheckFileReq struct {
-	Hash string `json:"hash"`
-	Size int64  `json:"size"`
+	FolderId int64  `json:"folderId"`
+	Hash     string `json:"hash"`
+	Size     int64  `json:"size"`
+	Name     string `json:"name"`
+	Ext      string `json:"ext"`
 }
 
 type UploadReq struct {
@@ -28,7 +31,7 @@ type UploadChunkReq struct {
 
 type CheckFileResp struct {
 	FileId int64 `json:"fileId"`
-	Status int8  `json:"status"`
+	Status int8  `json:"status"` // 0：文件未上传，1：文件已存在
 }
 
 type ListFileReq struct {

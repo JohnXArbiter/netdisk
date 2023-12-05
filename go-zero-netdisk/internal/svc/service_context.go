@@ -1,6 +1,7 @@
 package svc
 
 import (
+	"github.com/yitter/idgenerator-go/idgen"
 	"github.com/zeromicro/go-zero/rest"
 	"lc/netdisk/common/minio"
 	"lc/netdisk/common/xorm"
@@ -17,6 +18,9 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
+	idgenops := idgen.NewIdGeneratorOptions(c.Idgen.WorkerId)
+	idgen.SetIdGenerator(idgenops)
+
 	minioClient := minio.Init(&c.Minio)
 
 	xormEngine := xorm.Init(&c.Xorm)

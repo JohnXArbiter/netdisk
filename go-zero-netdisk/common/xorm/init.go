@@ -1,6 +1,7 @@
 package xorm
 
 import (
+	"context"
 	_ "github.com/go-sql-driver/mysql"
 	"xorm.io/xorm"
 )
@@ -12,6 +13,10 @@ type (
 
 	Engine struct {
 		*xorm.Engine
+	}
+
+	Session struct {
+		*xorm.Session
 	}
 )
 
@@ -29,6 +34,24 @@ func Init(conf *DbConf) *Engine {
 	return &Engine{engine}
 }
 
-//func DoWithTransaction(ctx context.Context,session *xorm.Session)  {
-//	session.
-//}
+func Transaction(ctx context.Context, engine *Engine,
+	fn func(context.Context, *Session) (interface{}, error)) (interface{}, error) {
+	session := engine.NewSession()
+	defer session.Close()
+
+	if err := session.Begin(); err != nil {
+		return nil, err
+	}
+
+	i, err := fn(ctx, &Session{session})
+	if err != nil {
+		return nil, err
+	}
+
+	err = session.Commit()
+	if err != nil {
+		return nil, err
+	}
+
+	return i, nil
+}

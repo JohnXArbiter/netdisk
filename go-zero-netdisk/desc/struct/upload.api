@@ -1,7 +1,10 @@
 type (
     checkFileReq {
+        folderId int64 `json:"folderId"`
         hash string `json:"hash"`
         size int64 `json:"size"`
+        name string `json:"name"`
+        ext string `json:"ext"`
     }
 
     uploadReq {
@@ -21,6 +24,6 @@ type (
 type (
     checkFileResp {
         fileId int64 `json:"fileId"`
-        status int8 `json:"status"`
+        status int8 `json:"status"` // 0：文件未上传，1：文件已存在
     }
 )

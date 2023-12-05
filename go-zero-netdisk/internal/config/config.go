@@ -10,4 +10,7 @@ type Config struct {
 	rest.RestConf
 	Minio minio.Conf
 	Xorm  xorm.DbConf
+	Idgen struct {
+		WorkerId uint16
+	}
 }
