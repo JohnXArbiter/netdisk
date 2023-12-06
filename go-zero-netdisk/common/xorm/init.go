@@ -1,7 +1,8 @@
 package xorm
 
 import (
-	"context"
+	"errors"
+	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"xorm.io/xorm"
 )
@@ -34,24 +35,35 @@ func Init(conf *DbConf) *Engine {
 	return &Engine{engine}
 }
 
-func Transaction(ctx context.Context, engine *Engine,
-	fn func(context.Context, *Session) (interface{}, error)) (interface{}, error) {
-	session := engine.NewSession()
-	defer session.Close()
+func (e *Engine) Transaction(ctx interface{}, session *Session, fns ...func(interface{}, *Session) error) error {
+
+	if session == nil {
+		session = &Session{e.NewSession()}
+	}
 
 	if err := session.Begin(); err != nil {
-		return nil, err
+		return err
 	}
 
-	i, err := fn(ctx, &Session{session})
-	if err != nil {
-		return nil, err
+	defer func() {
+		var err error
+		if r := recover(); r != nil {
+			err = errors.New(fmt.Sprintf("%v", r))
+			// TODO: log
+		}
+
+		if err != nil {
+			_ = session.Rollback()
+		} else {
+			_ = session.Commit()
+		}
+	}()
+
+	for _, fn := range fns {
+		if err := fn(ctx, session); err != nil {
+			return err
+		}
 	}
 
-	err = session.Commit()
-	if err != nil {
-		return nil, err
-	}
-
-	return i, nil
+	return nil
 }

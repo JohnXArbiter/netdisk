@@ -7,6 +7,8 @@ import (
 	"lc/netdisk/internal/svc"
 	"lc/netdisk/internal/types"
 	"lc/netdisk/model"
+	"strconv"
+	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -48,8 +50,9 @@ func (l *CheckFileLogic) CheckFile(req *types.CheckFileReq) (*types.CheckFileRes
 	// 文件不存在时
 	if !has {
 		fileRepository.Size = req.Size
+		fileRepository.Name = req.Name + strconv.FormatInt(time.Now().Unix(), 10) + ext
 		ctx := context.WithValue(l.ctx, fileRepositoryKey, fileRepository)
-		_, err := xorm.Transaction(ctx, engine, l.createFile)
+		err = engine.Transaction(ctx, nil, l.createFile)
 
 		return nil, err
 	}
@@ -93,11 +96,15 @@ func (l *CheckFileLogic) CheckFile(req *types.CheckFileReq) (*types.CheckFileRes
 	return resp, nil
 }
 
-func (l *CheckFileLogic) createFile(ctx context.Context, session *xorm.Session) (interface{}, error) {
+func (l *CheckFileLogic) createFile(iCtx interface{}, session *xorm.Session) error {
 	var (
+		ctx            = iCtx.(context.Context)
 		fileRepository = ctx.Value(fileRepositoryKey).(*model.FileRepository)
 	)
 
 	id, err := session.Insert(fileRepository)
-	return id, err
+
+	l.svcCtx.Minio.NewService().UploadFile()
+
+	return err
 }
