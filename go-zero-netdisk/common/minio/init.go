@@ -3,6 +3,7 @@ package minio
 import (
 	"github.com/minio/minio-go"
 	"log"
+	"time"
 )
 
 type (
@@ -15,7 +16,8 @@ type (
 	}
 
 	Client struct {
-		client *minio.Client
+		BucketName string
+		client     *minio.Client
 	}
 )
 
@@ -36,5 +38,10 @@ func Init(conf *Conf) *Client {
 		}
 	}
 
-	return &Client{client}
+	return &Client{bucketName, client}
+}
+
+func (c *Client) GenObjectName(hash, name string) string {
+	return "/" + c.BucketName + time.Now().Format("2006-01") +
+		"/" + string(hash[0]) + "/" + string(hash[0]) + "/" + name
 }

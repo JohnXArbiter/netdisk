@@ -1,8 +1,6 @@
 package xorm
 
 import (
-	"errors"
-	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"xorm.io/xorm"
 )
@@ -19,6 +17,8 @@ type (
 	Session struct {
 		*xorm.Session
 	}
+
+	TxFn func(session *Session) (interface{}, error)
 )
 
 func Init(conf *DbConf) *Engine {
@@ -35,35 +35,41 @@ func Init(conf *DbConf) *Engine {
 	return &Engine{engine}
 }
 
-func (e *Engine) Transaction(ctx interface{}, session *Session, fns ...func(interface{}, *Session) error) error {
-
-	if session == nil {
-		session = &Session{e.NewSession()}
-	}
-
-	if err := session.Begin(); err != nil {
-		return err
-	}
-
-	defer func() {
-		var err error
-		if r := recover(); r != nil {
-			err = errors.New(fmt.Sprintf("%v", r))
-			// TODO: log
-		}
-
-		if err != nil {
-			_ = session.Rollback()
-		} else {
-			_ = session.Commit()
-		}
-	}()
-
-	for _, fn := range fns {
-		if err := fn(ctx, session); err != nil {
-			return err
-		}
-	}
-
-	return nil
+func (e *Engine) DoTransaction(fn TxFn) (interface{}, error) {
+	return e.Transaction(func(session *xorm.Session) (interface{}, error) {
+		return fn(&Session{session})
+	})
 }
+
+//func (e *Engine) Transaction(ctx interface{}, session *Session, fns ...func(interface{}, *Session) error) error {
+//
+//	if session == nil {
+//		session = &Session{e.NewSession()}
+//	}
+//
+//	if err := session.Begin(); err != nil {
+//		return err
+//	}
+//
+//	defer func() {
+//		var err error
+//		if r := recover(); r != nil {
+//			err = errors.New(fmt.Sprintf("%v", r))
+//			// TODO: log
+//		}
+//
+//		if err != nil {
+//			_ = session.Rollback()
+//		} else {
+//			_ = session.Commit()
+//		}
+//	}()
+//
+//	for _, fn := range fns {
+//		if err := fn(ctx, session); err != nil {
+//			return err
+//		}
+//	}
+//
+//	return nil
+//}
