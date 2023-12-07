@@ -3,12 +3,11 @@ package upload
 import (
 	"context"
 	"github.com/yitter/idgenerator-go/idgen"
-	"lc/netdisk/common"
+	"lc/netdisk/common/constant"
 	"lc/netdisk/common/xorm"
 	"lc/netdisk/internal/svc"
 	"lc/netdisk/internal/types"
 	"lc/netdisk/model"
-	"strconv"
 	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -30,7 +29,7 @@ func NewCheckFileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CheckFi
 
 func (l *CheckFileLogic) CheckFile(req *types.CheckFileReq) (*types.CheckFileResp, error) {
 	var (
-		userId = l.ctx.Value(common.UserIdKey).(int64)
+		userId = l.ctx.Value(constant.UserIdKey).(int64)
 		ext    = req.Ext
 		engine = l.svcCtx.Xorm
 		has    bool
@@ -46,11 +45,8 @@ func (l *CheckFileLogic) CheckFile(req *types.CheckFileReq) (*types.CheckFileRes
 
 	// 文件不存在时
 	if !has {
-		data, err := engine.DoTransaction(l.createFsAndNetdiskRecord(req))
-		if err != nil {
-			return nil, err
-		}
-		return data.(*types.CheckFileResp), nil
+		res, err := engine.DoTransaction(l.createFsAndNetdiskRecord(req))
+		return res.(*types.CheckFileResp), err
 	}
 
 	// 文件存在时
@@ -78,8 +74,8 @@ func (l *CheckFileLogic) CheckFile(req *types.CheckFileReq) (*types.CheckFileRes
 			}
 		}
 		resp = &types.CheckFileResp{
-			FileId: fileNetdisk.Id,
-			Status: 1,
+			FileNetdiskId: fileNetdisk.Id,
+			Status:        1,
 		}
 	}
 
@@ -90,27 +86,22 @@ func (l *CheckFileLogic) CheckFile(req *types.CheckFileReq) (*types.CheckFileRes
 func (l *CheckFileLogic) createFsAndNetdiskRecord(req *types.CheckFileReq) xorm.TxFn {
 	return func(session *xorm.Session) (interface{}, error) {
 		var (
-			userId = l.ctx.Value(common.UserIdKey).(int64)
-			status int8
+			userId = l.ctx.Value(constant.UserIdKey).(int64)
+			status = constant.StatusFsFileUnuploaded
 			fsId   int64
 			err    error
 		)
 
-		if req.Size > common.NeedShardingSize {
-			status = -2
+		if req.Size > constant.NeedShardingSize {
+			status = constant.StatusFsBigFileUnuploaded
 		}
 
-		name := req.Name + "|" + strconv.FormatInt(time.Now().Unix(), 10) + req.Ext
-		objectName := l.svcCtx.Minio.GenObjectName(req.Hash, name)
 		fileFs := &model.FileFs{
-			Bucket:     l.svcCtx.Minio.BucketName,
-			Ext:        req.Ext,
-			ObjectName: objectName,
-			Hash:       req.Hash,
-			Name:       name,
-			Size:       req.Size,
-			Url:        "",
-			Status:     status,
+			Bucket: l.svcCtx.Minio.BucketName,
+			Ext:    req.Ext,
+			Hash:   req.Hash,
+			Size:   req.Size,
+			Status: status,
 		}
 		if fsId, err = session.Insert(fileFs); err != nil {
 			return nil, err
@@ -124,15 +115,14 @@ func (l *CheckFileLogic) createFsAndNetdiskRecord(req *types.CheckFileReq) xorm.
 			UserId:   userId,
 			FsId:     fsId,
 			FolderId: req.FolderId,
-			Name:     req.Name + req.Ext,
 		}
 		if _, err = session.Insert(netdisk); err != nil {
 			return nil, err
 		}
 
 		resp := &types.CheckFileResp{
-			FileId: netdiskId,
-			Status: status,
+			FileNetdiskId: netdiskId,
+			Status:        status,
 		}
 		return resp, nil
 	}

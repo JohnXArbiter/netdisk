@@ -8,7 +8,7 @@ type (
     }
 
     uploadReq {
-        fileId int64 `json:"fileId"`
+        fileNetdiskId int64 `json:"fileNetdiskId"`
     }
 
     checkChunkReq {
@@ -23,7 +23,7 @@ type (
 
 type (
     checkFileResp {
-        fileId int64 `json:"fileId"`
+        fileNetdiskId int64 `json:"fileNetdiskId"`
         status int8 `json:"status"` // 0：文件未上传，1：文件已存在
     }
 )

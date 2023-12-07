@@ -3,6 +3,9 @@ package minio
 import (
 	"github.com/minio/minio-go"
 	"log"
+	"path"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -41,7 +44,18 @@ func Init(conf *Conf) *Client {
 	return &Client{bucketName, client}
 }
 
-func (c *Client) GenObjectName(hash, name string) string {
-	return "/" + c.BucketName + time.Now().Format("2006-01") +
-		"/" + string(hash[0]) + "/" + string(hash[0]) + "/" + name
+// GenObjectName ext can only be one string variable
+func (c *Client) GenObjectName(hash, rawFilename string, ext ...string) (string, string) {
+	var filename, e string
+	if len(ext) > 0 {
+		e = ext[0]
+		filename = strings.TrimSuffix(rawFilename, e)
+	} else {
+		e = path.Ext(rawFilename)
+		filename = strings.TrimSuffix(rawFilename, e)
+	}
+
+	filename += "|" + strconv.FormatInt(time.Now().Unix(), 10) + e
+	return filename, "/" + time.Now().Format("2006-01") + "/" +
+		string(hash[0]) + "/" + string(hash[0]) + "/" + filename
 }

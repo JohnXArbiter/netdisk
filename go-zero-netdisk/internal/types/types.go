@@ -17,7 +17,7 @@ type CheckFileReq struct {
 }
 
 type UploadReq struct {
-	FileId int64 `json:"fileId"`
+	FileNetdiskId int64 `json:"fileNetdiskId"`
 }
 
 type CheckChunkReq struct {
@@ -30,8 +30,8 @@ type UploadChunkReq struct {
 }
 
 type CheckFileResp struct {
-	FileId int64 `json:"fileId"`
-	Status int8  `json:"status"` // 0：文件未上传，1：文件已存在
+	FileNetdiskId int64 `json:"fileNetdiskId"`
+	Status        int8  `json:"status"` // 0：文件未上传，1：文件已存在
 }
 
 type ListFileReq struct {

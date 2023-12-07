@@ -4,23 +4,25 @@ import (
 	"context"
 	"fmt"
 	"github.com/minio/minio-go"
+	"io"
 	"log"
 	"os"
 )
 
 type (
 	Service struct {
-		client *minio.Client
+		BucketName string
+		client     *minio.Client
 	}
 )
 
 func (c *Client) NewService() *Service {
-	return &Service{c.client}
+	return &Service{c.BucketName, c.client}
 }
 
 // UploadFile 上传文件
-func (s *Service) UploadFile(ctx context.Context, bucketName, objectName string, file *os.File) error {
-	_, err := s.client.PutObjectWithContext(ctx, bucketName, objectName, file, -1, minio.PutObjectOptions{})
+func (s *Service) UploadFile(ctx context.Context, objectName string, file io.Reader) error {
+	_, err := s.client.PutObjectWithContext(ctx, s.BucketName, objectName, file, -1, minio.PutObjectOptions{})
 	if err != nil {
 		log.Println("putObject fail: ", err)
 		return err
@@ -31,24 +33,24 @@ func (s *Service) UploadFile(ctx context.Context, bucketName, objectName string,
 	return nil
 }
 
-//// DownloadFile 下载文件
-//func (s *Service) DownloadFile(bucketName, objectName, filePath string) error {
-//	// 创建本地文件
-//	file, err := os.Create(filePath)
-//	if err != nil {
-//		return err
-//	}
-//	defer file.Close()
-//
-//	// 下载存储桶中的文件到本地
-//	err = s.Client.FGetObject(bucketName, objectName, filePath, minio.GetObjectOptions{})
-//	if err != nil {
-//		return err
-//	}
-//
-//	fmt.Println("Successfully downloaded", objectName)
-//	return nil
-//}
+// DownloadFile 下载文件
+func (s *Service) DownloadFile(ctx context.Context, objectName string) (string, error) {
+
+	file, err := os.CreateTemp("/tmp/netdisk/", "*")
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+
+	filename := file.Name()
+	if err = s.client.FGetObjectWithContext(ctx, s.BucketName, objectName,
+		filename, minio.GetObjectOptions{}); err != nil {
+		return "", err
+	}
+
+	return filename, nil
+}
+
 //
 //// DeleteFile 删除文件
 //func (s *Service) DeleteFile(bucketName, objectName string) (bool, error) {

@@ -32,7 +32,7 @@ type FileFs struct {
 	Name       string    `json:"name"`        // 实际文件名
 	Size       int64     `json:"size"`        // 文件大小
 	Url        string    `json:"url"`         // 访问地址
-	Status     int8      `json:"status"`      // 文件状态，-2：大文件未上传，-1：大文件待合并，0：小文件未上传，1：上传成功，
+	Status     int8      `json:"status"`      // 文件状态，0：大文件未上传，1：大文件待合并，2：小文件未上传，3：上传成功
 	DoneAt     time.Time `json:"done_at"`     // 大文件合并完成时间
 }
 
