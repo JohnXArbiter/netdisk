@@ -2,6 +2,8 @@ package user
 
 import (
 	"context"
+	"errors"
+	"lc/netdisk/model"
 
 	"lc/netdisk/internal/svc"
 	"lc/netdisk/internal/types"
@@ -23,8 +25,21 @@ func NewGetDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetDeta
 	}
 }
 
-func (l *GetDetailLogic) GetDetail(req *types.GetUserDetailReq) error {
-	// todo: add your logic here and delete this line
+// GetDetail TODO
+func (l *GetDetailLogic) GetDetail(req *types.GetUserDetailReq) (interface{}, error) {
+	var (
+		engine = l.svcCtx.Xorm
+		user   model.User
+	)
 
-	return nil
+	has, err := engine.ID(req.UserId).Get(&user)
+	if err != nil {
+		return nil, err
+	}
+
+	if !has {
+		return nil, errors.New("未找到该用户信息")
+	}
+
+	return user, nil
 }

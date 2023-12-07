@@ -8,7 +8,7 @@ import (
 service netdisk-api {
 	@handler login
 	post /login (loginReq) returns ()
-
+	
 	@handler register
 	post /register (registerReq) returns ()
 }
@@ -22,15 +22,15 @@ service netdisk-api {
 	// 检查该用户文件是否已存在（秒传）
 	@handler checkFile
 	post /check_file (checkFileReq) returns (checkFileResp)
-
+	
 	// 上传小文件
 	@handler upload
 	post / (uploadReq) returns ()
-
+	
 	// 检查分片
 	@handler checkChunk
 	post /check_chunk (checkChunkReq) returns ()
-
+	
 	@handler uploadChunk
 	post /chunk (uploadChunkReq) returns ()
 }
@@ -44,11 +44,11 @@ service netdisk-api {
 	// 检查大小
 	@handler checkSize
 	post /check_size (checkSizeReq) returns (checkSizeResp)
-
+	
 	// 下载小文件
 	@handler download
 	post / (downloadReq) returns ()
-
+	
 	// 下载分片
 	@handler chunkDownload
 	post /chunk (chunkDownloadReq) returns ()
@@ -62,10 +62,10 @@ service netdisk-api {
 service netdisk-api {
 	@handler updateDetail
 	post /detail (updateUserDetailReq) returns ()
-
+	
 	@handler getDetail
 	get /detail (getUserDetailReq) returns ()
-
+	
 	@handler updateAvatar
 	post /avatar (updateAvatarReq) returns ()
 }
@@ -78,22 +78,22 @@ service netdisk-api {
 service netdisk-api {
 	@handler listFile
 	get /list (listFileReq) returns ()
-
+	
 	@handler moveFile
 	put /move (moveFileReq) returns ()
-
+	
 	@handler updateFile
 	post /update (updateFileReq) returns ()
-
+	
 	@handler listFolder
 	get /folder_list (listFileFolderReq) returns ()
-
+	
 	@handler createFolder
 	post /folder_create (createFolderReq) returns ()
-
+	
 	@handler updateFolder
 	post /folder_update (updateFolderReq) returns ()
-
+	
 	@handler moveFolder
 	put /folder_move (moveFolderReq) returns ()
 }

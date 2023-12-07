@@ -9,6 +9,17 @@ type Model struct {
 	DeleteAt time.Time `xorm:"delete_at"`
 }
 
+// 未命名数据模型
+type User struct {
+	Model     `xorm:"extends"`
+	Username  string `json:"username"`
+	Password  string `json:"password"`
+	Name      string `json:"name"`
+	Avatar    string `json:"avatar"`
+	Email     string `json:"email"`
+	Signature string `json:"signature"`
+}
+
 // FileNetdisk 用户视角存储
 type FileNetdisk struct {
 	Model    `xorm:"extends"`
@@ -32,6 +43,7 @@ type FileFs struct {
 	Hash       string    `json:"hash"`        // 哈希值
 	Name       string    `json:"name"`        // 实际文件名
 	Size       int64     `json:"size"`        // 文件大小
+	ChunkNum   int64     `json:"chunkNum"`    // 分片数量
 	Url        string    `json:"url"`         // 访问地址
 	Status     int8      `json:"status"`      // 文件状态，0：大文件未上传，1：大文件待合并，2：小文件未上传，3：上传成功
 	DoneAt     time.Time `json:"done_at"`     // 大文件合并完成时间
@@ -43,6 +55,14 @@ type FileUploading struct {
 	NetdiskId int64 `xorm:"netdisk_id" json:"netdiskId"`
 	FsId      int64 `xorm:"repository_id" json:"repositoryId"`
 	ChunkNum  int   `xorm:"chunk_num" json:"chunkNum"`
+}
+
+// FileFolder 网盘文件夹
+type FileFolder struct {
+	Model    `xorm:"extends"`
+	ParentId int64  `json:"parent_id"` // 父文件夹id
+	Name     string `json:"name"`      // 文件夹名
+	UserId   int64  `json:"user_id"`
 }
 
 func (*FileNetdisk) TableName() string {

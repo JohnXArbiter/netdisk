@@ -16,6 +16,6 @@ type (
 type (
     checkSizeResp {
         isBig int8 `json:"status"`
-        chunkCount int64 `json:"chunkCount"`
+        chunkNum int64 `json:"chunkNum"`
     }
 )

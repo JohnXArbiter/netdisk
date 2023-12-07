@@ -39,8 +39,8 @@ type ListFileReq struct {
 }
 
 type MoveFileReq struct {
-	FileId   int64 `json:"fileId"`
-	FolderId int64 `json:"folderId"`
+	FileIds  []int64 `json:"fileIds"`
+	FolderId int64   `json:"folderId"`
 }
 
 type UpdateFileReq struct {
@@ -78,15 +78,15 @@ type ChunkDownloadReq struct {
 }
 
 type CheckSizeResp struct {
-	IsBig      int8  `json:"status"`
-	ChunkCount int64 `json:"chunkCount"`
+	IsBig    int8  `json:"status"`
+	ChunkNum int64 `json:"chunkNum"`
 }
 
 type UpdateUserDetailReq struct {
 }
 
 type GetUserDetailReq struct {
-	Id int64 `path:"id"`
+	UserId int64 `path:"userId"`
 }
 
 type UpdateAvatarReq struct {

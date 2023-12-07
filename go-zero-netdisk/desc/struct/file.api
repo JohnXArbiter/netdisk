@@ -6,7 +6,7 @@ type (
     }
 
     moveFileReq {
-        fileId int64 `json:"fileId"`
+        fileIds []int64 `json:"fileIds"`
         folderId int64 `json:"folderId"`
     }
 

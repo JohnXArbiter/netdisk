@@ -2,13 +2,11 @@ package download
 
 import (
 	"context"
+	"github.com/zeromicro/go-zero/core/logx"
 	"lc/netdisk/common/constant"
 	"lc/netdisk/internal/svc"
 	"lc/netdisk/internal/types"
 	"lc/netdisk/model"
-	"math"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type CheckSizeLogic struct {
@@ -50,8 +48,7 @@ func (l *CheckSizeLogic) CheckSize(req *types.CheckSizeReq) (*types.CheckSizeRes
 		return nil, err
 	}
 
-	chunkCount := math.Ceil(float64(fileFs.Size / constant.NeedShardingSize))
 	resp.IsBig = fileNetdisk.IsBig
-	resp.ChunkCount = int64(chunkCount)
+	resp.ChunkNum = fileFs.ChunkNum
 	return &resp, nil
 }

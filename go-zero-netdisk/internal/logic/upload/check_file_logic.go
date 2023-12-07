@@ -8,6 +8,7 @@ import (
 	"lc/netdisk/internal/svc"
 	"lc/netdisk/internal/types"
 	"lc/netdisk/model"
+	"math"
 	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -101,12 +102,14 @@ func (l *CheckFileLogic) createFsAndNetdiskRecord(req *types.CheckFileReq) xorm.
 			isBig = constant.BigFileFlag
 		}
 
+		chunkNum := math.Ceil(float64(req.Size / constant.NeedShardingSize))
 		fileFs := &model.FileFs{
-			Bucket: l.svcCtx.Minio.BucketName,
-			Ext:    req.Ext,
-			Hash:   req.Hash,
-			Size:   req.Size,
-			Status: status,
+			Bucket:   l.svcCtx.Minio.BucketName,
+			Ext:      req.Ext,
+			Hash:     req.Hash,
+			Size:     req.Size,
+			ChunkNum: int64(chunkNum),
+			Status:   status,
 		}
 		if fsId, err = session.Insert(fileFs); err != nil {
 			return nil, err
