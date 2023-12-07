@@ -65,10 +65,11 @@ type MoveFolderReq struct {
 }
 
 type CheckSizeReq struct {
-	FileId int64 `json:"fileId"`
+	FileNetdiskId int64 `json:"fileId"`
 }
 
 type DownloadReq struct {
+	FileNetdiskId int64 `json:"fileId"`
 }
 
 type ChunkDownloadReq struct {
@@ -77,7 +78,7 @@ type ChunkDownloadReq struct {
 }
 
 type CheckSizeResp struct {
-	Status     int8  `json:"status"`
+	IsBig      int8  `json:"status"`
 	ChunkCount int64 `json:"chunkCount"`
 }
 

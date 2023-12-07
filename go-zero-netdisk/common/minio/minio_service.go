@@ -2,7 +2,6 @@ package minio
 
 import (
 	"context"
-	"fmt"
 	"github.com/minio/minio-go"
 	"io"
 	"log"
@@ -27,9 +26,6 @@ func (s *Service) UploadFile(ctx context.Context, objectName string, file io.Rea
 		log.Println("putObject fail: ", err)
 		return err
 	}
-
-	fmt.Println("Successfully uploaded", objectName)
-
 	return nil
 }
 

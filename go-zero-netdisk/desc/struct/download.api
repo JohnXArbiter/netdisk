@@ -1,10 +1,10 @@
 type (
     checkSizeReq {
-        fileId int64 `json:"fileId"`
+        fileNetdiskId int64 `json:"fileId"`
     }
 
     downloadReq {
-
+        fileNetdiskId int64 `json:"fileId"`
     }
 
     chunkDownloadReq {
@@ -15,7 +15,7 @@ type (
 
 type (
     checkSizeResp {
-        status int8 `json:"status"`
+        isBig int8 `json:"status"`
         chunkCount int64 `json:"chunkCount"`
     }
 )

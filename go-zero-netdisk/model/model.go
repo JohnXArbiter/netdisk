@@ -18,6 +18,7 @@ type FileNetdisk struct {
 	Name     string    `json:"name"`     // 用户视角文件名
 	Url      string    `json:"url"`      // 访问地址
 	Status   int8      `json:"status"`   // 文件状态，0：待合并/未上传，1：上传成功
+	IsBig    int8      `json:"is_big"`   // 是否大文件，0：不是，1：是
 	DoneAt   time.Time `json:"done_at"`  // 大文件合并完成时间
 	DelFlag  int8      `json:"del_flag"` // 文件删除状态：0：未删除，1：删除
 }

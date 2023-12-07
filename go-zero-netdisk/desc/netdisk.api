@@ -43,7 +43,7 @@ service netdisk-api {
 service netdisk-api {
 	// 检查大小
 	@handler checkSize
-	post /check_size (checkSizeReq) returns ()
+	post /check_size (checkSizeReq) returns (checkSizeResp)
 
 	// 下载小文件
 	@handler download

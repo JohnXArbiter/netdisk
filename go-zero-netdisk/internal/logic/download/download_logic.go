@@ -2,9 +2,10 @@ package download
 
 import (
 	"context"
-
+	"lc/netdisk/common/constant"
 	"lc/netdisk/internal/svc"
 	"lc/netdisk/internal/types"
+	"lc/netdisk/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -23,8 +24,38 @@ func NewDownloadLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Download
 	}
 }
 
-func (l *DownloadLogic) Download(req *types.DownloadReq) error {
-	// todo: add your logic here and delete this line
+func (l *DownloadLogic) Download(req *types.DownloadReq) (string, error) {
+	var (
+		userId       = l.ctx.Value(constant.UserIdKey).(int64)
+		engine       = l.svcCtx.Xorm
+		minioService = l.svcCtx.Minio.NewService()
+		fileNetdisk  model.FileNetdisk
+		fileFs       model.FileFs
+	)
 
-	return nil
+	//key := redis.DownloadGetFsKey + strconv.FormatInt(req.FileNetdiskId, 10)
+	//fsMap, err := l.svcCtx.Redis.HGetAll(l.ctx, key).Result()
+	//if err == nil && fsMap != nil {
+	//	if _, ok := fsMap["id"]; ok {
+	//		return minioService.DownloadFile(l.ctx, fsMap["objectName"])
+	//	}
+	//}
+
+	if has, err := engine.ID(req.FileNetdiskId).
+		And("user_id = ?", userId).
+		Get(&fileNetdisk); err != nil || !has {
+		return "", err
+	}
+
+	if has, err := engine.ID(fileNetdisk.FsId).
+		Get(&fileFs); err != nil || !has {
+		return "", err
+	}
+
+	filename, err := minioService.DownloadFile(l.ctx, fileFs.ObjectName)
+	if err != nil {
+		return "", err
+	}
+
+	return filename, nil
 }

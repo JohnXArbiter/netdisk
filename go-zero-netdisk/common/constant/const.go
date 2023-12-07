@@ -5,6 +5,11 @@ const (
 	NeedShardingSize = 67108864 // 需要分片起始大小：64MB
 )
 
+const (
+	SmallFileFlag int8 = iota
+	BigFileFlag
+)
+
 // 0：待合并/未上传，1：上传成功
 const (
 	StatusNetdiskUnuploaded int8 = iota

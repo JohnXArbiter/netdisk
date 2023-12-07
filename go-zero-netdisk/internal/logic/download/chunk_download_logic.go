@@ -25,6 +25,5 @@ func NewChunkDownloadLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Chu
 
 func (l *ChunkDownloadLogic) ChunkDownload(req *types.ChunkDownloadReq) error {
 	// todo: add your logic here and delete this line
-
 	return nil
 }

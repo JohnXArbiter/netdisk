@@ -16,3 +16,6 @@
 
 *netdisk-api.yaml
 .idea
+
+*go.mod
+*go.sum

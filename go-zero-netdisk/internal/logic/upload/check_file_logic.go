@@ -61,12 +61,15 @@ func (l *CheckFileLogic) CheckFile(req *types.CheckFileReq) (*types.CheckFileRes
 		// 用户上传过，提示并返回
 		if !has {
 			// 用户未上传，信息落库
+			if fileFs.Size > constant.NeedShardingSize {
+				fileNetdisk.IsBig = constant.BigFileFlag
+			}
 			fileNetdisk.Id = idgen.NextId()
 			fileNetdisk.UserId = userId
 			fileNetdisk.FsId = fileFs.Id
 			fileNetdisk.Name = req.Name + ext
 			fileNetdisk.FolderId = req.FolderId
-			fileNetdisk.Status = 1
+			fileNetdisk.Status = constant.StatusNetdiskUploaded
 			fileNetdisk.Url = fileFs.Url
 			fileNetdisk.DoneAt = time.Now().Local()
 			if _, err = engine.Insert(&fileNetdisk); err != nil {
@@ -88,12 +91,14 @@ func (l *CheckFileLogic) createFsAndNetdiskRecord(req *types.CheckFileReq) xorm.
 		var (
 			userId = l.ctx.Value(constant.UserIdKey).(int64)
 			status = constant.StatusFsFileUnuploaded
+			isBig  = constant.SmallFileFlag
 			fsId   int64
 			err    error
 		)
 
 		if req.Size > constant.NeedShardingSize {
 			status = constant.StatusFsBigFileUnuploaded
+			isBig = constant.BigFileFlag
 		}
 
 		fileFs := &model.FileFs{
@@ -115,6 +120,7 @@ func (l *CheckFileLogic) createFsAndNetdiskRecord(req *types.CheckFileReq) xorm.
 			UserId:   userId,
 			FsId:     fsId,
 			FolderId: req.FolderId,
+			IsBig:    isBig,
 		}
 		if _, err = session.Insert(netdisk); err != nil {
 			return nil, err
