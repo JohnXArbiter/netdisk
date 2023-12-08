@@ -38,13 +38,9 @@ type ListFileReq struct {
 	FolderId int64 `path:"folderId"`
 }
 
-type MoveFileReq struct {
-	FileIds  []int64 `json:"fileIds"`
-	FolderId int64   `json:"folderId"`
-}
-
 type UpdateFileReq struct {
-	Name string `json:"name"`
+	FileNetdiskId int64  `json:"fileNetdiskId"`
+	Name          string `json:"name"`
 }
 
 type ListFileFolderReq struct {
@@ -57,11 +53,31 @@ type CreateFolderReq struct {
 }
 
 type UpdateFolderReq struct {
+	FolderId int64  `json:"folderId"`
+	Name     string `json:"name"`
+}
+
+type MoveReq struct {
+	ParentFolderId int64   `json:"parentFolderId"`
+	FolderIds      []int64 `json:"folderIds"`
+	FileNetdiskIds []int64 `json:"fileNetdiskIds"`
+}
+
+type ListFileFolderResp struct {
+	Folders      []*listFoldersStruct `json:"folders"`
+	FileNetdisks []*listFileStruct    `json:"fileNetdisks"`
+}
+
+type ListFoldersStruct struct {
+	Id   int64  `json:"id"`
 	Name string `json:"name"`
 }
 
-type MoveFolderReq struct {
-	FolderId int64 `json:"folderId"`
+type ListFileStruct struct {
+	Id     int64  `json:"id"`
+	Name   string `json:"name"`
+	Url    string `json:"url"`
+	Status int8   `json:"status"`
 }
 
 type CheckSizeReq struct {

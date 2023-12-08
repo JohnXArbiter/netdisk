@@ -5,14 +5,9 @@ type (
         folderId int64 `path:"folderId"`
     }
 
-    moveFileReq {
-        fileIds []int64 `json:"fileIds"`
-        folderId int64 `json:"folderId"`
-    }
-
     updateFileReq {
+        fileNetdiskId int64 `json:"fileNetdiskId"`
         name string `json:"name"`
-
     }
 
     listFileFolderReq {
@@ -25,10 +20,32 @@ type (
     }
 
     updateFolderReq {
+        folderId int64 `json:"folderId"`
         name string `json:"name"`
     }
 
-    moveFolderReq {
-        folderId int64 `json:"folderId"`
+    moveReq {
+        parentFolderId int64 `json:"parentFolderId"`
+        folderIds []int64 `json:"folderIds"`
+        fileNetdiskIds []int64 `json:"fileNetdiskIds"`
+    }
+)
+
+type (
+    listFileFolderResp {
+        folders []*listFoldersStruct `json:"folders"`
+        fileNetdisks []*listFileStruct `json:"fileNetdisks"`
+    }
+
+    listFoldersStruct {
+        id int64 `json:"id"`
+        name string `json:"name"`
+    }
+
+    listFileStruct {
+        id int64 `json:"id"`
+        name string `json:"name"`
+        url string `json:"url"`
+        status int8 `json:"status"`
     }
 )

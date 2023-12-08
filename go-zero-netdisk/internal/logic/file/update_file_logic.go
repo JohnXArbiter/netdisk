@@ -2,6 +2,9 @@ package file
 
 import (
 	"context"
+	"errors"
+	"lc/netdisk/common/constant"
+	"lc/netdisk/model"
 
 	"lc/netdisk/internal/svc"
 	"lc/netdisk/internal/types"
@@ -24,7 +27,18 @@ func NewUpdateFileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Update
 }
 
 func (l *UpdateFileLogic) UpdateFile(req *types.UpdateFileReq) error {
-	// todo: add your logic here and delete this line
+	var (
+		userId = l.ctx.Value(constant.UserIdKey).(int64)
+		engine = l.svcCtx.Xorm
+	)
+
+	// TODO: 文件格式
+	if affected, err := engine.ID(req.FileNetdiskId).And("user_id = ?", userId).
+		Update(&model.FileNetdisk{Name: req.Name}); err != nil {
+		return err
+	} else if affected != 1 {
+		return errors.New("文件信息有误！")
+	}
 
 	return nil
 }

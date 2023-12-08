@@ -3,10 +3,10 @@ package model
 import "time"
 
 type Model struct {
-	Id       int64     `xorm:"pk autoincr"`
-	CreateAt time.Time `xorm:"create_at"`
-	UpdateAt time.Time `xorm:"update_at"`
-	DeleteAt time.Time `xorm:"delete_at"`
+	Id      int64     `xorm:"pk autoincr"`
+	Created time.Time `xorm:"created"`
+	Updated time.Time `xorm:"updated"`
+	Deleted time.Time `xorm:"deleted"`
 }
 
 // 未命名数据模型
@@ -57,12 +57,16 @@ type FileUploading struct {
 	ChunkNum  int   `xorm:"chunk_num" json:"chunkNum"`
 }
 
-// FileFolder 网盘文件夹
-type FileFolder struct {
+// Folder 网盘文件夹
+type Folder struct {
 	Model    `xorm:"extends"`
 	ParentId int64  `json:"parent_id"` // 父文件夹id
 	Name     string `json:"name"`      // 文件夹名
 	UserId   int64  `json:"user_id"`
+}
+
+func (*User) TableName() string {
+	return "user"
 }
 
 func (*FileNetdisk) TableName() string {
@@ -71,4 +75,8 @@ func (*FileNetdisk) TableName() string {
 
 func (*FileFs) TableName() string {
 	return "file_fs"
+}
+
+func (*Folder) TableName() string {
+	return "folder"
 }

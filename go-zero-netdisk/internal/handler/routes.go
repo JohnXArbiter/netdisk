@@ -118,32 +118,27 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				{
 					Method:  http.MethodPut,
 					Path:    "/move",
-					Handler: file.MoveFileHandler(serverCtx),
+					Handler: file.MoveHandler(serverCtx),
 				},
 				{
-					Method:  http.MethodPost,
+					Method:  http.MethodPut,
 					Path:    "/update",
 					Handler: file.UpdateFileHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodGet,
-					Path:    "/folder_list",
+					Path:    "/folder/list",
 					Handler: file.ListFolderHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodPost,
-					Path:    "/folder_create",
+					Path:    "/folder",
 					Handler: file.CreateFolderHandler(serverCtx),
 				},
 				{
-					Method:  http.MethodPost,
-					Path:    "/folder_update",
-					Handler: file.UpdateFolderHandler(serverCtx),
-				},
-				{
 					Method:  http.MethodPut,
-					Path:    "/folder_move",
-					Handler: file.MoveFolderHandler(serverCtx),
+					Path:    "/folder",
+					Handler: file.UpdateFolderHandler(serverCtx),
 				},
 			}...,
 		),
