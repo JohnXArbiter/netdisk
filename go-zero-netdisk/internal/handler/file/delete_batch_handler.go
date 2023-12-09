@@ -10,19 +10,19 @@ import (
 	"lc/netdisk/internal/types"
 )
 
-func CreateFolderHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func DeleteBatchHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.CreateFolderReq
+		var req types.DeleteBatchReq
 		if err := httpx.ParseJsonBody(r, &req); err != nil {
 			xhttp.JsonBaseResponseCtx(r.Context(), w, err)
 			return
 		}
 
-		l := file.NewCreateFolderLogic(r.Context(), svcCtx)
-		if err := l.CreateFolder(&req); err != nil {
+		l := file.NewDeleteBatchLogic(r.Context(), svcCtx)
+		if resp, err := l.DeleteBatch(&req); err != nil {
 			xhttp.JsonBaseResponseCtx(r.Context(), w, err)
 		} else {
-			xhttp.JsonBaseResponseCtx(r.Context(), w, nil)
+			xhttp.JsonBaseResponseCtx(r.Context(), w, resp)
 		}
 	}
 }

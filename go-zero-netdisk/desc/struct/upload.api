@@ -23,7 +23,7 @@ type (
 
 type (
     checkFileResp {
-        fileNetdiskId int64 `json:"fileNetdiskId"`
+        fileId int64 `json:"fileId"`
         status int8 `json:"status"` // 0：文件未上传，1：文件已存在
     }
 )
