@@ -1,10 +1,8 @@
 <template>
     <div class="common-layout">
         <el-container>
-            <el-header style="background-color: #535bf2">
-                <el-row class="demo-avatar demo-basic">
-                    <Avatar/>
-                </el-row>
+            <el-header style="background-color: lightsteelblue">
+              <Avatar/>
 
             </el-header>
             <el-container>
