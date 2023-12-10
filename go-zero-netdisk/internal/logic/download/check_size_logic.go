@@ -25,30 +25,30 @@ func NewCheckSizeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CheckSi
 
 func (l *CheckSizeLogic) CheckSize(req *types.CheckSizeReq) (*types.CheckSizeResp, error) {
 	var (
-		userId      = l.ctx.Value(constant.UserIdKey).(int64)
-		engine      = l.svcCtx.Xorm
-		fileNetdisk model.FileNetdisk
-		fileFs      model.FileFs
-		resp        types.CheckSizeResp
+		userId = l.ctx.Value(constant.UserIdKey).(int64)
+		engine = l.svcCtx.Xorm
+		file   model.File
+		fileFs model.FileFs
+		resp   types.CheckSizeResp
 	)
 
-	if has, err := engine.ID(req.FileNetdiskId).
+	if has, err := engine.ID(req.FileId).
 		And("user_id = ?", userId).
-		Get(&fileNetdisk); err != nil || !has {
+		Get(&file); err != nil || !has {
 		return nil, err
 	}
 
-	if fileNetdisk.IsBig == constant.SmallFileFlag {
-		resp.IsBig = fileNetdisk.IsBig
+	if file.IsBig == constant.SmallFileFlag {
+		resp.IsBig = file.IsBig
 		return &resp, nil
 	}
 
-	if has, err := engine.ID(fileNetdisk.FsId).
+	if has, err := engine.ID(file.FsId).
 		Get(&fileFs); err != nil || !has {
 		return nil, err
 	}
 
-	resp.IsBig = fileNetdisk.IsBig
+	resp.IsBig = file.IsBig
 	resp.ChunkNum = fileFs.ChunkNum
 	return &resp, nil
 }

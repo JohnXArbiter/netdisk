@@ -6,8 +6,18 @@ type (
     }
 
     updateFileReq {
-        fileNetdiskId int64 `json:"fileNetdiskId"`
+        fileId int64 `json:"fileId"`
         name string `json:"name"`
+    }
+
+    deleteBatchReq {
+        folderIds []int64 `json:"folderIds"`
+        fileIds []int64 `json:"fileIds"`
+    }
+
+    deleteBatchTrulyReq {
+        folderIds []int64 `json:"folderIds"`
+        fileIds []int64 `json:"fileIds"`
     }
 
     listFileFolderReq {
@@ -27,25 +37,55 @@ type (
     moveReq {
         parentFolderId int64 `json:"parentFolderId"`
         folderIds []int64 `json:"folderIds"`
-        fileNetdiskIds []int64 `json:"fileNetdiskIds"`
+        fileIds []int64 `json:"fileIds"`
     }
 )
 
 type (
-    listFileFolderResp {
-        folders []*listFoldersStruct `json:"folders"`
-        fileNetdisks []*listFileStruct `json:"fileNetdisks"`
+    deleteBatchResp {
+        folderIds []int64 `json:"folderIds"`
+        fileIds []int64 `json:"fileIds"`
     }
 
-    listFoldersStruct {
+    listDeletedItemsResp {
+        folders []*ListDeletedFolderStruct `json:"folders"`
+        files []*ListDeletedFileStruct `json:"files"`
+    }
+
+    deleteBatchTrulyResp {
+        folderIds []int64 `json:"folderIds"`
+        fileIds []int64 `json:"fileIds"`
+    }
+
+    listFileFolderResp {
+        folders []*ListFolderStruct `json:"folders"`
+        files []*ListFileStruct `json:"files"`
+    }
+)
+
+type (
+    ListFolderStruct {
         id int64 `json:"id"`
         name string `json:"name"`
     }
 
-    listFileStruct {
+    ListFileStruct {
         id int64 `json:"id"`
         name string `json:"name"`
         url string `json:"url"`
         status int8 `json:"status"`
+    }
+
+    ListDeletedFolderStruct {
+        id int64 `json:"id"`
+        name string `json:"name"`
+        DelTime int64 `json:"delTime"`
+    }
+
+    ListDeletedFileStruct {
+        id int64 `json:"id"`
+        name string `json:"name"`
+        url string `json:"url"`
+        DelTime int64 `json:"delTime"`
     }
 )

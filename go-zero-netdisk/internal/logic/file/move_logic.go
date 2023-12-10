@@ -59,9 +59,9 @@ func (l *MoveLogic) Move(req *types.MoveReq) error {
 func (l *MoveLogic) updateFolderId(param *types.MoveReq, userId int64) xorm.TxFn {
 	return func(session *xorm.Session) (interface{}, error) {
 		var folderId = param.ParentFolderId
-		for _, id := range param.FileNetdiskIds {
+		for _, id := range param.FileIds {
 			if affected, err := session.ID(id).And("user_id = ?", userId).
-				Update(&model.FileNetdisk{FolderId: folderId}); err != nil {
+				Update(&model.File{FolderId: folderId}); err != nil {
 				return nil, err
 			} else if affected != 1 {
 				return 0, nil

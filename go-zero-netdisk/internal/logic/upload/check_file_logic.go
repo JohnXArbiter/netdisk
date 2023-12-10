@@ -53,7 +53,7 @@ func (l *CheckFileLogic) CheckFile(req *types.CheckFileReq) (*types.CheckFileRes
 	// 文件存在时
 	if has {
 		// 判断该用户是否上传过
-		var fileNetdisk model.FileNetdisk
+		var fileNetdisk model.File
 		if has, err = engine.Where("user_id = ?", userId).
 			And("fs_id = ?", fileFs.Id).Get(&fileNetdisk); err != nil {
 			return nil, err
@@ -70,16 +70,17 @@ func (l *CheckFileLogic) CheckFile(req *types.CheckFileReq) (*types.CheckFileRes
 			fileNetdisk.FsId = fileFs.Id
 			fileNetdisk.Name = req.Name + ext
 			fileNetdisk.FolderId = req.FolderId
-			fileNetdisk.Status = constant.StatusNetdiskUploaded
+			fileNetdisk.Status = constant.StatusFileUploaded
 			fileNetdisk.Url = fileFs.Url
 			fileNetdisk.DoneAt = time.Now().Local()
+			fileNetdisk.DelFlag = constant.StatusFileUndeleted
 			if _, err = engine.Insert(&fileNetdisk); err != nil {
 				return nil, err
 			}
 		}
 		resp = &types.CheckFileResp{
-			FileNetdiskId: fileNetdisk.Id,
-			Status:        1,
+			FileId: fileNetdisk.Id,
+			Status: 1,
 		}
 	}
 
@@ -116,7 +117,7 @@ func (l *CheckFileLogic) createFsAndNetdiskRecord(req *types.CheckFileReq) xorm.
 		}
 
 		netdiskId := idgen.NextId()
-		netdisk := &model.FileNetdisk{
+		netdisk := &model.File{
 			Model: model.Model{
 				Id: netdiskId,
 			},
@@ -130,8 +131,8 @@ func (l *CheckFileLogic) createFsAndNetdiskRecord(req *types.CheckFileReq) xorm.
 		}
 
 		resp := &types.CheckFileResp{
-			FileNetdiskId: netdiskId,
-			Status:        status,
+			FileId: netdiskId,
+			Status: status,
 		}
 		return resp, nil
 	}

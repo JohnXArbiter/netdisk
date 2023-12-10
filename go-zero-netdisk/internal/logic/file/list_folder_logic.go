@@ -30,29 +30,31 @@ func (l *ListFolderLogic) ListFolder(req *types.ListFileFolderReq) (*types.ListF
 		userId       = l.ctx.Value(constant.UserIdKey).(int64)
 		engine       = l.svcCtx.Xorm
 		folders      []*model.Folder
-		fileNetdisks []*model.FileNetdisk
+		fileNetdisks []*model.File
 		resp         types.ListFileFolderResp
 	)
 
 	if err := engine.Where("parent_id = ?", req.ParentFolderId).
-		And("user_id = ?", userId).Find(&folders); err != nil {
+		And("user_id = ?", userId).And("del_flag = ?",
+		constant.StatusFileUndeleted).Find(&folders); err != nil {
 		return nil, err
 	}
 
 	if err := engine.Where("folder_id = ?", req.ParentFolderId).
-		And("user_id = ?", userId).Find(&fileNetdisks); err != nil {
+		And("user_id = ?", userId).And("del_flag = ?",
+		constant.StatusFolderUndeleted).Find(&fileNetdisks); err != nil {
 		return nil, err
 	}
 
 	for _, folder := range folders {
-		resp.Folders = append(resp.Folders, &types.ListFoldersStruct{
+		resp.Folders = append(resp.Folders, &types.ListFolderStruct{
 			Id:   folder.Id,
 			Name: folder.Name,
 		})
 	}
 
 	for _, fileNetdisk := range fileNetdisks {
-		resp.FileNetdisks = append(resp.FileNetdisks, &types.ListFileStruct{
+		resp.Files = append(resp.Files, &types.ListFileStruct{
 			Id:     fileNetdisk.Id,
 			Name:   fileNetdisk.Name,
 			Url:    fileNetdisk.Url,

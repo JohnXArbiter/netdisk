@@ -122,12 +122,27 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodPut,
-					Path:    "/update",
+					Path:    "/",
 					Handler: file.UpdateFileHandler(serverCtx),
 				},
 				{
+					Method:  http.MethodDelete,
+					Path:    "/",
+					Handler: file.DeleteBatchHandler(serverCtx),
+				},
+				{
 					Method:  http.MethodGet,
-					Path:    "/folder/list",
+					Path:    "/delete",
+					Handler: file.ListDeletedItemsHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodDelete,
+					Path:    "/delete",
+					Handler: file.DeleteBatchTrulyHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/folder/:parentFolderId",
 					Handler: file.ListFolderHandler(serverCtx),
 				},
 				{

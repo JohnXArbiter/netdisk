@@ -1,10 +1,10 @@
 type (
     checkSizeReq {
-        fileNetdiskId int64 `json:"fileId"`
+        fileId int64 `json:"fileId"`
     }
 
     downloadReq {
-        fileNetdiskId int64 `json:"fileId"`
+        fileId int64 `json:"fileId"`
     }
 
     chunkDownloadReq {

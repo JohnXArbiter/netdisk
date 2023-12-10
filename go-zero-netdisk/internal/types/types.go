@@ -30,8 +30,8 @@ type UploadChunkReq struct {
 }
 
 type CheckFileResp struct {
-	FileNetdiskId int64 `json:"fileNetdiskId"`
-	Status        int8  `json:"status"` // 0：文件未上传，1：文件已存在
+	FileId int64 `json:"fileId"`
+	Status int8  `json:"status"` // 0：文件未上传，1：文件已存在
 }
 
 type ListFileReq struct {
@@ -39,8 +39,18 @@ type ListFileReq struct {
 }
 
 type UpdateFileReq struct {
-	FileNetdiskId int64  `json:"fileNetdiskId"`
-	Name          string `json:"name"`
+	FileId int64  `json:"fileId"`
+	Name   string `json:"name"`
+}
+
+type DeleteBatchReq struct {
+	FolderIds []int64 `json:"folderIds"`
+	FileIds   []int64 `json:"fileIds"`
+}
+
+type DeleteBatchTrulyReq struct {
+	FolderIds []int64 `json:"folderIds"`
+	FileIds   []int64 `json:"fileIds"`
 }
 
 type ListFileFolderReq struct {
@@ -60,15 +70,30 @@ type UpdateFolderReq struct {
 type MoveReq struct {
 	ParentFolderId int64   `json:"parentFolderId"`
 	FolderIds      []int64 `json:"folderIds"`
-	FileNetdiskIds []int64 `json:"fileNetdiskIds"`
+	FileIds        []int64 `json:"fileIds"`
+}
+
+type DeleteBatchResp struct {
+	FolderIds []int64 `json:"folderIds"`
+	FileIds   []int64 `json:"fileIds"`
+}
+
+type ListDeletedItemsResp struct {
+	Folders []*ListDeletedFolderStruct `json:"folders"`
+	Files   []*ListDeletedFileStruct   `json:"files"`
+}
+
+type DeleteBatchTrulyResp struct {
+	FolderIds []int64 `json:"folderIds"`
+	FileIds   []int64 `json:"fileIds"`
 }
 
 type ListFileFolderResp struct {
-	Folders      []*listFoldersStruct `json:"folders"`
-	FileNetdisks []*listFileStruct    `json:"fileNetdisks"`
+	Folders []*ListFolderStruct `json:"folders"`
+	Files   []*ListFileStruct   `json:"files"`
 }
 
-type ListFoldersStruct struct {
+type ListFolderStruct struct {
 	Id   int64  `json:"id"`
 	Name string `json:"name"`
 }
@@ -80,12 +105,25 @@ type ListFileStruct struct {
 	Status int8   `json:"status"`
 }
 
+type ListDeletedFolderStruct struct {
+	Id      int64  `json:"id"`
+	Name    string `json:"name"`
+	DelTime int64  `json:"delTime"`
+}
+
+type ListDeletedFileStruct struct {
+	Id      int64  `json:"id"`
+	Name    string `json:"name"`
+	Url     string `json:"url"`
+	DelTime int64  `json:"delTime"`
+}
+
 type CheckSizeReq struct {
-	FileNetdiskId int64 `json:"fileId"`
+	FileId int64 `json:"fileId"`
 }
 
 type DownloadReq struct {
-	FileNetdiskId int64 `json:"fileId"`
+	FileId int64 `json:"fileId"`
 }
 
 type ChunkDownloadReq struct {
