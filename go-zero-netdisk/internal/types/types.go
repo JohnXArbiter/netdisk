@@ -44,13 +44,18 @@ type UpdateFileReq struct {
 }
 
 type DeleteBatchReq struct {
-	FolderIds []int64 `json:"folderIds"`
-	FileIds   []int64 `json:"fileIds"`
+	FolderIdsStruct
+	FileIdsStruct
+}
+
+type RecoverReq struct {
+	FolderIdsStruct
+	FileIdsStruct
 }
 
 type DeleteBatchTrulyReq struct {
-	FolderIds []int64 `json:"folderIds"`
-	FileIds   []int64 `json:"fileIds"`
+	FolderIdsStruct
+	FileIdsStruct
 }
 
 type ListFileFolderReq struct {
@@ -68,24 +73,14 @@ type UpdateFolderReq struct {
 }
 
 type MoveReq struct {
-	ParentFolderId int64   `json:"parentFolderId"`
-	FolderIds      []int64 `json:"folderIds"`
-	FileIds        []int64 `json:"fileIds"`
-}
-
-type DeleteBatchResp struct {
-	FolderIds []int64 `json:"folderIds"`
-	FileIds   []int64 `json:"fileIds"`
+	ParentFolderId int64 `json:"parentFolderId"`
+	FolderIdsStruct
+	FileIdsStruct
 }
 
 type ListDeletedItemsResp struct {
 	Folders []*ListDeletedFolderStruct `json:"folders"`
 	Files   []*ListDeletedFileStruct   `json:"files"`
-}
-
-type DeleteBatchTrulyResp struct {
-	FolderIds []int64 `json:"folderIds"`
-	FileIds   []int64 `json:"fileIds"`
 }
 
 type ListFileFolderResp struct {
@@ -116,6 +111,14 @@ type ListDeletedFileStruct struct {
 	Name    string `json:"name"`
 	Url     string `json:"url"`
 	DelTime int64  `json:"delTime"`
+}
+
+type FolderIdsStruct struct {
+	FolderIds []int64 `json:"folderIds"`
+}
+
+type FileIdsStruct struct {
+	FileIds []int64 `json:"fileIds"`
 }
 
 type CheckSizeReq struct {

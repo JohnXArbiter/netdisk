@@ -28,15 +28,12 @@ func NewDeleteBatchLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Delet
 	}
 }
 
-func (l *DeleteBatchLogic) DeleteBatch(req *types.DeleteBatchReq) (resp *types.DeleteBatchResp, err error) {
-	var (
-		engine = l.svcCtx.Xorm
-	)
+func (l *DeleteBatchLogic) DeleteBatch(req *types.DeleteBatchReq) error {
 
 	l.ctx = context.WithValue(l.ctx, constant.CtxFolderIdsKey, req.FolderIds)
 	l.ctx = context.WithValue(l.ctx, constant.CtxFileIdsKey, req.FileIds)
-	_, err = engine.DoTransactions(nil, l.updateFoldersStatus, l.updateFileNetdisksStatus)
-	return
+	_, err := l.svcCtx.Xorm.DoTransactions(nil, l.updateFoldersStatus, l.updateFilesStatus)
+	return err
 }
 
 func (l *DeleteBatchLogic) updateFoldersStatus(session *xorm.Session) (interface{}, error) {
@@ -57,7 +54,7 @@ func (l *DeleteBatchLogic) updateFoldersStatus(session *xorm.Session) (interface
 	return nil, nil
 }
 
-func (l *DeleteBatchLogic) updateFileNetdisksStatus(session *xorm.Session) (interface{}, error) {
+func (l *DeleteBatchLogic) updateFilesStatus(session *xorm.Session) (interface{}, error) {
 	var (
 		ctx     = l.ctx
 		userId  = ctx.Value(constant.UserIdKey).(int64)

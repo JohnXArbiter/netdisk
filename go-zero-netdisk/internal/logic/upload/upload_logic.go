@@ -61,21 +61,21 @@ func (l *UploadLogic) Upload(req *types.UploadReq, fileParam *types.FileParam) (
 }
 
 func (l *UploadLogic) uploadAndUpdateFsAndNetdiskRecord(fileFs *model.FileFs,
-	fileNetdisk *model.File, fileParam *types.FileParam) xorm.TxFn {
+	file *model.File, fileParam *types.FileParam) xorm.TxFn {
 	return func(session *xorm.Session) (interface{}, error) {
 		var (
-			minioService = l.svcCtx.Minio.NewService()
-			header       = fileParam.FileHeader
-			file         = fileParam.File
-			err          error
+			minioService  = l.svcCtx.Minio.NewService()
+			header        = fileParam.FileHeader
+			multipartFile = fileParam.File
+			err           error
 		)
 
 		filename, objectName := l.svcCtx.Minio.GenObjectName(fileFs.Hash, header.Filename)
 
-		fileNetdisk.Name = filename
-		fileNetdisk.Url = ""
-		fileNetdisk.Status = constant.StatusFileUploaded
-		if _, err = session.Insert(fileNetdisk); err != nil {
+		file.Name = filename
+		file.Url = ""
+		file.Status = constant.StatusFileUploaded
+		if _, err = session.Insert(file); err != nil {
 			return nil, err
 		}
 
@@ -83,11 +83,11 @@ func (l *UploadLogic) uploadAndUpdateFsAndNetdiskRecord(fileFs *model.FileFs,
 		fileFs.ObjectName = objectName
 		fileFs.Url = ""
 		fileFs.Status = constant.StatusFsUploaded
-		if _, err = session.Insert(fileNetdisk); err != nil {
+		if _, err = session.Insert(file); err != nil {
 			return nil, err
 		}
 
-		if err = minioService.UploadFile(l.ctx, objectName, file); err != nil {
+		if err = minioService.UploadFile(l.ctx, objectName, multipartFile); err != nil {
 			return nil, err
 		}
 		return nil, nil

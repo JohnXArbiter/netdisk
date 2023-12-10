@@ -1,6 +1,7 @@
 package user
 
 import (
+	xhttp "github.com/zeromicro/x/http"
 	"net/http"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
@@ -12,17 +13,16 @@ import (
 func GetDetailHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req types.GetUserDetailReq
-		if err := httpx.Parse(r, &req); err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
+		if err := httpx.ParsePath(r, &req); err != nil {
+			xhttp.JsonBaseResponseCtx(r.Context(), w, err)
 			return
 		}
 
 		l := user.NewGetDetailLogic(r.Context(), svcCtx)
-		err := l.GetDetail(&req)
-		if err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
+		if resp, err := l.GetDetail(&req); err != nil {
+			xhttp.JsonBaseResponseCtx(r.Context(), w, err)
 		} else {
-			httpx.Ok(w)
+			xhttp.JsonBaseResponseCtx(r.Context(), w, resp)
 		}
 	}
 }

@@ -34,12 +34,14 @@ func (l *ListDeletedItemsLogic) ListDeletedItems() (resp *types.ListDeletedItems
 	)
 
 	if err = engine.Cols("id", "name", "del_time").Where("user_id = ?", userId).
-		And("del_flag = ?", constant.StatusFolderDeleted).Find(&folders); err != nil {
+		And("del_flag = ?", constant.StatusFolderDeleted).Asc("del_time").
+		Find(&folders); err != nil {
 		return nil, err
 	}
 
 	if err = engine.Cols("id", "name", "url", "del_time").Where("user_id = ?", userId).
-		And("del_flag = ?", constant.StatusFileDeleted).Find(&files); err != nil {
+		And("del_flag = ?", constant.StatusFileDeleted).Asc("del_time").
+		Find(&files); err != nil {
 		return nil, err
 	}
 

@@ -19,10 +19,10 @@ func DeleteBatchHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := file.NewDeleteBatchLogic(r.Context(), svcCtx)
-		if resp, err := l.DeleteBatch(&req); err != nil {
+		if err := l.DeleteBatch(&req); err != nil {
 			xhttp.JsonBaseResponseCtx(r.Context(), w, err)
 		} else {
-			xhttp.JsonBaseResponseCtx(r.Context(), w, resp)
+			xhttp.JsonBaseResponseCtx(r.Context(), w, nil)
 		}
 	}
 }

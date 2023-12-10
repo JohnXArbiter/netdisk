@@ -27,13 +27,13 @@ func NewDeleteBatchTrulyLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 	}
 }
 
-func (l *DeleteBatchTrulyLogic) DeleteBatchTruly(req *types.DeleteBatchTrulyReq) (resp *types.DeleteBatchTrulyResp, err error) {
+func (l *DeleteBatchTrulyLogic) DeleteBatchTruly(req *types.DeleteBatchTrulyReq) error {
 
 	l.ctx = context.WithValue(l.ctx, constant.CtxFolderIdsKey, req.FolderIds)
 	l.ctx = context.WithValue(l.ctx, constant.CtxFileIdsKey, req.FileIds)
-	l.svcCtx.Xorm.DoTransactions(nil, l.deleteFolders, l.deleteFiles)
+	_, err := l.svcCtx.Xorm.DoTransactions(nil, l.deleteFolders, l.deleteFiles)
 
-	return
+	return err
 }
 
 func (l *DeleteBatchTrulyLogic) deleteFolders(session *xorm.Session) (interface{}, error) {
@@ -59,6 +59,7 @@ func (l *DeleteBatchTrulyLogic) deleteFolders(session *xorm.Session) (interface{
 		return nil, err
 	}
 
+	// TODO: MQ
 	return nil, nil
 }
 
@@ -85,5 +86,6 @@ func (l *DeleteBatchTrulyLogic) deleteFiles(session *xorm.Session) (interface{},
 		return nil, err
 	}
 
+	// TODO: MQ
 	return nil, nil
 }

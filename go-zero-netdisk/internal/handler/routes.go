@@ -136,6 +136,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: file.ListDeletedItemsHandler(serverCtx),
 				},
 				{
+					Method:  http.MethodPut,
+					Path:    "/recover",
+					Handler: file.RecoverDeletedItemsHandler(serverCtx),
+				},
+				{
 					Method:  http.MethodDelete,
 					Path:    "/delete",
 					Handler: file.DeleteBatchTrulyHandler(serverCtx),

@@ -86,13 +86,16 @@ service netdisk-api {
 	put / (updateFileReq) returns ()
 	
 	@handler deleteBatch
-	delete / (deleteBatchReq) returns (deleteBatchResp)
+	delete / (deleteBatchReq) returns ()
 	
 	@handler listDeletedItems
 	get /delete () returns (listDeletedItemsResp)
 	
+	@handler recoverDeletedItems
+	put /recover (recoverReq) returns ()
+	
 	@handler deleteBatchTruly
-	delete /delete (deleteBatchTrulyReq) returns (deleteBatchTrulyResp)
+	delete /delete (deleteBatchTrulyReq) returns ()
 	
 	@handler listFolder
 	get /folder/:parentFolderId (listFileFolderReq) returns (listFileFolderResp)

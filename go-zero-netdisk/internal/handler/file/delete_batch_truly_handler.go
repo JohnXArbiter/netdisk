@@ -1,6 +1,7 @@
 package file
 
 import (
+	xhttp "github.com/zeromicro/x/http"
 	"net/http"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
@@ -12,17 +13,16 @@ import (
 func DeleteBatchTrulyHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req types.DeleteBatchTrulyReq
-		if err := httpx.Parse(r, &req); err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
+		if err := httpx.ParseJsonBody(r, &req); err != nil {
+			xhttp.JsonBaseResponseCtx(r.Context(), w, err)
 			return
 		}
 
 		l := file.NewDeleteBatchTrulyLogic(r.Context(), svcCtx)
-		resp, err := l.DeleteBatchTruly(&req)
-		if err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
+		if err := l.DeleteBatchTruly(&req); err != nil {
+			xhttp.JsonBaseResponseCtx(r.Context(), w, err)
 		} else {
-			httpx.OkJsonCtx(r.Context(), w, resp)
+			xhttp.JsonBaseResponseCtx(r.Context(), w, nil)
 		}
 	}
 }
