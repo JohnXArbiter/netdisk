@@ -8,7 +8,7 @@ type (
     }
 
     uploadReq {
-        fileNetdiskId int64 `json:"fileNetdiskId"`
+        fileId int64 `json:"fileId"`
     }
 
     checkChunkReq {

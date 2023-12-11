@@ -35,7 +35,7 @@ func (l *UploadLogic) Upload(req *types.UploadReq, fileParam *types.FileParam) (
 		err    error
 	)
 
-	if has, err = engine.ID(req.FileNetdiskId).And("user_id = ?", userId).
+	if has, err = engine.ID(req.FileId).And("user_id = ?", userId).
 		Get(&file); err != nil {
 		return nil, err
 	} else if !has {
@@ -52,7 +52,7 @@ func (l *UploadLogic) Upload(req *types.UploadReq, fileParam *types.FileParam) (
 		return nil, errors.New("文件上传发生错误！")
 	}
 
-	if _, err = engine.DoTransaction(l.uploadAndUpdateFsAndNetdiskRecord(
+	if _, err = engine.DoTransaction(l.uploadAndUpdateFsAndFileRecord(
 		&fileFs, &file, fileParam)); err != nil {
 		return nil, err
 	}
@@ -60,7 +60,7 @@ func (l *UploadLogic) Upload(req *types.UploadReq, fileParam *types.FileParam) (
 	return nil, nil
 }
 
-func (l *UploadLogic) uploadAndUpdateFsAndNetdiskRecord(fileFs *model.FileFs,
+func (l *UploadLogic) uploadAndUpdateFsAndFileRecord(fileFs *model.FileFs,
 	file *model.File, fileParam *types.FileParam) xorm.TxFn {
 	return func(session *xorm.Session) (interface{}, error) {
 		var (

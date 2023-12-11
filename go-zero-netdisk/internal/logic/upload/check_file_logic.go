@@ -46,16 +46,16 @@ func (l *CheckFileLogic) CheckFile(req *types.CheckFileReq) (*types.CheckFileRes
 
 	// 文件不存在时
 	if !has {
-		res, err := engine.DoTransaction(l.createFsAndNetdiskRecord(req))
+		res, err := engine.DoTransaction(l.createFsAndFileRecord(req))
 		return res.(*types.CheckFileResp), err
 	}
 
 	// 文件存在时
 	if has {
 		// 判断该用户是否上传过
-		var fileNetdisk model.File
+		var file model.File
 		if has, err = engine.Where("user_id = ?", userId).
-			And("fs_id = ?", fileFs.Id).Get(&fileNetdisk); err != nil {
+			And("fs_id = ?", fileFs.Id).Get(&file); err != nil {
 			return nil, err
 		}
 
@@ -63,23 +63,23 @@ func (l *CheckFileLogic) CheckFile(req *types.CheckFileReq) (*types.CheckFileRes
 		if !has {
 			// 用户未上传，信息落库
 			if fileFs.Size > constant.NeedShardingSize {
-				fileNetdisk.IsBig = constant.BigFileFlag
+				file.IsBig = constant.BigFileFlag
 			}
-			fileNetdisk.Id = idgen.NextId()
-			fileNetdisk.UserId = userId
-			fileNetdisk.FsId = fileFs.Id
-			fileNetdisk.Name = req.Name + ext
-			fileNetdisk.FolderId = req.FolderId
-			fileNetdisk.Status = constant.StatusFileUploaded
-			fileNetdisk.Url = fileFs.Url
-			fileNetdisk.DoneAt = time.Now().Local()
-			fileNetdisk.DelFlag = constant.StatusFileUndeleted
-			if _, err = engine.Insert(&fileNetdisk); err != nil {
+			file.Id = idgen.NextId()
+			file.UserId = userId
+			file.FsId = fileFs.Id
+			file.Name = req.Name + ext
+			file.FolderId = req.FolderId
+			file.Status = constant.StatusFileUploaded
+			file.Url = fileFs.Url
+			file.DoneAt = time.Now().Local()
+			file.DelFlag = constant.StatusFileUndeleted
+			if _, err = engine.Insert(&file); err != nil {
 				return nil, err
 			}
 		}
 		resp = &types.CheckFileResp{
-			FileId: fileNetdisk.Id,
+			FileId: file.Id,
 			Status: 1,
 		}
 	}
@@ -88,7 +88,7 @@ func (l *CheckFileLogic) CheckFile(req *types.CheckFileReq) (*types.CheckFileRes
 }
 
 // 创建实际存储和用户存储记录
-func (l *CheckFileLogic) createFsAndNetdiskRecord(req *types.CheckFileReq) xorm.TxFn {
+func (l *CheckFileLogic) createFsAndFileRecord(req *types.CheckFileReq) xorm.TxFn {
 	return func(session *xorm.Session) (interface{}, error) {
 		var (
 			userId = l.ctx.Value(constant.UserIdKey).(int64)
@@ -116,22 +116,22 @@ func (l *CheckFileLogic) createFsAndNetdiskRecord(req *types.CheckFileReq) xorm.
 			return nil, err
 		}
 
-		netdiskId := idgen.NextId()
-		netdisk := &model.File{
+		fileId := idgen.NextId()
+		file := &model.File{
 			Model: model.Model{
-				Id: netdiskId,
+				Id: fileId,
 			},
 			UserId:   userId,
 			FsId:     fsId,
 			FolderId: req.FolderId,
 			IsBig:    isBig,
 		}
-		if _, err = session.Insert(netdisk); err != nil {
+		if _, err = session.Insert(file); err != nil {
 			return nil, err
 		}
 
 		resp := &types.CheckFileResp{
-			FileId: netdiskId,
+			FileId: fileId,
 			Status: status,
 		}
 		return resp, nil

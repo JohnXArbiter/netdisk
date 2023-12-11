@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"lc/netdisk/internal/middleware"
 
 	"lc/netdisk/internal/config"
 	"lc/netdisk/internal/handler"
@@ -22,6 +23,7 @@ func main() {
 
 	server := rest.MustNewServer(c.RestConf)
 	defer server.Stop()
+	server.Use(middleware.HandleCors)
 
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)

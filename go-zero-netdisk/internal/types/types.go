@@ -17,7 +17,7 @@ type CheckFileReq struct {
 }
 
 type UploadReq struct {
-	FileNetdiskId int64 `json:"fileNetdiskId"`
+	FileId int64 `json:"fileId"`
 }
 
 type CheckChunkReq struct {

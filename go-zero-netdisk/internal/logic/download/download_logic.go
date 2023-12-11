@@ -29,7 +29,7 @@ func (l *DownloadLogic) Download(req *types.DownloadReq) (string, error) {
 		userId       = l.ctx.Value(constant.UserIdKey).(int64)
 		engine       = l.svcCtx.Xorm
 		minioService = l.svcCtx.Minio.NewService()
-		fileNetdisk  model.File
+		file         model.File
 		fileFs       model.FileFs
 	)
 
@@ -43,11 +43,11 @@ func (l *DownloadLogic) Download(req *types.DownloadReq) (string, error) {
 
 	if has, err := engine.ID(req.FileId).
 		And("user_id = ?", userId).
-		Get(&fileNetdisk); err != nil || !has {
+		Get(&file); err != nil || !has {
 		return "", err
 	}
 
-	if has, err := engine.ID(fileNetdisk.FsId).
+	if has, err := engine.ID(file.FsId).
 		Get(&fileFs); err != nil || !has {
 		return "", err
 	}
