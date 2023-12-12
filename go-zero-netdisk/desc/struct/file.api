@@ -62,6 +62,7 @@ type (
     ListFolderStruct {
         id int64 `json:"id"`
         name string `json:"name"`
+        Updated string `json:"updated"`
     }
 
     ListFileStruct {
@@ -69,6 +70,8 @@ type (
         name string `json:"name"`
         url string `json:"url"`
         status int8 `json:"status"`
+        Size int64 `json:"size"`
+        Updated string `json:"updated"`
     }
 
     ListDeletedFolderStruct {

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
+	"lc/netdisk/model"
 	"xorm.io/xorm"
 )
 
@@ -30,9 +31,11 @@ func Init(conf *DbConf) *Engine {
 	if err != nil {
 		panic("[XORM ERROR] NewServiceContext 获取mysql连接错误 " + err.Error())
 	}
-	err = engine.Ping()
-	if err != nil {
+	if err = engine.Ping(); err != nil {
 		panic("[XORM ERROR] NewServiceContext ping mysql 失败" + err.Error())
+	}
+	if err = engine.Sync(&model.User{}, &model.Folder{}, &model.File{}, &model.FileFs{}); err != nil {
+		panic("[XORM ERROR] sync mysql 失败" + err.Error())
 	}
 	return &Engine{engine}
 }

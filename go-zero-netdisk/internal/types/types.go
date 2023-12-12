@@ -89,15 +89,18 @@ type ListFileFolderResp struct {
 }
 
 type ListFolderStruct struct {
-	Id   int64  `json:"id"`
-	Name string `json:"name"`
+	Id      int64  `json:"id"`
+	Name    string `json:"name"`
+	Updated string `json:"updated"`
 }
 
 type ListFileStruct struct {
-	Id     int64  `json:"id"`
-	Name   string `json:"name"`
-	Url    string `json:"url"`
-	Status int8   `json:"status"`
+	Id      int64  `json:"id"`
+	Name    string `json:"name"`
+	Url     string `json:"url"`
+	Status  int8   `json:"status"`
+	Size    int64  `json:"size"`
+	Updated string `json:"updated"`
 }
 
 type ListDeletedFolderStruct struct {

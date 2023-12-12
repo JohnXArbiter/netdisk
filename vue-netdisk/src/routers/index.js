@@ -1,53 +1,21 @@
-import {createRouter, createWebHistory} from 'vue-router'
+import {createRouter, createWebHashHistory, createWebHistory} from 'vue-router'
 
 const routes = [
     {
         path: '/',
-        redirect: '/home/sell',
+        redirect: '/folder/0',
         component: () => import('../views/Main.vue'),
         children: [
             {
-                path: 'home',
-                component: () => import('../views/main/Home.vue'),
-                children: [
-                    {
-                        path: 'sell',
-                        component: () => import('../components/home/Sell.vue')
-                    },
-                    {
-                        path: 'want',
-                        component: () => import('../components/home/Want.vue')
-                    }
-                ]
+                path: 'folder/:id',
+                component: () => import('../views/FileFolder.vue'),
             },
-            {
-                path: '/cmdty/:id',
-                name: 'info',
-                component: () => import('../views/cmdty/Info.vue'),
-            },
-            {
-                path: 'atcl',
-                component: () => import('../views/main/Atcl.vue')
-            },
-            {
-                path: 'msg',
-                component: () => import('../views/main/Msg.vue')
-            },
-            {
-                path: 'user',
-                component: () => import('../views/main/User.vue')
-            }
         ]
     },
     {
         path: '/login',
         name: 'login',
         component: () => import('../views/Login.vue')
-    },
-    {
-        path: '/login1',
-        name: 'login1',
-        component: () => import('../views/LoginForm.vue')
     },
 ]
 

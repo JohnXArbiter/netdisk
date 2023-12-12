@@ -53,12 +53,14 @@ func (l *ListFolderLogic) ListFolder(req *types.ListFileFolderReq) (*types.ListF
 		})
 	}
 
-	for _, fileN := range files {
+	for _, file := range files {
 		resp.Files = append(resp.Files, &types.ListFileStruct{
-			Id:     fileN.Id,
-			Name:   fileN.Name,
-			Url:    fileN.Url,
-			Status: fileN.Status,
+			Id:      file.Id,
+			Name:    file.Name,
+			Url:     file.Url,
+			Size:    file.Size,
+			Status:  file.Status,
+			Updated: file.Updated.Format(constant.TimeFormat),
 		})
 	}
 

@@ -1,5 +1,6 @@
 <template>
-  <Main />
+<!--  <Main />-->
+  <router-view />
 </template>
 
 <script setup>

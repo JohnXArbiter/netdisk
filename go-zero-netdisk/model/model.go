@@ -6,57 +6,58 @@ type Model struct {
 	Id      int64     `xorm:"pk autoincr"`
 	Created time.Time `xorm:"created"`
 	Updated time.Time `xorm:"updated"`
-	//Deleted time.Time `xorm:"deleted"`
 }
 
-// 未命名数据模型
+// User 用户
 type User struct {
 	Model     `xorm:"extends"`
-	Username  string `json:"username"`
-	Password  string `json:"password"`
-	Name      string `json:"name"`
-	Avatar    string `json:"avatar"`
-	Email     string `json:"email"`
-	Signature string `json:"signature"`
+	Username  string `xorm:"varchar(20) notnull unique 'username' comment('账号')"`
+	Password  string `xorm:"varchar(255) notnull default '' 'password'"`
+	Name      string `xorm:"varchar(20) notnull default '' 'name'"`
+	Avatar    string `xorm:"varchar(255) notnull default '' 'avatar'"`
+	Email     string `xorm:"varchar(127) notnull default '' 'email'"`
+	Signature string `xorm:"varchar(255) notnull default '' 'signature'"`
+	Status    int8   `xorm:"tinyint notnull default 0 'status'"`
 }
 
 type (
 	// File 用户视角存储
 	File struct {
 		Model    `xorm:"extends"`
-		UserId   int64     `xorm:"user_id" json:"userId"`
-		FsId     int64     `xorm:"fs_id" json:"fsId"`
-		FolderId int64     `xorm:"folder_id" json:"folderId"`
-		Name     string    `json:"name"`     // 用户视角文件名
-		Url      string    `json:"url"`      // 访问地址
-		Status   int8      `json:"status"`   // 文件状态，0：待合并/未上传，1：上传成功
-		IsBig    int8      `json:"is_big"`   // 是否大文件，0：不是，1：是
-		DoneAt   time.Time `json:"done_at"`  // 大文件合并完成时间
-		DelFlag  int8      `json:"del_flag"` // 文件删除状态：2：未删除，3：删除
-		DelTime  int64     `json:"del_time"`
+		UserId   int64     `xorm:"bigint notnull default 0 'user_id'"`
+		FsId     int64     `xorm:"bigint notnull default 0 'fs_id'"`
+		FolderId int64     `xorm:"bigint notnull default 0 'folder_id'"`
+		Name     string    `xorm:"varchar(255) notnull default '' 'name' comment('用户视角文件名')"`
+		Url      string    `xorm:"varchar(255) notnull default '' 'url' comment('')"`
+		Size     int64     `xorm:"bigint notnull default 0 'size' comment('文件大小')"`
+		Status   int8      `xorm:"tinyint notnull default 0 'status' comment('文件状态，0：待合并/未上传，1：上传成功')"`
+		IsBig    int8      `xorm:"tinyint notnull default 0 'is_big' comment('是否大文件，0：不是，1：是')"`
+		DoneAt   time.Time `xorm:"datetime 'done_at' comment('大文件合并完成时间')"`
+		DelFlag  int8      `xorm:"tinyint notnull default 0 'del_flag' comment('文件删除状态：2：未删除，3：删除')"`
+		DelTime  int64     `xorm:"bigint notnull default 0 'del_time' comment('')"`
 	}
 
 	// FileFs 实际存储
 	FileFs struct {
 		Model      `xorm:"extends"`
-		Bucket     string    `json:"bucket"`     // 桶名
-		Ext        string    `json:"ext"`        // 文件扩展名
-		ObjectName string    `json:"objectName"` // 存储路径名
-		Hash       string    `json:"hash"`       // 哈希值
-		Name       string    `json:"name"`       // 实际文件名
-		Size       int64     `json:"size"`       // 文件大小
-		ChunkNum   int64     `json:"chunkNum"`   // 分片数量
-		Url        string    `json:"url"`        // 访问地址
-		Status     int8      `json:"status"`     // 文件状态，0：大文件未上传，1：大文件待合并，2：小文件未上传，3：上传成功
-		DoneAt     time.Time `json:"done_at"`    // 大文件合并完成时间
+		Bucket     string    `xorm:"varchar(255) notnull default '' bucket comment('桶名')"`
+		Ext        string    `xorm:"varchar(255) notnull default '' 'ext' comment('文件扩展名')"`
+		ObjectName string    `xorm:"varchar(255) notnull default '' 'object_name' comment('存储路径名')"`
+		Hash       string    `xorm:"varchar(255) notnull default '' 'hash' comment('哈希值')"`
+		Name       string    `xorm:"varchar(255) notnull default '' 'name' comment('实际文件名')"`
+		Size       int64     `xorm:"bigint notnull default 0 'size' comment('文件大小')"`
+		ChunkNum   int64     `xorm:"bigint notnull default 0 'chunk_num' comment('分片数量')"`
+		Url        string    `xorm:"varchar(255) notnull default '' 'url' comment('访问地址')"`
+		Status     int8      `xorm:"tinyint notnull default 0 'status'  comment('文件状态，0：大文件未上传，1：大文件待合并，2：小文件未上传，3：上传成功')"` //
+		DoneAt     time.Time `xorm:"datetime 'done_at' comment('大文件合并完成时间')"`
 	}
 
 	// FileUploading 上传中间态
 	FileUploading struct {
 		Model    `xorm:"extends"`
-		FileId   int64 `xorm:"file_id" json:"fileId"`
-		FsId     int64 `xorm:"repository_id" json:"repositoryId"`
-		ChunkNum int   `xorm:"chunk_num" json:"chunkNum"`
+		FileId   int64 `xorm:"bigint notnull default 0 'file_id'"`
+		FsId     int64 `xorm:"bigint notnull default 0 'fs_id'"`
+		ChunkNum int64 `xorm:"bigint notnull default 0 'chunk_num'"`
 	}
 )
 
@@ -64,11 +65,11 @@ type (
 type (
 	Folder struct {
 		Model    `xorm:"extends"`
-		ParentId int64  `json:"parent_id"` // 父文件夹id
-		Name     string `json:"name"`      // 文件夹名
-		UserId   int64  `json:"user_id"`
-		DelFlag  int8   `json:"del_flag"` // 文件删除状态：0：未删除，1：删除
-		DelTime  int64  `json:"del_time"`
+		ParentId int64  `xorm:"bigint notnull default 0 'parent_id' comment('父文件夹id')"`
+		Name     string `xorm:"varchar(64) notnull default '' 'name' comment('文件夹名')"`
+		UserId   int64  `xorm:"bigint notnull default 0 'user_id'"`
+		DelFlag  int8   `xorm:"tinyint notnull default 0 'del_flag' comment('文件删除状态：0：未删除，1：删除')"`
+		DelTime  int64  `xorm:"bigint notnull default 0 'del_time'"`
 	}
 )
 
