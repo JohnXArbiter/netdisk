@@ -13,9 +13,19 @@ const routes = [
         ]
     },
     {
-        path: '/login',
-        name: 'login',
-        component: () => import('../views/Login.vue')
+        path: '/netdisk',
+        name: '',
+        component: () => import('../views/NoAuth.vue'),
+        children: [
+            {
+                path: '/login',
+                component: () => import('../components/LoginForm.vue')
+            },
+            {
+                path: '/register',
+                component: () => import('../components/RegisterForm.vue')
+            }
+        ]
     },
 ]
 

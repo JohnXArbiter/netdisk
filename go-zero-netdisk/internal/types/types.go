@@ -2,10 +2,20 @@
 package types
 
 type LoginReq struct {
+	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
 type RegisterReq struct {
+	Username       string `json:"username"`
+	Password       string `json:"password"`
+	PasswordRepeat string `json:"passwordRepeat"`
+}
+
+type LoginResp struct {
+	Token  string `json:"utils"`
+	UserId int64  `json:"userId"`
+	Avatar string `json:"avatar"`
 }
 
 type CheckFileReq struct {

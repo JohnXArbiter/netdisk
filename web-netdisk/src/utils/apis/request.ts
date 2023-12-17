@@ -4,13 +4,13 @@ import router from "../../routers";
 
 
 function getTokenAUTH() {
-    // return store.state.user.token ? "Bearer " + store.state.user.token : ""
+    // return store.state.user.utils ? "Bearer " + store.state.user.utils : ""
     return null
 }
 
 function jumpLogin() {
     // window.location.href = "#/login" // 跳转登录
-    // store.state.user.token = ""
+    // store.state.user.utils = ""
     router.push("/login")
 }
 
@@ -45,7 +45,7 @@ api.interceptors.response.use(
         const {code: code, msg: message} = resp.data
 
         if (code === 401 || code === 403) {
-            // store.state.user.token = ""
+            // store.state.user.utils = ""
             sessionStorage.clear()
             jumpLogin()
         }
