@@ -18,14 +18,10 @@
 
 </template>
 
-<script>
+<script lang="ts" setup>
 import Avatar from "../components/header/Avatar.vue";
 import Navigator from "../components/aside/Navigator.vue";
 
-export default {
-  name: "Main",
-  components: {Navigator, Avatar}
-}
 </script>
 
 <style scoped>

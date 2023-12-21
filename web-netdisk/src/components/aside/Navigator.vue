@@ -42,7 +42,7 @@
     </el-row>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 
 </script>
 

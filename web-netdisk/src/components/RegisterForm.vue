@@ -2,10 +2,8 @@
 
 </template>
 
-<script>
-export default {
-    name: "LoginForm"
-}
+<script lang="ts" setup>
+
 </script>
 
 <style scoped>
