@@ -1,10 +1,8 @@
 <template>
-  <!--  <Main />-->
-    <router-view />
+  <router-view/>
 </template>
 
 <script setup>
-import Main from "./views/Main.vue";
 </script>
 
 

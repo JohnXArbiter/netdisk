@@ -1,6 +1,11 @@
-import {createRouter, createWebHashHistory, createWebHistory} from 'vue-router'
+import {createRouter, createWebHashHistory} from 'vue-router'
 
 const routes = [
+    {
+        path: '/login',
+        name: 'login',
+        component: () => import('../views/Login.vue'),
+    },
     {
         path: '/',
         redirect: '/folder/0',
@@ -10,21 +15,6 @@ const routes = [
                 path: 'folder/:id',
                 component: () => import('../views/fileFolder/FileFolder.vue'),
             },
-        ]
-    },
-    {
-        path: '/netdisk',
-        name: '',
-        component: () => import('../views/NoAuth.vue'),
-        children: [
-            {
-                path: '/login',
-                component: () => import('../components/LoginForm.vue')
-            },
-            {
-                path: '/register',
-                component: () => import('../components/RegisterForm.vue')
-            }
         ]
     },
 ]

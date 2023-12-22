@@ -2,12 +2,12 @@
   <div class="common-layout">
     <el-container>
       <el-header style="background-color: lightsteelblue">
-        <Avatar/>
+        <avatar/>
 
       </el-header>
       <el-container>
         <el-aside width="200px" style="background-color: #16e52d">
-          <Navigator/>
+          <navigator/>
         </el-aside>
         <el-main style="background-color: #d02e59">
           <router-view/>

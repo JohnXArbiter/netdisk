@@ -14,17 +14,19 @@
 
 <script lang="ts" setup>
 import {reactive} from "vue";
-import {loginForm, loginResp} from "./loginForm.ts";
-import api from "../utils/apis/request.ts"
+import {loginPost, LoginReq} from "./loginForm.ts";
 
-let loginForm = reactive<loginForm>({
+let loginForm = reactive<LoginReq>({
   password: "",
   username: "",
 })
 
-const login = () => {
-  const resp = api.post<any, loginResp>("/login", loginForm)
-  if (resp.)
+const login = async () => {
+  console.log(loginForm.password, loginForm.username)
+  const resp = await loginPost(loginForm)
+  if (resp.code === 0) {
+    localStorage.setItem("token", resp.data.token)
+  }
 }
 
 // const ruleFormRef = ref<FormInstance>()

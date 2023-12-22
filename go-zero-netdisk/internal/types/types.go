@@ -13,7 +13,7 @@ type RegisterReq struct {
 }
 
 type LoginResp struct {
-	Token  string `json:"utils"`
+	Token  string `json:"token"`
 	UserId int64  `json:"userId"`
 	Avatar string `json:"avatar"`
 }

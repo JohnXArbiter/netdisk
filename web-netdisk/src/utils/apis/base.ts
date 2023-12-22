@@ -1,6 +1,5 @@
-interface baseResp {
+export interface Resp<T> {
     code: number
     msg: string
+    data: T
 }
-
-export default baseResp
