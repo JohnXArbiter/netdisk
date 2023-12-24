@@ -1,4 +1,4 @@
-import baseResp from "../../utils/apis/base.ts";
+import {Resp} from "../../utils/apis/base.ts";
 import api from "../../utils/apis/request.ts";
 
 interface folder {
@@ -16,14 +16,14 @@ interface file {
     updated: string
 }
 
-export interface listFolderItemsResp extends baseResp {
+export interface listFolderItemsResp {
     data: {
         folders: folder[]
         files: file[]
     }
 }
 
-export const getFolderItems = (url: string) => {
-    return api.get<any, listFolderItemsResp>(url)
+export const getFolderItems = (parentFolderId: number) => {
+    return api.get<any, Resp<listFolderItemsResp>>("/file/folder/" + parentFolderId)
 }
 

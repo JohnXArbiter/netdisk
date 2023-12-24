@@ -54,7 +54,7 @@ const parentFolderId = 0
 
 const listFolderItems = async () => {
     let res: listFolderItemsResp
-    res = await getFolderItems("/file/folder/" + parentFolderId)
+    res = await getFolderItems(parentFolderId)
     if (res.code === 0 && res.data) {
         folderList = res.data.folders
         fileList = res.data.files

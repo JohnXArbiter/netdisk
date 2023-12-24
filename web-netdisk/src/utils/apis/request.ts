@@ -1,6 +1,6 @@
 import {ElMessage} from 'element-plus'
-import axios, {AxiosRequestConfig} from 'axios'
-import router from "../../routers";
+import axios from 'axios'
+import router from "../../router";
 
 
 function getTokenAUTH() {
@@ -19,7 +19,7 @@ function jumpLogin() {
 // 相当于我们创建了一个带配置的axios，然后用这个
 const api = axios.create({
     // 基础路径
-    baseURL: 'http://localhost:8888',
+    // baseURL: 'http://localhost:8888',
     // import.meta.env.BASE_URL.VITE_APP_BASE_API, //请求路径上都会写带上这个url  但是这里不知道为什么读取不到
     timeout: 5 * 1000, // 请求超时时间
 })

@@ -11,5 +11,5 @@ export interface LoginResp {
 }
 
 export const loginPost = (loginReq: LoginReq): Resp<LoginResp> => {
-   return api.post<any, Resp<LoginResp>>("/login", loginReq)
+   return api.post<any, Resp<LoginResp>>("/api/login",  loginReq)
 }
