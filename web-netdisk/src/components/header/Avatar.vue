@@ -8,41 +8,53 @@
   <!--      </div>-->
   <!--    </el-col>-->
   <!--  </el-row>-->
-  <el-row>
-    <el-col :span="23">
-      <div class="grid-content ep-bg-purple"/>
-    </el-col>
-    <el-col :span="1">
-      <div class="grid-content ep-bg-purple-light">
-        <div class="demo-basic--circle">
-          <div class="block head-pic">
-            <el-avatar :size="50" :src="url"/>
-          </div>
-        </div>
-      </div>
-    </el-col>
-  </el-row>
+    <el-row>
+        <el-col :span="23">
+            <div class="grid-content ep-bg-purple"/>
+        </el-col>
+        <el-col :span="1">
+            <div class="grid-content ep-bg-purple-light">
+                <div class="demo-basic--circle">
+                    <div class="block head-pic">
+                        <el-avatar :size="50" :src="user.avatar"/>
+                    </div>
+                </div>
+            </div>
+        </el-col>
+    </el-row>
 </template>
 
 <script lang="ts" setup>
-const url = "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+import {onMounted} from "vue";
+import {useBaseStore, UserInfo} from "../../store";
+
+let user: UserInfo | null = null
+
+const showUserInfo = async () => {
+    if (!user) {
+        user = await useBaseStore().getUserInfo()
+    }
+}
+onMounted(() => {
+    showUserInfo()
+})
 
 </script>
 
 <style scoped>
-.head-pic{
-  margin-top: 5px;
+.head-pic {
+    margin-top: 5px;
 }
 
 .el-row {
-  margin-bottom: 20px;
+    margin-bottom: 20px;
 }
 
 .el-row:last-child {
-  margin-bottom: 0;
+    margin-bottom: 0;
 }
 
 .grid-content {
-  min-height: 36px;
+    min-height: 36px;
 }
 </style>

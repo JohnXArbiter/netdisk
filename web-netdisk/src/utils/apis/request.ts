@@ -1,17 +1,12 @@
 import {ElMessage} from 'element-plus'
 import axios from 'axios'
 import router from "../../router";
-
-
-function getTokenAUTH() {
-    // return store.state.user.utils ? "Bearer " + store.state.user.utils : ""
-
-    return null
-}
+import {useBaseStore} from "../../store";
 
 function jumpLogin() {
     // window.location.href = "#/login" // 跳转登录
     // store.state.user.utils = ""
+    useBaseStore().updateToken('')
     router.push("/login")
 }
 
@@ -27,9 +22,9 @@ const api = axios.create({
 // 2.request实例添加请求和拦截器
 api.interceptors.request.use(
     config => {
-
-        if (getTokenAUTH() && typeof window !== "undefined") {
-            config.headers.Authorization = getTokenAUTH()
+        const token = useBaseStore().getToken()
+        if (token && typeof window !== "undefined") {
+            config.headers.Authorization = token
         }
         // config配置对象有headers请求头
         return config
@@ -47,7 +42,7 @@ api.interceptors.response.use(
 
         if (code === 401 || code === 403) {
             // store.state.user.utils = ""
-            sessionStorage.clear()
+            localStorage.clear()
             jumpLogin()
         }
 

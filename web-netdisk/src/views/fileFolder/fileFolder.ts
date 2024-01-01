@@ -1,13 +1,13 @@
 import {Resp} from "../../utils/apis/base.ts";
 import api from "../../utils/apis/request.ts";
 
-interface folder {
+export interface folder {
     id: number
     name: string
     updated: string
 }
 
-interface file {
+export interface file {
     id: number
     name: string
     size: number
@@ -17,10 +17,8 @@ interface file {
 }
 
 export interface listFolderItemsResp {
-    data: {
-        folders: folder[]
-        files: file[]
-    }
+    folders: folder[]
+    files: file[]
 }
 
 export const getFolderItems = (parentFolderId: number) => {

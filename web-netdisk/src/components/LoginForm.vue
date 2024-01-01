@@ -16,6 +16,7 @@
 import {reactive, ref} from "vue";
 import {loginPost, LoginReq} from "./loginForm.ts";
 import {FormInstance, FormRules} from "element-plus";
+import {useBaseStore} from "../store";
 
 let loginForm = reactive<LoginReq>({
     password: "",
@@ -26,7 +27,7 @@ const login = async () => {
     console.log(loginForm.password, loginForm.username)
     const resp = await loginPost(loginForm)
     if (resp.code === 0) {
-        localStorage.setItem("token", resp.data.token)
+        useBaseStore().updateToken(resp.data.token)
     }
 }
 

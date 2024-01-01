@@ -43,25 +43,22 @@
 <script lang="ts" setup>
 import {onMounted, reactive, ref} from 'vue'
 import {ElMessage, ElTable, UploadFile, UploadFiles, UploadInstance, UploadRequestOptions} from 'element-plus'
-import {listFolderItemsResp} from "./fileFolder.ts";
+import {folder, listFolderItemsResp} from "./fileFolder.ts";
 import {getFolderItems} from "./fileFolder.ts";
-
-const actionUrl = `/upload`
 
 let folderList = reactive([])
 let fileList = reactive([])
 const parentFolderId = 0
 
 const listFolderItems = async () => {
-    let res: listFolderItemsResp
-    res = await getFolderItems(parentFolderId)
+    const res = await getFolderItems(parentFolderId)
     if (res.code === 0 && res.data) {
         folderList = res.data.folders
         fileList = res.data.files
     } else {
         ElMessage({
             type: 'error',
-            message: res.data.msg,
+            message: res.msg,
         })
     }
 }
