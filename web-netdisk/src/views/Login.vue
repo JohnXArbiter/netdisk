@@ -52,7 +52,6 @@ const change = (num: number) => {
 .form-box {
     background-color: #e3f1ff;
     width: 20%;
-    height: 30%;
     border-radius: 20px;
     box-shadow: 5px 3px 3px #e5e5e5;
 }

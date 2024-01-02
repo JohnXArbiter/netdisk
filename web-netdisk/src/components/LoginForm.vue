@@ -24,7 +24,6 @@ let loginForm = reactive<LoginReq>({
 })
 
 const login = async () => {
-    console.log(loginForm.password, loginForm.username)
     const resp = await loginPost(loginForm)
     if (resp.code === 0) {
         useBaseStore().updateToken(resp.data.token)

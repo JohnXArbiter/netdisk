@@ -72,38 +72,37 @@ api.interceptors.response.use(
         return resp.data
     },
     error => {
-        // 一般处理http网络错误
-        // 定义一个变量，存储网络错误
-        // console.log(error)
-        // const status = error.response.status
-        // let msg
-        // switch (status) {
-        //     case 201:
-        //         msg = '用户名或密码不对'
-        //         break
-        //     case 401:
-        //         // 401 一般是token过期
-        //         msg = 'TOKEN过期'
-        //         break
-        //     case 403:
-        //         msg = '无权访问'
-        //         break
-        //     case 404:
-        //         msg = '没有这个资源'
-        //         break
-        //     case 500:
-        //         msg = '服务器嗝屁了，哈哈哈'
-        //         break
-        //     default:
-        //         msg = '网络出现问题'
-        //         break
-        // }
+
+        const status = error.response.status
+        let msg
+        switch (status) {
+            case 201:
+                msg = '用户名或密码不对'
+                break
+            case 401:
+                // 401 一般是token过期
+                msg = 'TOKEN过期'
+                break
+            case 403:
+                msg = '无权访问'
+                break
+            case 404:
+                msg = '没有这个资源'
+                break
+            case 500:
+                msg = '服务器嗝屁了，哈哈哈'
+                break
+            default:
+                msg = '网络出现问题'
+                break
+        }
         // 提示错误信息
-        // ElMessage({
-        //     type: 'error',
-        //     message: msg,
-        // })
-        return Promise.reject(error)
+        ElMessage({
+            type: 'error',
+            message: msg,
+        })
+        console.error("请求出错", error)
+        return Promise.resolve(error)
     },
 )
 
