@@ -15,18 +15,19 @@ export const useBaseStore = defineStore('base', () => {
     let token = localStorage.getItem("token") || ''
     let user: UserInfo | null = null
 
-    const updateToken = (tokenStr: string) => {
+    function updateToken(tokenStr: string) {
+        token = tokenStr
         localStorage.setItem("token", tokenStr)
     }
 
-    const getToken = () => {
+    function getToken() {
         if (!token || token === '') {
             token = localStorage.getItem("token") || ''
         }
         return token
     }
 
-    const getUserInfo = async () => {
+    async function getUserInfo() {
         if (user === null) {
             const resp = await api.get<any, Resp<UserInfo>>('/detail')
             if (resp.code === 0) {
@@ -35,8 +36,13 @@ export const useBaseStore = defineStore('base', () => {
         }
         return user
     }
+
+    function updateUserInfo(userInfo: UserInfo) {
+        user = userInfo
+    }
+
     return {
         updateToken, getToken,
-        getUserInfo
+        getUserInfo, updateUserInfo
     }
 })

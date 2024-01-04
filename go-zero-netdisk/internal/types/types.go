@@ -13,9 +13,17 @@ type RegisterReq struct {
 }
 
 type LoginResp struct {
-	Token  string `json:"token"`
-	UserId int64  `json:"userId"`
-	Avatar string `json:"avatar"`
+	Token    string   `json:"token"`
+	UserInfo UserInfo `json:"userInfo"`
+}
+
+type UserInfo struct {
+	UserId    int64  `json:"userId"`
+	Name      string `json:"name"`
+	Avatar    string `json:"avatar"`
+	Email     string `json:"email"`
+	Signature string `json:"signature"`
+	Status    int8   `json:"status"`
 }
 
 type CheckFileReq struct {

@@ -4,6 +4,7 @@ import api from "../../utils/apis/request.ts";
 export interface folder {
     id: number
     name: string
+    size?: string
     updated: string
 }
 

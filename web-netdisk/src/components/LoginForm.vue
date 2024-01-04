@@ -13,9 +13,8 @@
 </template>
 
 <script lang="ts" setup>
-import {reactive, ref} from "vue";
+import {reactive} from "vue";
 import {loginPost, LoginReq} from "./loginForm.ts";
-import {FormInstance, FormRules} from "element-plus";
 import {useBaseStore} from "../store";
 
 let loginForm = reactive<LoginReq>({
@@ -26,7 +25,10 @@ let loginForm = reactive<LoginReq>({
 const login = async () => {
     const resp = await loginPost(loginForm)
     if (resp.code === 0) {
-        useBaseStore().updateToken(resp.data.token)
+      const baseStore = useBaseStore()
+      baseStore.updateToken(resp.data.token)
+      baseStore.updateUserInfo(resp.data.userInfo)
+      console.log("123123123",baseStore.getUserInfo())
     }
 }
 
@@ -37,7 +39,7 @@ const rules = {
     ],
     password: [
         {required: true, message: '请输入密码', trigger: 'blur'},
-        {min: 8, max: 20, message: '密码的长度在8-20之间', trigger: 'blur'},
+        {min: 6, max: 20, message: '密码的长度在8-20之间', trigger: 'blur'},
     ],
 }
 

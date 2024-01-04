@@ -39,30 +39,38 @@ func (l *LoginLogic) Login(req *types.LoginReq) (*types.LoginResp, error) {
 		redisClient = l.svcCtx.Redis
 	)
 
-	userInfo := &model.User{Username: username}
+	user := &model.User{Username: username}
 	if has, err := engine.Cols("id", "username", "password",
-		"name").Get(userInfo); err != nil || !has {
+		"name").Get(user); err != nil || !has {
 		return nil, errors.New("帐号或密码错误！")
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(userInfo.Password),
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password),
 		[]byte(password)); err != nil {
 		return nil, errors.New("帐号或密码错误！")
 	}
 
-	token, err := utils.GenToken(userInfo)
+	token, err := utils.GenToken(user)
 	if err != nil {
 		return nil, errors.New("出错啦，请重试！")
 	}
 
-	key := redis.LoggedUser + strconv.FormatInt(userInfo.Id, 10)
+	key := redis.LoggedUser + strconv.FormatInt(user.Id, 10)
 	if err = redisClient.Set(l.ctx, key, token, 7*24*time.Hour).Err(); err != nil {
-		logx.Errorf("[REDIS ERROR] Login 保存用户token失败，userid：%v %v\n", userInfo.Id, err)
+		logx.Errorf("[REDIS ERROR] Login 保存用户token失败，userid：%v %v\n", user.Id, err)
 		l.svcCtx.Redis.Set(l.ctx, key, token, 7*24*time.Hour) // 重试
 	}
 
+	var userInfo types.UserInfo
+	userInfo.UserId = user.Id
+	userInfo.Name = user.Name
+	userInfo.Avatar = user.Avatar
+	userInfo.Email = user.Email
+	userInfo.Signature = user.Signature
+	userInfo.Status = user.Status
+
 	resp := &types.LoginResp{}
-	resp.UserId = userInfo.Id
+	resp.UserInfo = userInfo
 	resp.Token = token
 	return resp, nil
 }
