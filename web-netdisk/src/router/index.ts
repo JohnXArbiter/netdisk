@@ -12,8 +12,9 @@ const routes = [
         component: () => import('../views/Main.vue'),
         children: [
             {
-                path: 'folder/:id',
+                path: 'folder/:parentFolderId',
                 component: () => import('../views/fileFolder/FileFolder.vue'),
+                props:true
             },
         ]
     },

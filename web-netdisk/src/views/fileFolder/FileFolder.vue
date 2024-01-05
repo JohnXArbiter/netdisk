@@ -1,73 +1,133 @@
 <template>
-    <el-upload
-            ref="uploadFiless"
-            class="upload-demo"
-            action="actionUrl"
-            multiple
-            :limit="20"
-            :auto-upload="false"
-            :on-change="change"
-            :http-request="uploadProcedure"
-    >
-        <template #trigger>
-            <el-button type="primary">select file</el-button>
+  <el-upload
+      ref="uploadFiless"
+      class="upload-demo"
+      action="actionUrl"
+      multiple
+      :limit="20"
+      :auto-upload="false"
+      :on-change="change"
+      :http-request="uploadProcedure"
+  >
+    <template #trigger>
+      <el-button type="primary">select file</el-button>
+    </template>
+    <el-button class="ml-3" type="success" @click="">
+      upload to server
+    </el-button>
+  </el-upload>
+  <el-table :data="tb" style="width: 100%">
+    <el-table-column type="selection" width="55"/>
+    <el-table-column label="文件夹名" width="180">
+      <template #default="scope">
+        <div style="display: flex; align-items: center">
+          <template v-if="(scope.row as File).size != undefined">
+            <span>{{ scope.row.name }}</span>
+          </template>
+          <template v-else>
+            <el-icon>
+              <FolderOpened/>
+            </el-icon>
+            <span style="margin-left: 10px">{{ scope.row.name }}</span>
+          </template>
+        </div>
+      </template>
+    </el-table-column>
+    <el-table-column label="修改时间" width="180">
+      <template #default="scope">
+        <div>{{ scope.row.updated }}</div>
+      </template>
+    </el-table-column>
+    <el-table-column label="大小" width="180">
+      <template #default="scope">
+        <template v-if="(scope.row as File).size != undefined ">
+          <div>{{ scope.row.size }}</div>
         </template>
-        <el-button class="ml-3" type="success" @click="">
-            upload to server
+        <template v-else>
+          <div> - </div>
+        </template>
+      </template>
+    </el-table-column>
+    <el-table-column label="Operations">
+      <template #default="scope">
+        <el-button size="small" @click="handleEdit(scope.$index, scope.row)"
+        >Edit
         </el-button>
-    </el-upload>
-    <el-table
-            :data="folderList"
-            style="width: 100%"
-            empty-text="暂无文件夹"
-    >
-        <el-table-column type="selection" width="55"/>
-        <el-table-column property="name" label="文件夹名" width="120">
-        </el-table-column>
-        <el-table-column property="updated" label="修改时间" width="120"/>
-        <el-table-column property="size" label="大小" show-overflow-tooltip/>
-    </el-table>
-    <el-table
-            :data="fileList"
-            style="width: 100%"
-            empty-text="暂无文件"
-    >
-        <el-table-column type="selection" width="55"/>
-        <el-table-column property="name" label="文件名" width="120">
-        </el-table-column>
-        <el-table-column property="updated" label="修改时间" width="120"/>
-        <el-table-column property="size" label="大小" show-overflow-tooltip/>
-    </el-table>
+        <el-button
+            size="small"
+            type="danger"
+            @click="handleDelete(scope.$index, scope.row)"
+        >Delete
+        </el-button>
+      </template>
+    </el-table-column>
+  </el-table>
+
+  <!--  <el-table :data="fileList" style="width: 100%">-->
+  <!--    <el-table-column type="selection" width="55" />-->
+  <!--    <el-table-column label="文件名" width="180">-->
+  <!--      <template #default="scope">-->
+  <!--        <div style="display: flex; align-items: center">-->
+  <!--          <template v-if=""></template>-->
+  <!--          <span style="margin-left: 10px">{{ scope.row.name }}</span>-->
+  <!--        </div>-->
+  <!--      </template>-->
+  <!--    </el-table-column>-->
+  <!--    <el-table-column label="修改时间" width="180">-->
+  <!--      <template #default="scope">-->
+  <!--        <div>{{ scope.row.updated }}</div>-->
+  <!--      </template>-->
+  <!--    </el-table-column>-->
+  <!--    <el-table-column label="大小" width="180">-->
+  <!--      <template #default="scope">-->
+  <!--        <div>{{ scope.row.size }}</div>-->
+  <!--      </template>-->
+  <!--    </el-table-column>-->
+  <!--    <el-table-column label="Operations">-->
+  <!--      <template #default="scope">-->
+  <!--        <el-button size="small" @click="handleEdit(scope.$index, scope.row)"-->
+  <!--        >Edit-->
+  <!--        </el-button>-->
+  <!--        <el-button-->
+  <!--            size="small"-->
+  <!--            type="danger"-->
+  <!--            @click="handleDelete(scope.$index, scope.row)"-->
+  <!--        >Delete-->
+  <!--        </el-button>-->
+  <!--      </template>-->
+  <!--    </el-table-column>-->
+  <!--  </el-table>-->
+
 </template>
 
 <script lang="ts" setup>
 import {onMounted, reactive, ref} from 'vue'
 import {ElMessage, ElTable, UploadFile, UploadFiles, UploadInstance} from 'element-plus'
-import {folder, file} from './fileFolder.ts';
+import type {Folder, File} from './fileFolder.ts';
 import {getFolderItems} from './fileFolder.ts';
 import axios, {AxiosProgressEvent} from "axios";
+import {FolderOpened} from '@element-plus/icons-vue'
 
-let folderList = reactive<folder[]>([
+var {parentFolderId} = defineProps(["parentFolderId"]);
+
+let folderList: Folder[] = [
   {
     id: 111,
     updated: '2016-05-03',
     name: 'Jerry',
-    size: '-',
   },
   {
     id: 222,
     updated: '2016-05-02',
     name: 'Tom',
-    size: '-',
   },
   {
     id: 333,
     updated: '2016-05-04',
     name: 'Sam',
-    size: '-',
   }
-])
-let fileList = reactive<file[]>([
+]
+let fileList: File[] = [
   {
     id: 4444,
     name: '43',
@@ -75,33 +135,41 @@ let fileList = reactive<file[]>([
     url: 'qwe',
     status: 2,
     updated: '2016-05-07'
+  },
+  {
+    id: 4444,
+    name: 'adsasd',
+    size: 423,
+    url: 'qwe',
+    status: 2,
+    updated: '2016-05-07'
   }
-])
-const parentFolderId = 0
+]
+
+const tb: any[] = reactive([])
+tb.push(...folderList)
+tb.push(...fileList)
 
 const listFolderItems = async () => {
-    const res = await getFolderItems(parentFolderId)
-    if (res.code === 0 && res.data) {
-      folderList = res.data.folders
-      folderList.forEach(folder => {
-        folder.size = '-';
-      })
-      fileList = res.data.files
+  const res = await getFolderItems(parentFolderId)
+  if (res.code === 0 && res.data) {
+    folderList = res.data.folders
+    fileList = res.data.files
 
-    } else {
-        ElMessage({
-            type: 'error',
-            message: res.msg,
-        })
-    }
+  } else {
+    ElMessage({
+      type: 'error',
+      message: res.msg,
+    })
+  }
 }
 
 let uploadFiless = ref<UploadInstance[]>([])
 
 function change(uploadFile: UploadFile, uploadFiles: UploadFiles) {
-    console.log("111", uploadFiless)
-    console.log("222", uploadFile)
-    console.log("333", uploadFiles)
+  console.log("111", uploadFiless)
+  console.log("222", uploadFile)
+  console.log("333", uploadFiles)
 
 }
 
@@ -115,8 +183,8 @@ function asd(e: Event) {
         form.append("file", file[i])
       }
       axios.post("/", form, {
-        onUploadProgress:(progressEvent: AxiosProgressEvent) => {
-          Math.round((progressEvent.loaded/(progressEvent.total as number)*100))
+        onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+          Math.round((progressEvent.loaded / (progressEvent.total as number) * 100))
         }
       })
     }
@@ -130,7 +198,7 @@ function asd(e: Event) {
 // }
 
 onMounted(() => {
-    listFolderItems()
+  listFolderItems()
 })
 
 

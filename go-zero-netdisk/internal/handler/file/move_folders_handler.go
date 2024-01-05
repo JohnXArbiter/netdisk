@@ -10,16 +10,16 @@ import (
 	"lc/netdisk/internal/types"
 )
 
-func MoveHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func MoveFoldersHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.MoveReq
+		var req types.MoveFoldersReq
 		if err := httpx.ParseJsonBody(r, &req); err != nil {
-			xhttp.JsonBaseResponseCtx(r.Context(), w, err)
+			httpx.ErrorCtx(r.Context(), w, err)
 			return
 		}
 
-		l := file.NewMoveLogic(r.Context(), svcCtx)
-		if err := l.Move(&req); err != nil {
+		l := file.NewMoveFoldersLogic(r.Context(), svcCtx)
+		if err := l.MoveFolders(&req); err != nil {
 			xhttp.JsonBaseResponseCtx(r.Context(), w, err)
 		} else {
 			xhttp.JsonBaseResponseCtx(r.Context(), w, nil)

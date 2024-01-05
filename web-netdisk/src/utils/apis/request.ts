@@ -46,15 +46,6 @@ api.interceptors.response.use(
             jumpLogin()
         }
 
-        if (code === 600) {
-            ElMessage({
-                type: "error",
-                message: "密码设置超期，请修改密码",
-            })
-            // store.commit("setChangePasswd", Math.random())
-            return Promise.reject(resp.data)
-        }
-
         if (
             code.toString() &&
             code.toString() !== "0" &&

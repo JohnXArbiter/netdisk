@@ -16,6 +16,7 @@
 import {reactive} from "vue";
 import {loginPost, LoginReq} from "./loginForm.ts";
 import {useBaseStore} from "../store";
+import router from "../router";
 
 let loginForm = reactive<LoginReq>({
     password: "",
@@ -28,7 +29,7 @@ const login = async () => {
       const baseStore = useBaseStore()
       baseStore.updateToken(resp.data.token)
       baseStore.updateUserInfo(resp.data.userInfo)
-      console.log("123123123",baseStore.getUserInfo())
+       router.push('/folder/0')
     }
 }
 

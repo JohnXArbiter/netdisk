@@ -76,7 +76,7 @@ type DeleteBatchTrulyReq struct {
 	FileIdsStruct
 }
 
-type ListFileFolderReq struct {
+type ParentFolderIdReq struct {
 	ParentFolderId int64 `path:"parentFolderId"`
 }
 
@@ -90,10 +90,14 @@ type UpdateFolderReq struct {
 	Name     string `json:"name"`
 }
 
-type MoveReq struct {
+type MoveFilesReq struct {
+	ParentFolderId int64 `json:"parentFolderId"`
+	FileIdsStruct
+}
+
+type MoveFoldersReq struct {
 	ParentFolderId int64 `json:"parentFolderId"`
 	FolderIdsStruct
-	FileIdsStruct
 }
 
 type ListDeletedItemsResp struct {
@@ -109,7 +113,7 @@ type ListFileFolderResp struct {
 type ListFolderStruct struct {
 	Id      int64  `json:"id"`
 	Name    string `json:"name"`
-	Updated string `json:"updated"`
+	Updated string `json:"updated,omitempty"`
 }
 
 type ListFileStruct struct {

@@ -25,7 +25,7 @@ func NewListFolderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ListFo
 	}
 }
 
-func (l *ListFolderLogic) ListFolder(req *types.ListFileFolderReq) (*types.ListFileFolderResp, error) {
+func (l *ListFolderLogic) ListFolder(req *types.ParentFolderIdReq) (*types.ListFileFolderResp, error) {
 	var (
 		userId  = l.ctx.Value(constant.UserIdKey).(int64)
 		engine  = l.svcCtx.Xorm
@@ -48,8 +48,9 @@ func (l *ListFolderLogic) ListFolder(req *types.ListFileFolderReq) (*types.ListF
 
 	for _, folder := range folders {
 		resp.Folders = append(resp.Folders, &types.ListFolderStruct{
-			Id:   folder.Id,
-			Name: folder.Name,
+			Id:      folder.Id,
+			Name:    folder.Name,
+			Updated: folder.Updated.Format(constant.TimeFormat),
 		})
 	}
 
