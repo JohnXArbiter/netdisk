@@ -1,19 +1,9 @@
 <template>
     <div class="bg">
         <div class="form-box">
-            <div v-show="flag" class="text">
-                <span class="big-text">登录</span>
-                <button v-show="flag"
-                        class="change"
-                        @click="change(1)">注册
-                </button>
-            </div>
-            <div v-show="!flag" class="text">
-                <span class="big-text">注册</span>
-                <button v-show="!flag"
-                        class="change"
-                        @click="change(0)">登录
-                </button>
+            <div class="banner-header">
+              <button class="active" @click="showBannerHeader(true)">登录</button>
+              <button @click="showBannerHeader(false)" >注册</button>
             </div>
             <div v-show="flag">
                 <login-form></login-form>
@@ -26,7 +16,7 @@
 </template>
 
 <script lang="ts" setup>
-import LoginForm from '../components/LoginForm.vue'
+import LoginForm from '@/components/LoginForm.vue'
 import RegisterForm from "../components/RegisterForm.vue"
 import {ref} from "vue";
 
@@ -34,6 +24,18 @@ let flag = ref<boolean>(true)
 
 const change = (num: number) => {
     flag.value = num === 0
+}
+
+function showBannerHeader(bo){
+  let sibling = document.getElementsByClassName('banner-header')[0].children
+  sibling[0].classList.remove('active')
+  sibling[1].classList.remove('active')
+  if (bo){
+    sibling[0].classList.add('active')
+  }else {
+    sibling[1].classList.add('active')
+  }
+  flag.value = bo
 }
 
 </script>
@@ -44,16 +46,17 @@ const change = (num: number) => {
     justify-content: center;
     align-items: center;
     background-color: #f7f7ff;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 98vh;
     overflow: hidden;
 }
 
 .form-box {
     background-color: #e3f1ff;
-    width: 20%;
+    width: 50vh;
     border-radius: 20px;
     box-shadow: 5px 3px 3px #e5e5e5;
+  padding: 2rem;
 }
 
 .text {
@@ -64,6 +67,27 @@ const change = (num: number) => {
     font-size: 5rem;
     margin-right: 3rem;
     color: #787eef;
+}
+.banner-header{
+  width: 100%;
+  border-bottom: 3px solid lightseagreen;
+  margin-bottom: 4%;
+}
+.banner-header button{
+  margin-bottom: 2px;
+  color: slategrey;
+  font-size: 22px;
+  font-weight: 700;
+  margin-left: 3%;
+  border: none;
+  background-color: rgb(227,241,255);
+}
+.banner-header button:hover{
+  background-color: lightblue;
+}
+.banner-header button.active{
+  color: lightcoral;
+  font-size: 25px;
 }
 
 

@@ -1,7 +1,6 @@
 import {defineConfig} from 'vite'
 import vue from '@vitejs/plugin-vue'
-import {resolve} from "path"
-import * as path from "path";
+import path from "path"
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -16,24 +15,11 @@ export default defineConfig({
             }
         }
     },
+    // 这里是配置@为src目录，
     resolve: {
-        alias: [
-            {
-               '@': path.resolve('./src'),
-            },
-            {
-                find: '@',
-                replacement: resolve(__dirname, "src")
-            },
-            {
-                find: 'components',
-                replacement: resolve(__dirname, "src/components")
-            },
-            {
-                find: 'views',
-                replacement: resolve(__dirname, "src/views")
-            }
-        ]
-    }
+        alias: {
+            '@': path.resolve('./src'),
+        },
+    },
 })
 
