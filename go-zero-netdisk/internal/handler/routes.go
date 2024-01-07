@@ -136,6 +136,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: file.UpdateFileHandler(serverCtx),
 				},
 				{
+					Method:  http.MethodPost,
+					Path:    "/copy",
+					Handler: file.CopyFilesHandler(serverCtx),
+				},
+				{
 					Method:  http.MethodDelete,
 					Path:    "/",
 					Handler: file.DeleteBatchHandler(serverCtx),
@@ -179,6 +184,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPut,
 					Path:    "/folder",
 					Handler: file.UpdateFolderHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPut,
+					Path:    "/copy-folder",
+					Handler: file.CopyFoldersHandler(serverCtx),
 				},
 			}...,
 		),

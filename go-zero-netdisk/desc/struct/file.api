@@ -10,6 +10,11 @@ type (
         name string `json:"name"`
     }
 
+    CopyFilesReq {
+        ParentFolderId int64 `path:"parentFolderId"`
+        FileIdsStruct
+    }
+
     deleteBatchReq {
         FolderIdsStruct
         FileIdsStruct
@@ -37,6 +42,11 @@ type (
     updateFolderReq {
         folderId int64 `json:"folderId"`
         name string `json:"name"`
+    }
+
+    CopyFoldersReq {
+        ParentFolderId int64 `path:"parentFolderId"`
+        FolderIdsStruct
     }
 
     moveFilesReq {

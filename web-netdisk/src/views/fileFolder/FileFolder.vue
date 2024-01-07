@@ -21,25 +21,21 @@
     </div>
     <div class="folder-table">
         <div class="button-group">
-            <template v-if="buttonState === 0">
-            </template>
-            <!--  -->
-            <template v-if="buttonState === 0">
+            <template v-if="folderButtonsState !== 0">
                 <el-button-group>
                     <el-button type="primary" round plain :icon="Download">下载</el-button>
-                    <el-button type="primary" round plain :icon="EditPen">重命名</el-button>
+                    <template v-if="folderButtonsState === 1">
+                        <el-button type="primary" round plain :icon="EditPen">重命名</el-button>
+                    </template>
                     <el-button type="primary" round plain :icon="Rank">移动</el-button>
                     <el-button type="primary" round plain :icon="CopyDocument">复制</el-button>
                     <el-button type="danger" round plain :icon="DeleteFilled">删除</el-button>
                 </el-button-group>
             </template>
-            <template v-if="buttonState === 1">
-
-            </template>
         </div>
 
         <el-table :data="folderList" style="width: 100%"
-                  @selection-change="handleSelectionChange"
+                  @selection-change="folderSelectionChange"
         >
             <el-table-column type="selection" width="55"/>
             <el-table-column label="文件夹名" width="180">
@@ -88,88 +84,86 @@
         </el-table>
     </div>
 
-  <div class="file-table">
-      <div class="button-group">
-          <template v-if="buttonState === 0">
-          </template>
-          <!--  -->
-          <template v-if="buttonState === 0">
-              <el-button-group>
-                  <el-button type="primary" round plain :icon="Download">下载</el-button>
-                  <el-button type="primary" round plain :icon="EditPen">重命名</el-button>
-                  <el-button type="primary" round plain :icon="Rank">移动</el-button>
-                  <el-button type="primary" round plain :icon="CopyDocument">复制</el-button>
-                  <el-button type="danger" round plain :icon="DeleteFilled">删除</el-button>
-              </el-button-group>
-          </template>
-          <template v-if="buttonState === 1">
+    <div class="file-table">
+        <div class="button-group">
+            <template v-if="fileButtonsState !== 0">
+                <el-button-group>
+                    <el-button type="primary" round plain :icon="Download">下载</el-button>
+                    <template v-if="fileButtonsState === 1">
+                        <el-button type="primary" round plain :icon="EditPen">重命名</el-button>
+                    </template>
+                    <el-button type="primary" round plain :icon="Rank">移动</el-button>
+                    <el-button type="primary" round plain :icon="CopyDocument">复制</el-button>
+                    <el-button type="danger" round plain :icon="DeleteFilled">删除</el-button>
+                </el-button-group>
+            </template>
+        </div>
 
-          </template>
-      </div>
-
-      <el-table :data="fileList" style="width: 100%"
-                @selection-change="handleSelectionChange"
-      >
-          <el-table-column type="selection" width="55"/>
-          <el-table-column label="文件夹名" width="180">
-              <template #default="scope">
-                  <div style="display: flex; align-items: center">
-                      <template v-if="(scope.row as File).size != undefined">
-                          <span>{{ scope.row.name }}</span>
-                      </template>
-                      <template v-else>
-                          <el-icon>
-                              <FolderOpened/>
-                          </el-icon>
-                          <span style="margin-left: 10px">{{ scope.row.name }}</span>
-                      </template>
-                  </div>
-              </template>
-          </el-table-column>
-          <el-table-column label="修改时间" width="180">
-              <template #default="scope">
-                  <div>{{ scope.row.updated }}</div>
-              </template>
-          </el-table-column>
-          <el-table-column label="大小" width="180">
-              <template #default="scope">
-                  <template v-if="(scope.row as File).size != undefined ">
-                      <div>{{ scope.row.size }}</div>
-                  </template>
-                  <template v-else>
-                      <div> -</div>
-                  </template>
-              </template>
-          </el-table-column>
-          <el-table-column label="Operations">
-              <template #default="scope">
-                  <el-button size="small" @click="handleEdit(scope.$index, scope.row)"
-                  >Edit
-                  </el-button>
-                  <el-button
-                          size="small"
-                          type="danger"
-                          @click="handleDelete(scope.$index, scope.row)"
-                  >Delete
-                  </el-button>
-              </template>
-          </el-table-column>
-      </el-table>
-  </div>
+        <el-table :data="fileList" style="width: 100%"
+                  @selection-change="fileSelectionChange"
+        >
+            <el-table-column type="selection" width="55"/>
+            <el-table-column label="文件夹名" width="180">
+                <template #default="scope">
+                    <div style="display: flex; align-items: center">
+                        <template v-if="(scope.row as File).size != undefined">
+                            <span>{{ scope.row.name }}</span>
+                        </template>
+                        <template v-else>
+                            <el-icon>
+                                <FolderOpened/>
+                            </el-icon>
+                            <span style="margin-left: 10px">{{ scope.row.name }}</span>
+                        </template>
+                    </div>
+                </template>
+            </el-table-column>
+            <el-table-column label="修改时间" width="180">
+                <template #default="scope">
+                    <div>{{ scope.row.updated }}</div>
+                </template>
+            </el-table-column>
+            <el-table-column label="大小" width="180">
+                <template #default="scope">
+                    <template v-if="(scope.row as File).size != undefined ">
+                        <div>{{ scope.row.size }}</div>
+                    </template>
+                    <template v-else>
+                        <div> -</div>
+                    </template>
+                </template>
+            </el-table-column>
+            <el-table-column label="Operations">
+                <template #default="scope">
+                    <el-button size="small" @click="handleEdit(scope.$index, scope.row)"
+                    >Edit
+                    </el-button>
+                    <el-button
+                            size="small"
+                            type="danger"
+                            @click="handleDelete(scope.$index, scope.row)"
+                    >Delete
+                    </el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+    </div>
 </template>
 
 <script lang="ts" setup>
 import {onMounted, reactive, ref} from 'vue'
 import {ElMessage, ElTable, UploadFile, UploadFiles, UploadInstance} from 'element-plus'
-import type {Folder, File} from './fileFolder.ts';
-import {getFolderItems} from './fileFolder.ts';
+import type {Folder, File} from '@/views/fileFolder/fileFolder.ts'
+import {getFolderItems} from '@/views/fileFolder/fileFolder.ts'
 import axios, {AxiosProgressEvent} from "axios";
 import {FolderOpened} from '@element-plus/icons-vue'
 import {Upload, Select, FolderAdd, Download, CopyDocument, EditPen, DeleteFilled, Rank} from '@element-plus/icons-vue'
 
 let props = defineProps(["folderId"]);
 let folderId = props.folderId
-let buttonState = ref(0)
+let fileButtonsState = ref(0)
+let folderButtonsState = ref(0)
+
 let folderList: Folder[] = [
     {
         id: 111,
@@ -206,15 +200,11 @@ let fileList: File[] = [
     }
 ]
 
-const tableData: any[] = reactive([])
-tableData.push(...folderList)
-tableData.push(...fileList)
-
 const listFolderItems = async () => {
     const res = await getFolderItems(folderId)
     if (res.code === 0 && res.data) {
-        tableData.push(...res.data.folders)
-        tableData.push(...res.data.files)
+        folderList = res.data.folders
+        fileList = res.data.files
     } else {
         ElMessage({
             type: 'error',
@@ -229,7 +219,6 @@ function change(uploadFile: UploadFile, uploadFiles: UploadFiles) {
     console.log("111", uploadFiless)
     console.log("222", uploadFile)
     console.log("333", uploadFiles)
-
 }
 
 function asd(e: Event) {
@@ -256,27 +245,27 @@ function asd(e: Event) {
 //     return XMLHttpRequest
 // }
 
-const handleSelectionChange = (items: any[]) => {
-    const len = items.length;
-    if (items && len == 1) {
-        if ((items[0] as File).size != undefined) {
-
-        }
-    } else if (items && len > 0) {
-        items.forEach(item => {
-            if ((item as File).size != undefined) {
-
-            }
-        })
-        if ((items[len - 1] as File).size != undefined) {
-            console.log('文件', buttonState.value)
-            buttonState.value = 2
+function folderSelectionChange(items: Folder[]) {
+    if (!items || items.length == 0) {
+        folderButtonsState.value = 0
+    } else if (items) {
+        if (items.length === 1) {
+            folderButtonsState.value = 1
         } else {
-            console.log("文件夹", buttonState.value)
-            buttonState.value = 1
+            folderButtonsState.value = 2
         }
-    } else {
-        buttonState.value = 0
+    }
+}
+
+function fileSelectionChange(items: File[]) {
+    if (!items || items.length == 0) {
+        fileButtonsState.value = 0
+    } else if (items) {
+        if (items.length === 1) {
+            fileButtonsState.value = 1
+        } else {
+            fileButtonsState.value = 2
+        }
     }
 }
 
