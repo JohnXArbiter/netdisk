@@ -50,7 +50,7 @@ func (l *CopyFilesLogic) CopyFiles(req *types.CopyFilesReq) error {
 	now := time.Now()
 	for _, file := range files {
 		file.Id = idgen.NextId()
-		file.Name = file.Name + "_复制"
+		file.Name = file.Name + "_" + time.Now().Format(constant.TimeFormat2) + "复制"
 		file.Created = now
 		file.Updated = now
 	}

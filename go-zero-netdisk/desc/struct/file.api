@@ -44,13 +44,8 @@ type (
         name string `json:"name"`
     }
 
-    CopyFoldersReq {
-        ParentFolderId int64 `path:"parentFolderId"`
-        FolderIdsStruct
-    }
-
     moveFilesReq {
-        parentFolderId int64 `json:"parentFolderId"`
+        FolderId int64 `json:"folderId"`
         FileIdsStruct
     }
 
@@ -58,12 +53,17 @@ type (
         parentFolderId int64 `json:"parentFolderId"`
         FolderIdsStruct
     }
+
+    listFolderMovableFolderReq {
+        parentFolderId int64 `json:"parentFolderId"`
+        SelectedFolderIds []int64 `json:"selectedFolderIds"`
+    }
 )
 
 type (
     listDeletedItemsResp {
-        folders []*ListDeletedFolderStruct `json:"folders"`
-        files []*ListDeletedFileStruct `json:"files"`
+        Folders []*ListDeletedFolderStruct `json:"folders"`
+        Files []*ListDeletedFileStruct `json:"files"`
     }
 
     listFileFolderResp {

@@ -143,7 +143,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				{
 					Method:  http.MethodDelete,
 					Path:    "/",
-					Handler: file.DeleteBatchHandler(serverCtx),
+					Handler: file.DeleteFilesHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodDelete,
+					Path:    "/delete",
+					Handler: file.DeleteFilesTrulyHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodGet,
@@ -153,12 +158,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				{
 					Method:  http.MethodPut,
 					Path:    "/recover",
-					Handler: file.RecoverDeletedItemsHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodDelete,
-					Path:    "/delete",
-					Handler: file.DeleteBatchTrulyHandler(serverCtx),
+					Handler: file.RecoverFilesHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodGet,
@@ -167,12 +167,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodGet,
-					Path:    "/move-folder/:parentFolderId",
+					Path:    "/folder-move/:parentFolderId",
 					Handler: file.ListFolderMovableFolderHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodPut,
-					Path:    "/move-folder",
+					Path:    "/folder-move",
 					Handler: file.MoveFoldersHandler(serverCtx),
 				},
 				{
@@ -186,9 +186,19 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: file.UpdateFolderHandler(serverCtx),
 				},
 				{
+					Method:  http.MethodDelete,
+					Path:    "/folder",
+					Handler: file.DeleteFoldersHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodDelete,
+					Path:    "/folder-delete",
+					Handler: file.DeleteFoldersTrulyHandler(serverCtx),
+				},
+				{
 					Method:  http.MethodPut,
-					Path:    "/copy-folder",
-					Handler: file.CopyFoldersHandler(serverCtx),
+					Path:    "/folder-recover",
+					Handler: file.RecoverFoldersHandler(serverCtx),
 				},
 			}...,
 		),

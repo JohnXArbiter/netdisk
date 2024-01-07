@@ -94,26 +94,26 @@ service netdisk-api {
 	@handler copyFiles
 	post /copy (CopyFilesReq) returns ()
 	
-	@handler deleteBatch
-	delete / (deleteBatchReq) returns ()
+	@handler deleteFiles
+	delete / () returns ()
+	
+	@handler deleteFilesTruly
+	delete /delete () returns ()
 	
 	@handler listDeletedItems
 	get /delete () returns (listDeletedItemsResp)
 	
-	@handler recoverDeletedItems
+	@handler recoverFiles
 	put /recover (recoverReq) returns ()
-	
-	@handler deleteBatchTruly
-	delete /delete (deleteBatchTrulyReq) returns ()
 	
 	@handler listFolder
 	get /folder/:parentFolderId (parentFolderIdReq) returns (listFileFolderResp)
 	
 	@handler listFolderMovableFolder
-	get /move-folder/:parentFolderId (parentFolderIdReq) returns ([]ListFolderStruct)
+	get /folder-move/:parentFolderId (listFolderMovableFolderReq) returns ([]ListFolderStruct)
 	
 	@handler moveFolders
-	put /move-folder (moveFoldersReq) returns ()
+	put /folder-move (moveFoldersReq) returns ()
 	
 	@handler createFolder
 	post /folder (createFolderReq) returns ()
@@ -121,8 +121,14 @@ service netdisk-api {
 	@handler updateFolder
 	put /folder (updateFolderReq) returns ()
 	
-	@handler copyFolders
-	put /copy-folder (CopyFoldersReq) returns ()
+	@handler deleteFolders
+	delete /folder () returns ()
+	
+	@handler deleteFoldersTruly
+	delete /folder-delete () returns ()
+	
+	@handler recoverFolders
+	put /folder-recover (recoverReq) returns ()
 }
 
 type (

@@ -28,19 +28,21 @@ func NewMoveFilesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *MoveFil
 
 func (l *MoveFilesLogic) MoveFiles(req *types.MoveFilesReq) error {
 	var (
-		userId         = l.ctx.Value(constant.UserIdKey).(int64)
-		engine         = l.svcCtx.Xorm
-		parentFolderId = req.ParentFolderId
+		userId   = l.ctx.Value(constant.UserIdKey).(int64)
+		engine   = l.svcCtx.Xorm
+		folderId = req.FolderId
 	)
 
-	has, err := engine.ID(parentFolderId).And("user_id = ?", userId).Get(&model.Folder{})
-	if err != nil {
-		return errors.New("发生错误！" + err.Error())
-	} else if !has {
-		return errors.New("该目录不存在")
+	if folderId != 0 {
+		has, err := engine.ID(folderId).And("user_id = ?", userId).Get(&model.Folder{})
+		if err != nil {
+			return errors.New("发生错误！" + err.Error())
+		} else if !has {
+			return errors.New("该目录不存在")
+		}
 	}
 
-	file := &model.File{FolderId: parentFolderId}
+	file := &model.File{FolderId: folderId}
 	affected, err := engine.In("id", req.FileIds).Update(file)
 	if err != nil || affected != int64(len(req.FileIds)) {
 		return errors.New("移动出错！" + err.Error())
