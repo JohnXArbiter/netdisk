@@ -62,7 +62,7 @@ type UpdateFileReq struct {
 }
 
 type CopyFilesReq struct {
-	ParentFolderId int64 `path:"parentFolderId"`
+	FolderId int64 `path:"folderId"`
 	FileIdsStruct
 }
 

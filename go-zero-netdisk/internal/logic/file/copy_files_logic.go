@@ -30,13 +30,13 @@ func NewCopyFilesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CopyFil
 
 func (l *CopyFilesLogic) CopyFiles(req *types.CopyFilesReq) error {
 	var (
-		userId         = l.ctx.Value(constant.UserIdKey).(int64)
-		engine         = l.svcCtx.Xorm
-		parentFolderId = req.ParentFolderId
-		files          []*model.File
+		userId   = l.ctx.Value(constant.UserIdKey).(int64)
+		engine   = l.svcCtx.Xorm
+		folderId = req.FolderId
+		files    []*model.File
 	)
 
-	has, err := engine.ID(parentFolderId).And("user_id = ?", userId).Get(&model.Folder{})
+	has, err := engine.ID(folderId).And("user_id = ?", userId).Get(&model.Folder{})
 	if err != nil {
 		return errors.New("发生错误！" + err.Error())
 	} else if !has {
