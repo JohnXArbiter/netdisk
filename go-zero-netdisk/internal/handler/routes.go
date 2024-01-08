@@ -126,14 +126,29 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: file.ListFileMovableFolderHandler(serverCtx),
 				},
 				{
+					Method:  http.MethodGet,
+					Path:    "/folder-move/:parentFolderId",
+					Handler: file.ListFolderMovableFolderHandler(serverCtx),
+				},
+				{
 					Method:  http.MethodPut,
 					Path:    "/move",
 					Handler: file.MoveFilesHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodPut,
+					Path:    "/folder-move",
+					Handler: file.MoveFoldersHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPut,
 					Path:    "/",
 					Handler: file.UpdateFileHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPut,
+					Path:    "/folder",
+					Handler: file.UpdateFolderHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodPost,
@@ -151,41 +166,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: file.DeleteFilesTrulyHandler(serverCtx),
 				},
 				{
-					Method:  http.MethodGet,
-					Path:    "/delete",
-					Handler: file.ListDeletedItemsHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodPut,
-					Path:    "/recover",
-					Handler: file.RecoverFilesHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodGet,
-					Path:    "/folder/:parentFolderId",
-					Handler: file.ListFolderHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodGet,
-					Path:    "/folder-move/:parentFolderId",
-					Handler: file.ListFolderMovableFolderHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodPut,
-					Path:    "/folder-move",
-					Handler: file.MoveFoldersHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodPost,
-					Path:    "/folder",
-					Handler: file.CreateFolderHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodPut,
-					Path:    "/folder",
-					Handler: file.UpdateFolderHandler(serverCtx),
-				},
-				{
 					Method:  http.MethodDelete,
 					Path:    "/folder",
 					Handler: file.DeleteFoldersHandler(serverCtx),
@@ -197,8 +177,28 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodPut,
+					Path:    "/recover",
+					Handler: file.RecoverFilesHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPut,
 					Path:    "/folder-recover",
 					Handler: file.RecoverFoldersHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/folder",
+					Handler: file.CreateFolderHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/folder/:parentFolderId",
+					Handler: file.ListFolderHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/delete",
+					Handler: file.ListDeletedItemsHandler(serverCtx),
 				},
 			}...,
 		),
