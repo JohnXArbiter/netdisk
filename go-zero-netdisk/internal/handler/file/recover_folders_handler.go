@@ -11,7 +11,7 @@ import (
 
 func RecoverFoldersHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.RecoverReq
+		var req types.FolderIdsStruct
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return

@@ -23,7 +23,7 @@ func NewRecoverFoldersLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Re
 	}
 }
 
-func (l *RecoverFoldersLogic) RecoverFolders(req *types.RecoverReq) error {
+func (l *RecoverFoldersLogic) RecoverFolders(req *types.FolderIdsStruct) error {
 	// todo: add your logic here and delete this line
 
 	return nil

@@ -2,6 +2,8 @@ package file
 
 import (
 	"context"
+	"lc/netdisk/common/constant"
+	"lc/netdisk/model"
 
 	"lc/netdisk/internal/svc"
 	"lc/netdisk/internal/types"
@@ -23,8 +25,18 @@ func NewRecoverFilesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Reco
 	}
 }
 
-func (l *RecoverFilesLogic) RecoverFiles(req *types.RecoverReq) error {
-	// todo: add your logic here and delete this line
+func (l *RecoverFilesLogic) RecoverFiles(req *types.FileIdsStruct) error {
+	var (
+		ctx       = l.ctx
+		userId    = ctx.Value(constant.UserIdKey).(int64)
+		engine    = l.svcCtx.Xorm
+		folderIds = ctx.Value(constant.CtxFolderIdsKey).([]int64)
+		folders   []*model.Folder
+	)
+
+	if err := engine.In("id", req.FileIds).Find(&folders); err != nil {
+
+	}
 
 	return nil
 }
