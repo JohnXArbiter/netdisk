@@ -1,5 +1,10 @@
 <template>
     <div class="bg">
+      <div class="logo-icon">
+        <img src="@/assets/img.png" alt=""/>
+        <span>咪咪网盘</span>
+      </div>
+      <img src="@/assets/background_boy.png" alt=""/>
         <div class="form-box">
             <div class="banner-header">
               <button class="active" @click="showBannerHeader(true)">登录</button>
@@ -41,11 +46,28 @@ function showBannerHeader(bo){
 </script>
 
 <style>
+.logo-icon{
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  display: flex;
+}
+.logo-icon img{
+  width: 40px;
+  margin-right: 5px;
+}
+.logo-icon span{
+  font-size: 28px;
+  font-weight: 700;
+  height: 45px;
+  line-height: 50px;
+  color: orange;
+}
 .bg {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #f7f7ff;
+    background: url('@/assets/background_grid.png');
     width: 100%;
     height: 98vh;
     overflow: hidden;
@@ -87,7 +109,7 @@ function showBannerHeader(bo){
 }
 .banner-header button.active{
   color: lightcoral;
-  font-size: 25px;
+  font-size: 39px;
 }
 
 
