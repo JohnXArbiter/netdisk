@@ -8,6 +8,7 @@
                 text-color="black"
                 @open="handleOpen"
                 @close="handleClose"
+                style="width: 100%"
         >
             <el-sub-menu index="1">
                 <template #title>
