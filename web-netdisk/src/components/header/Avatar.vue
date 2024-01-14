@@ -8,7 +8,7 @@
   <!--      </div>-->
   <!--    </el-col>-->
   <!--  </el-row>-->
-    <el-row>
+    <el-row class="el-row">
         <el-col :span="23">
             <div class="grid-content ep-bg-purple"/>
         </el-col>
