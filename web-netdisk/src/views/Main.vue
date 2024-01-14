@@ -6,7 +6,7 @@
 
       </el-header>
       <el-container>
-        <el-aside width="10%" >
+        <el-aside style="width: 10%;">
           <navigator/>
         </el-aside>
         <el-main style="background-color: #fff2e3">

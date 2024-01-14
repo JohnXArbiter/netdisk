@@ -14,8 +14,17 @@ const routes = [
             {
                 path: 'folder/:folderId',
                 component: () => import('../views/fileFolder/FileFolder.vue'),
-                props:true
+                props: true
             },
+            {
+                path: 'files/:fileType',
+                component: () => import('../views/files/Files.vue'),
+                props: true
+            },
+            {
+                path: 'bin',
+                component: () => import('../views/bin/Bin.vue')
+            }
         ]
     },
 ]
