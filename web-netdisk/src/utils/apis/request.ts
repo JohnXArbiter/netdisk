@@ -59,6 +59,13 @@ api.interceptors.response.use(
             return Promise.reject(resp.data)
         }
 
+        if (resp.data.code && resp.data.code !== 0) {
+            ElMessage({
+                type: 'error',
+                message: resp.data.msg,
+            })
+        }
+
         // 这里是简化了数据
         return resp.data
     },

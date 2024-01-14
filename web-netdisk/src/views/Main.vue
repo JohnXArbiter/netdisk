@@ -1,15 +1,15 @@
 <template>
   <div class="common-layout">
     <el-container>
-      <el-header style="background-color: lightsteelblue">
+      <el-header style="background-color: lightsalmon">
         <avatar/>
 
       </el-header>
       <el-container>
-        <el-aside width="200px" style="background-color: #16e52d">
+        <el-aside style="width: 10%;">
           <navigator/>
         </el-aside>
-        <el-main style="background-color: #d02e59">
+        <el-main style="background-color: #fff2e3">
           <router-view/>
         </el-main>
       </el-container>
@@ -25,5 +25,10 @@ import Navigator from "../components/aside/Navigator.vue";
 </script>
 
 <style scoped>
-
+.common-layout{
+    margin: 0;
+}
+.el-header{
+    height: 6vh;
+}
 </style>

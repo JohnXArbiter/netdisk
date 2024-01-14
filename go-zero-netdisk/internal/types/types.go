@@ -61,6 +61,11 @@ type UpdateFileReq struct {
 	Name   string `json:"name"`
 }
 
+type CopyFilesReq struct {
+	FolderId int64 `path:"folderId"`
+	FileIdsStruct
+}
+
 type DeleteBatchReq struct {
 	FolderIdsStruct
 	FileIdsStruct
@@ -91,13 +96,18 @@ type UpdateFolderReq struct {
 }
 
 type MoveFilesReq struct {
-	ParentFolderId int64 `json:"parentFolderId"`
+	FolderId int64 `json:"folderId"`
 	FileIdsStruct
 }
 
 type MoveFoldersReq struct {
 	ParentFolderId int64 `json:"parentFolderId"`
 	FolderIdsStruct
+}
+
+type ListFolderMovableFolderReq struct {
+	ParentFolderId    int64   `json:"parentFolderId"`
+	SelectedFolderIds []int64 `json:"selectedFolderIds"`
 }
 
 type ListDeletedItemsResp struct {

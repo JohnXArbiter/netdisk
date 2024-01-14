@@ -10,16 +10,16 @@ import (
 	"lc/netdisk/internal/types"
 )
 
-func DeleteBatchHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func CopyFilesHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.DeleteBatchReq
+		var req types.CopyFilesReq
 		if err := httpx.ParseJsonBody(r, &req); err != nil {
 			xhttp.JsonBaseResponseCtx(r.Context(), w, err)
 			return
 		}
 
-		l := file.NewDeleteBatchLogic(r.Context(), svcCtx)
-		if err := l.DeleteBatch(&req); err != nil {
+		l := file.NewCopyFilesLogic(r.Context(), svcCtx)
+		if err := l.CopyFiles(&req); err != nil {
 			xhttp.JsonBaseResponseCtx(r.Context(), w, err)
 		} else {
 			xhttp.JsonBaseResponseCtx(r.Context(), w, nil)

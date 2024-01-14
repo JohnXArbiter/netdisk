@@ -50,7 +50,7 @@ func (l *ListFolderLogic) ListFolder(req *types.ParentFolderIdReq) (*types.ListF
 		resp.Folders = append(resp.Folders, &types.ListFolderStruct{
 			Id:      folder.Id,
 			Name:    folder.Name,
-			Updated: folder.Updated.Format(constant.TimeFormat),
+			Updated: folder.Updated.Format(constant.TimeFormat1),
 		})
 	}
 
@@ -61,7 +61,7 @@ func (l *ListFolderLogic) ListFolder(req *types.ParentFolderIdReq) (*types.ListF
 			Url:     file.Url,
 			Size:    file.Size,
 			Status:  file.Status,
-			Updated: file.Updated.Format(constant.TimeFormat),
+			Updated: file.Updated.Format(constant.TimeFormat1),
 		})
 	}
 

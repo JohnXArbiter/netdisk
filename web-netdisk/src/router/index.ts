@@ -8,14 +8,23 @@ const routes = [
     },
     {
         path: '/',
-        redirect: '/folder/0',
+        redirect: 'folder/0',
         component: () => import('../views/Main.vue'),
         children: [
             {
                 path: 'folder/:folderId',
                 component: () => import('../views/fileFolder/FileFolder.vue'),
-                props:true
+                props: true
             },
+            {
+                path: 'file/:fileType',
+                component: () => import('../views/file/File.vue'),
+                props: true
+            },
+            {
+                path: 'bin',
+                component: () => import('../views/bin/Bin.vue')
+            }
         ]
     },
 ]

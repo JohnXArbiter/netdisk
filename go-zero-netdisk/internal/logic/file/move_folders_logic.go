@@ -31,14 +31,16 @@ func (l *MoveFoldersLogic) MoveFolders(req *types.MoveFoldersReq) error {
 		userId         = l.ctx.Value(constant.UserIdKey).(int64)
 		engine         = l.svcCtx.Xorm
 		parentFolderId = req.ParentFolderId
+		folder         = &model.Folder{}
 	)
 
-	folder := &model.Folder{}
-	has, err := engine.ID(parentFolderId).And("user_id = ?", userId).Get(folder)
-	if err != nil {
-		return errors.New("发生错误！")
-	} else if !has {
-		return errors.New("该目录不存在")
+	if parentFolderId != 0 {
+		has, err := engine.ID(parentFolderId).And("user_id = ?", userId).Get(folder)
+		if err != nil {
+			return errors.New("发生错误！")
+		} else if !has {
+			return errors.New("该目录不存在")
+		}
 	}
 
 	folder = &model.Folder{ParentId: parentFolderId}
