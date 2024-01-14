@@ -13,21 +13,57 @@
             <el-sub-menu index="1">
                 <template #title>
                     <el-icon>
-                        <location/>
+                        <Folder/>
                     </el-icon>
+
                     <span>我的文件</span>
                 </template>
                 <el-menu-item-group>
-                    <el-menu-item index="1-1">文档</el-menu-item>
-                    <el-menu-item index="1-2">图片</el-menu-item>
-                    <el-menu-item index="1-2">视频</el-menu-item>
-                    <el-menu-item index="1-2">音频</el-menu-item>
-                    <el-menu-item index="1-2">其他</el-menu-item>
+                    <el-menu-item index="1-1">
+                        <router-link to="/file/0/0">
+                            <el-icon>
+                                <Document/>
+                            </el-icon>
+                            文档
+                        </router-link>
+                    </el-menu-item>
+                    <el-menu-item index="1-2">
+                        <router-link to="/file/1/0">
+                            <el-icon>
+                                <PictureFilled/>
+                            </el-icon>
+                            图片
+                        </router-link>
+                    </el-menu-item>
+                    <el-menu-item index="1-3">
+                        <router-link to="/file/2/0">
+                            <el-icon>
+                                <VideoCameraFilled/>
+                            </el-icon>
+                            视频
+                        </router-link>
+                    </el-menu-item>
+                    <el-menu-item index="1-4">
+                        <router-link to="/file/3/0">
+                            <el-icon>
+                                <Headset/>
+                            </el-icon>
+                            音频
+                        </router-link>
+                    </el-menu-item>
+                    <el-menu-item index="1-5">
+                        <router-link to="/file/4/0">
+                            <el-icon>
+                                <More/>
+                            </el-icon>
+                            其他
+                        </router-link>
+                    </el-menu-item>
                 </el-menu-item-group>
             </el-sub-menu>
             <el-menu-item index="2">
                 <el-icon>
-                    <icon-menu/>
+                    <Delete/>
                 </el-icon>
                 <span>回收站</span>
             </el-menu-item>
@@ -45,7 +81,10 @@
 </template>
 
 <script lang="ts" setup>
-import {Document, Location, Menu as IconMenu, Setting,} from '@element-plus/icons-vue'
+import {
+    Folder, Document, PictureFilled, Headset, More,
+    Delete, VideoCameraFilled
+} from '@element-plus/icons-vue'
 
 const handleOpen = (key: string, keyPath: string[]) => {
     console.log(key, keyPath)
