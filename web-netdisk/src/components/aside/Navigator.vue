@@ -13,65 +13,72 @@
             <el-sub-menu index="1">
                 <template #title>
                     <el-icon>
-                        <Folder/>
+                        <Files/>
                     </el-icon>
-
-                    <span>我的文件</span>
+                    文件
                 </template>
-                <el-menu-item-group>
-                    <el-menu-item index="1-1">
-                        <router-link to="/file/0/0">
-                            <el-icon>
-                                <Document/>
-                            </el-icon>
-                            文档
-                        </router-link>
-                    </el-menu-item>
-                    <el-menu-item index="1-2">
-                        <router-link to="/file/1/0">
-                            <el-icon>
-                                <PictureFilled/>
-                            </el-icon>
-                            图片
-                        </router-link>
-                    </el-menu-item>
-                    <el-menu-item index="1-3">
-                        <router-link to="/file/2/0">
-                            <el-icon>
-                                <VideoCameraFilled/>
-                            </el-icon>
-                            视频
-                        </router-link>
-                    </el-menu-item>
-                    <el-menu-item index="1-4">
-                        <router-link to="/file/3/0">
-                            <el-icon>
-                                <Headset/>
-                            </el-icon>
-                            音频
-                        </router-link>
-                    </el-menu-item>
-                    <el-menu-item index="1-5">
-                        <router-link to="/file/4/0">
-                            <el-icon>
-                                <More/>
-                            </el-icon>
-                            其他
-                        </router-link>
-                    </el-menu-item>
-                </el-menu-item-group>
+                <el-menu-item index="1-1">
+                    <router-link active-class="a" to="/file/folder/0">
+                        <el-icon>
+                            <Folder/>
+                        </el-icon>
+                        全部文件
+                    </router-link>
+                </el-menu-item>
+                <el-menu-item index="1-1">
+                    <router-link active-class="a" to="/file/0">
+                        <el-icon>
+                            <Document/>
+                        </el-icon>
+                        文档
+                    </router-link>
+                </el-menu-item>
+                <el-menu-item index="1-2">
+                    <router-link active-class="a" to="/file/1">
+                        <el-icon>
+                            <PictureFilled/>
+                        </el-icon>
+                        图片
+                    </router-link>
+                </el-menu-item>
+                <el-menu-item index="1-3">
+                    <router-link active-class="a" to="/file/2">
+                        <el-icon>
+                            <VideoCameraFilled/>
+                        </el-icon>
+                        视频
+                    </router-link>
+                </el-menu-item>
+                <el-menu-item index="1-4">
+                    <router-link class="a" to="/file/3">
+                        <el-icon>
+                            <Headset/>
+                        </el-icon>
+                        音频
+                    </router-link>
+                </el-menu-item>
+                <el-menu-item index="1-5">
+                    <router-link class="a" to="/file/4">
+                        <el-icon>
+                            <More/>
+                        </el-icon>
+                        其他
+                    </router-link>
+                </el-menu-item>
             </el-sub-menu>
             <el-menu-item index="2">
-                <el-icon>
-                    <Delete/>
-                </el-icon>
-                <span>回收站</span>
+                <router-link class="a" to="/bin">
+                    <el-icon>
+                        <Delete/>
+                    </el-icon>
+                    <span>回收站</span>
+                </router-link>
             </el-menu-item>
             <el-menu-item index="3" disabled>
                 <el-icon>
                     <document/>
                 </el-icon>
-                <span>Navigator Three</span>
+                <span>TODO</span>
             </el-menu-item>
         </el-menu>
         <div class="cat-banner">
@@ -82,6 +89,7 @@
 
 <script lang="ts" setup>
 import {
+    Files,
     Folder, Document, PictureFilled, Headset, More,
     Delete, VideoCameraFilled
 } from '@element-plus/icons-vue'
@@ -121,5 +129,14 @@ const handleClose = (key: string, keyPath: string[]) => {
     to {
         margin-left: 100%;
     }
+}
+
+
+router-link {
+    text-decoration: underline;
+}
+
+router-link:hover {
+    text-decoration: none;
 }
 </style>

@@ -1,14 +1,14 @@
 <template>
     <div class="bg">
-      <div class="logo-icon">
-        <img src="@/assets/img.png" alt=""/>
-        <span>咪咪网盘</span>
-      </div>
-      <img src="@/assets/background_boy.png" alt=""/>
+        <div class="logo-icon">
+            <img src="@/assets/img.png" alt=""/>
+            <span>咪咪网盘</span>
+        </div>
+        <img src="@/assets/background_boy.png" alt=""/>
         <div class="form-box">
             <div class="banner-header">
-              <button class="active" @click="showBannerHeader(true)">登录</button>
-              <button @click="showBannerHeader(false)" >注册</button>
+                <button class="active" @click="showBannerHeader(true)">登录</button>
+                <button @click="showBannerHeader(false)">注册</button>
             </div>
             <div v-show="flag">
                 <login-form></login-form>
@@ -31,38 +31,41 @@ const change = (num: number) => {
     flag.value = num === 0
 }
 
-function showBannerHeader(bo){
-  let sibling = document.getElementsByClassName('banner-header')[0].children
-  sibling[0].classList.remove('active')
-  sibling[1].classList.remove('active')
-  if (bo){
-    sibling[0].classList.add('active')
-  }else {
-    sibling[1].classList.add('active')
-  }
-  flag.value = bo
+function showBannerHeader(bo) {
+    let sibling = document.getElementsByClassName('banner-header')[0].children
+    sibling[0].classList.remove('active')
+    sibling[1].classList.remove('active')
+    if (bo) {
+        sibling[0].classList.add('active')
+    } else {
+        sibling[1].classList.add('active')
+    }
+    flag.value = bo
 }
 
 </script>
 
 <style>
-.logo-icon{
-  position: absolute;
-  left: 10px;
-  top: 10px;
-  display: flex;
+.logo-icon {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    display: flex;
 }
-.logo-icon img{
-  width: 40px;
-  margin-right: 5px;
+
+.logo-icon img {
+    width: 40px;
+    margin-right: 5px;
 }
-.logo-icon span{
-  font-size: 28px;
-  font-weight: 700;
-  height: 45px;
-  line-height: 50px;
-  color: orange;
+
+.logo-icon span {
+    font-size: 28px;
+    font-weight: 700;
+    height: 45px;
+    line-height: 50px;
+    color: orange;
 }
+
 .bg {
     display: flex;
     justify-content: center;
@@ -78,7 +81,7 @@ function showBannerHeader(bo){
     width: 50vh;
     border-radius: 20px;
     box-shadow: 5px 3px 3px #e5e5e5;
-  padding: 2rem;
+    padding: 2rem;
 }
 
 .text {
@@ -90,26 +93,30 @@ function showBannerHeader(bo){
     margin-right: 3rem;
     color: #787eef;
 }
-.banner-header{
-  width: 100%;
-  border-bottom: 3px solid lightseagreen;
-  margin-bottom: 4%;
+
+.banner-header {
+    width: 100%;
+    border-bottom: 3px solid lightseagreen;
+    margin-bottom: 4%;
 }
-.banner-header button{
-  margin-bottom: 2px;
-  color: slategrey;
-  font-size: 22px;
-  font-weight: 700;
-  margin-left: 3%;
-  border: none;
-  background-color: rgb(227,241,255);
+
+.banner-header button {
+    margin-bottom: 2px;
+    color: slategrey;
+    font-size: 22px;
+    font-weight: 700;
+    margin-left: 3%;
+    border: none;
+    background-color: rgb(227, 241, 255);
 }
-.banner-header button:hover{
-  background-color: lightblue;
+
+.banner-header button:hover {
+    background-color: lightblue;
 }
-.banner-header button.active{
-  color: lightcoral;
-  font-size: 39px;
+
+.banner-header button.active {
+    color: lightcoral;
+    font-size: 39px;
 }
 
 

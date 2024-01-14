@@ -9,7 +9,7 @@
         <el-aside style="width: 10%;">
           <navigator/>
         </el-aside>
-        <el-main style="background-color: #fff2e3">
+        <el-main style="background-color: #fff2e3; padding: 15px 0 0 0">
           <router-view/>
         </el-main>
       </el-container>

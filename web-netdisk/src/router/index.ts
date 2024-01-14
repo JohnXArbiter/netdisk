@@ -4,26 +4,33 @@ const routes = [
     {
         path: '/login',
         name: 'login',
-        component: () => import('../views/Login.vue')
+        component: () => import('@/views/Login.vue')
     },
     {
         path: '/',
-        redirect: 'folder/0',
-        component: () => import('../views/Main.vue'),
+        redirect: 'file/folder/0',
+        component: () => import('@/views/Main.vue'),
         children: [
             {
-                path: 'folder/:folderId',
-                component: () => import('../views/fileFolder/FileFolder.vue'),
-                props: true
-            },
-            {
-                path: 'file/:fileType',
-                component: () => import('../views/file/File.vue'),
-                props: true
+                path: 'file',
+                component: () => import('@/views/fileFolder/FileFolder.vue'),
+                props: true,
+                children: [
+                    {
+                        path: 'folder/:folderId',
+                        component: () => import('@/components/files/Folder.vue'),
+                        props: true,
+                    },
+                    {
+                        path: ':fileType',
+                        component: () => import('@/components/files/File.vue'),
+                        props: true,
+                    }
+                ]
             },
             {
                 path: 'bin',
-                component: () => import('../views/bin/Bin.vue')
+                component: () => import('@/views/bin/Bin.vue')
             }
         ]
     },

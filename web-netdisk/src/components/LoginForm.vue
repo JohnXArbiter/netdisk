@@ -6,7 +6,7 @@
         <el-form-item label="密码" size="large" prop="password">
             <el-input v-model="loginForm.password"/>
         </el-form-item>
-        <el-form-item >
+        <el-form-item>
             <el-button type="primary" size="large" @click="login">登录</el-button>
         </el-form-item>
     </el-form>
@@ -26,10 +26,10 @@ let loginForm = reactive<LoginReq>({
 const login = async () => {
     const resp = await loginPost(loginForm)
     if (resp.code === 0) {
-      const baseStore = useBaseStore()
-      baseStore.updateToken(resp.data.token)
-      baseStore.updateUserInfo(resp.data.userInfo)
-       router.push('/folder/0')
+        const baseStore = useBaseStore()
+        baseStore.updateToken(resp.data.token)
+        baseStore.updateUserInfo(resp.data.userInfo)
+        router.push('/file/folder/0')
     }
 }
 
