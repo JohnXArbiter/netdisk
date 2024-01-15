@@ -117,8 +117,18 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Route{
 				{
 					Method:  http.MethodGet,
-					Path:    "/list",
+					Path:    "/list/:parentFolderId",
 					Handler: file.ListFileHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/type/:fileType",
+					Handler: file.ListFileByTypeHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/folder-list/:parentFolderId",
+					Handler: file.ListFolderHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodGet,
@@ -126,7 +136,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: file.ListFileMovableFolderHandler(serverCtx),
 				},
 				{
-					Method:  http.MethodGet,
+					Method:  http.MethodPost,
 					Path:    "/folder-move/:parentFolderId",
 					Handler: file.ListFolderMovableFolderHandler(serverCtx),
 				},
@@ -189,11 +199,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/folder",
 					Handler: file.CreateFolderHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodGet,
-					Path:    "/folder/:parentFolderId",
-					Handler: file.ListFolderHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodGet,

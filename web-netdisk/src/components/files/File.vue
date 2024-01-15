@@ -146,7 +146,7 @@ import {
     CopyDocument,
     DeleteFilled,
     Download,
-    EditPen, FolderAdd,
+    EditPen,
     FolderOpened,
     Rank,
     Select,
@@ -156,13 +156,13 @@ import {onMounted, reactive, ref} from "vue";
 import {
     copyFiles, deleteFiles,
     File as iFile,
-    Folder,
-    getFolderItems,
+    listFilesByFolderId,
     listFileMovableFolders
     , moveFiles,
-    updateFileName
-} from "./folder.ts";
+    updateFileName, listFilesByFileType
+} from "./file.ts";
 import axios, {AxiosProgressEvent} from "axios";
+import {Folder} from "./folder.ts";
 
 let forFolder = false
 let folderId: number
@@ -209,15 +209,15 @@ let fileList = reactive<iFile[]>([
     }
 ])
 
-const listFolderItems = async () => {
-    const res = await getFolderItems(folderId)
-    if (res.code === 0 && res.data) {
-        fileList = res.data.files
+const listFiles = async () => {
+    let resp
+    if (forFolder) {
+        resp = await listFilesByFolderId(folderId)
     } else {
-        ElMessage({
-            type: 'error',
-            message: res.msg,
-        })
+        resp = await listFilesByFileType(fileType)
+    }
+    if (resp.code === 0 && resp.data) {
+        Object.assign(fileList, resp.data)
     }
 }
 
@@ -258,8 +258,7 @@ let listFoldersCurrentFolderId = 0
 let fileCopyAndMoveDialog = ref(false)
 let fileCopyAndMoveFlag
 let selectedFiles: iFile[]
-let fileMovableFolderList = reactive<Folder[]>(folderList)
-let folderMovableFolderList = reactive<Folder[]>(folderList)
+let fileMovableFolderList = reactive(folderList)
 
 // files
 function fileButton(option: number) {
@@ -278,13 +277,13 @@ function fileButton(option: number) {
 
 async function renameFile() {
     await updateFileName(selectedFiles[0])
-    await listFolderItems()
+    await listFiles()
 }
 
 async function toFolder(folderId: number) {
     const resp = await listFileMovableFolders(folderId)
     if (resp && resp.code === 0) {
-        fileMovableFolderList = resp.data
+        Object.assign(fileMovableFolderList, resp.data)
         listFoldersCurrentFolderId = folderId
     }
 }
@@ -301,7 +300,7 @@ async function fileCopyAndMoveConfirm() {
 
 async function deleteFilesConfirm() {
     await deleteFiles(selectedFiles.map(file => file.id))
-    await listFolderItems()
+    await listFiles()
 }
 
 function fileSelectionChange(items: File[]) {
@@ -324,7 +323,7 @@ onMounted(() => {
         fileType = props.fileType
     }
 
-    listFolderItems()
+    listFiles()
 })
 
 </script>

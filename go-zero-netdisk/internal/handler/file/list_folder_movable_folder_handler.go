@@ -12,7 +12,7 @@ import (
 
 func ListFolderMovableFolderHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.ParentFolderIdReq
+		var req types.ListFolderMovableFolderReq
 		if err := httpx.ParsePath(r, &req); err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return

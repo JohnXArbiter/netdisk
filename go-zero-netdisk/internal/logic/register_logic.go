@@ -60,7 +60,7 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) error {
 		return errors.New("出错啦，请重试！")
 	}
 
-	key := redis.LoggedUser + strconv.FormatInt(userInfo.Id, 10)
+	key := redis.UserLogin + strconv.FormatInt(userInfo.Id, 10)
 	if err = l.svcCtx.Redis.Set(l.ctx, key, token, 7*24*time.Hour).Err(); err != nil {
 		logx.Errorf("[REDIS ERROR] Register 保存用户token失败，userid：%v %v\n", userInfo.Id, err)
 		l.svcCtx.Redis.Set(l.ctx, key, token, 7*24*time.Hour) // 重试

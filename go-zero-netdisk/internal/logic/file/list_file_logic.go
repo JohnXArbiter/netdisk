@@ -2,6 +2,9 @@ package file
 
 import (
 	"context"
+	"fmt"
+	"lc/netdisk/common/constant"
+	"lc/netdisk/model"
 
 	"lc/netdisk/internal/svc"
 	"lc/netdisk/internal/types"
@@ -23,8 +26,31 @@ func NewListFileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ListFile
 	}
 }
 
-func (l *ListFileLogic) ListFile(req *types.ListFileReq) error {
-	// todo: add your logic here and delete this line
+func (l *ListFileLogic) ListFile(req *types.ParentFolderIdReq) ([]*types.ListFileStruct, error) {
+	var (
+		userId = l.ctx.Value(constant.UserIdKey).(int64)
+		engine = l.svcCtx.Xorm
+		files  []*model.File
+		resp   []*types.ListFileStruct
+	)
+	fmt.Println("asd")
+	if err := engine.Where("folder_id = ?", req.ParentFolderId).
+		And("user_id = ?", userId).And("del_flag = ?",
+		constant.StatusFileUndeleted).Find(&files); err != nil {
+		return nil, err
+	}
+	fmt.Println(files)
 
-	return nil
+	for _, file := range files {
+		resp = append(resp, &types.ListFileStruct{
+			Id:      file.Id,
+			Name:    file.Name,
+			Url:     file.Url,
+			Size:    file.Size,
+			Status:  file.Status,
+			Updated: file.Updated.Format(constant.TimeFormat1),
+		})
+	}
+
+	return resp, nil
 }

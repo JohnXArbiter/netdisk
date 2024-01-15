@@ -1,7 +1,8 @@
 package constant
 
 const (
-	UserIdKey = "userId"
+	UserIdKey   = "userId"
+	UserNameKey = "userName"
 )
 
 const (

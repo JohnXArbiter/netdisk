@@ -5,6 +5,8 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
+var Redis *Client
+
 type (
 	Conf struct {
 		Addr     string
@@ -29,5 +31,6 @@ func Init(conf *Conf) *Client {
 	if err := client.Ping(ctx).Err(); err != nil {
 		panic("[REDIS ERROR] 连接redis失败 " + err.Error())
 	}
+	Redis = &Client{client}
 	return &Client{client}
 }

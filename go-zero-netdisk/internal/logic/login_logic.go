@@ -55,7 +55,7 @@ func (l *LoginLogic) Login(req *types.LoginReq) (*types.LoginResp, error) {
 		return nil, errors.New("出错啦，请重试！")
 	}
 
-	key := redis.LoggedUser + strconv.FormatInt(user.Id, 10)
+	key := redis.UserLogin + strconv.FormatInt(user.Id, 10)
 	if err = redisClient.Set(l.ctx, key, token, 7*24*time.Hour).Err(); err != nil {
 		logx.Errorf("[REDIS ERROR] Login 保存用户token失败，userid：%v %v\n", user.Id, err)
 		l.svcCtx.Redis.Set(l.ctx, key, token, 7*24*time.Hour) // 重试

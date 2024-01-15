@@ -30,6 +30,7 @@ type (
 		Name     string    `xorm:"varchar(255) notnull default '' 'name' comment('用户视角文件名')"`
 		Url      string    `xorm:"varchar(255) notnull default '' 'url' comment('')"`
 		Size     int64     `xorm:"bigint notnull default 0 'size' comment('文件大小')"`
+		Type     int8      `xorm:"tinyint notnull default 0 comment('类别')"`
 		Status   int8      `xorm:"tinyint notnull default 0 'status' comment('文件状态，0：待合并/未上传，1：上传成功')"`
 		IsBig    int8      `xorm:"tinyint notnull default 0 'is_big' comment('是否大文件，0：不是，1：是')"`
 		DoneAt   time.Time `xorm:"datetime 'done_at' comment('大文件合并完成时间')"`

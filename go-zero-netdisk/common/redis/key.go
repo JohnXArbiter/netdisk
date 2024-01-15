@@ -1,7 +1,7 @@
 package redis
 
 const (
-	LoggedUser = "login:user:"
+	UserLogin = "user:login:"
 
 	DownloadGetFsKey = "download:fs:fn:"
 )

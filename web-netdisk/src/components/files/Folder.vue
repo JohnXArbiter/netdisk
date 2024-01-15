@@ -153,13 +153,12 @@ import {
     EditPen, DeleteFilled, Rank, Warning
 } from '@element-plus/icons-vue'
 import {
-    getFolderItems,
     updateFolderName,
     createFolder,
     listFolderMovableFolders,
     moveFolders,
     copyFolders,
-    deleteFolders
+    deleteFolders, listFoldersByParentFolderId
 } from "./folder.ts";
 import File from './File.vue'
 
@@ -186,15 +185,10 @@ let folderList = reactive<Folder[]>([
     }
 ])
 
-const listFolderItems = async () => {
-    const res = await getFolderItems(folderId)
-    if (res.code === 0 && res.data) {
-        folderList = res.data.folders
-    } else {
-        ElMessage({
-            type: 'error',
-            message: res.msg,
-        })
+const listFolders = async () => {
+    const resp = await listFoldersByParentFolderId(folderId)
+    if (resp.code === 0 && resp.data) {
+        Object.assign(folderList, resp.data)
     }
 }
 
@@ -210,7 +204,7 @@ let folderMovableFolderList = reactive<Folder[]>(folderList)
 async function toFolder(folderId: number) {
     const resp = await listFolderMovableFolders(folderId)
     if (resp && resp.code === 0) {
-        folderMovableFolderList = resp.data
+        Object.assign(folderMovableFolderList, resp.data)
         listFoldersCurrentFolderId = folderId
     }
 }
@@ -236,12 +230,12 @@ function folderButton(option: number) {
 
 async function createFolderConfirm() {
     await createFolder(selectedFolders[0])
-    await listFolderItems()
+    await listFolders()
 }
 
 async function renameFolder() {
     await updateFolderName(selectedFolders[0])
-    await listFolderItems()
+    await listFolders()
 }
 
 async function folderCopyAndMoveConfirm() {
@@ -256,7 +250,7 @@ async function folderCopyAndMoveConfirm() {
 
 async function deleteFoldersConfirm() {
     await deleteFolders(selectedFolders.map(folder => folder.id))
-    await listFolderItems()
+    await listFolders()
 }
 
 function folderSelectionChange(items: Folder[]) {
@@ -273,7 +267,7 @@ function folderSelectionChange(items: Folder[]) {
 
 
 onMounted(() => {
-    listFolderItems()
+    listFolders()
 })
 
 

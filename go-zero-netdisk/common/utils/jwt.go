@@ -7,12 +7,7 @@ import (
 )
 
 type (
-	JwtUser struct {
-		Id   int64  `json:"id"`
-		Name string `json:"name"`
-	}
-
-	SysClaims struct {
+	NetdiskClaims struct {
 		Id   int64  `json:"id"`
 		Name string `json:"name"`
 		jwt.RegisteredClaims
@@ -23,7 +18,7 @@ var secretKey = []byte("netdisk")
 
 func GenToken(user *model.User) (string, error) {
 	var now = time.Now().Local()
-	claims := &SysClaims{
+	claims := &NetdiskClaims{
 		Id:   user.Id,
 		Name: user.Name,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -36,8 +31,8 @@ func GenToken(user *model.User) (string, error) {
 	return tokenString, err
 }
 
-func ParseToken(token string) (*SysClaims, error) {
-	var claims = new(SysClaims)
+func ParseToken(token string) (*NetdiskClaims, error) {
+	var claims = new(NetdiskClaims)
 	// ParseWithClaims是NewParser().ParseWithClaims()的快捷方式
 	// 第一个值是token ，
 	// 第二个值是我们之后需要把解析的数据放入的地方，

@@ -12,17 +12,17 @@ import (
 
 func ListFileHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.ListFileReq
+		var req types.ParentFolderIdReq
 		if err := httpx.ParsePath(r, &req); err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return
 		}
 
 		l := file.NewListFileLogic(r.Context(), svcCtx)
-		if err := l.ListFile(&req); err != nil {
+		if resp, err := l.ListFile(&req); err != nil {
 			xhttp.JsonBaseResponseCtx(r.Context(), w, err)
 		} else {
-			xhttp.JsonBaseResponseCtx(r.Context(), w, nil)
+			xhttp.JsonBaseResponseCtx(r.Context(), w, resp)
 		}
 	}
 }

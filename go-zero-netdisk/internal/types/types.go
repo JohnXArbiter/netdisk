@@ -52,10 +52,6 @@ type CheckFileResp struct {
 	Status int8  `json:"status"` // 0：文件未上传，1：文件已存在
 }
 
-type ListFileReq struct {
-	FolderId int64 `path:"folderId"`
-}
-
 type UpdateFileReq struct {
 	FileId int64  `json:"fileId"`
 	Name   string `json:"name"`
@@ -79,6 +75,10 @@ type RecoverReq struct {
 type DeleteBatchTrulyReq struct {
 	FolderIdsStruct
 	FileIdsStruct
+}
+
+type FileTypeReq struct {
+	FileType int64 `path:"fileType"`
 }
 
 type ParentFolderIdReq struct {
@@ -113,11 +113,6 @@ type ListFolderMovableFolderReq struct {
 type ListDeletedItemsResp struct {
 	Folders []*ListDeletedFolderStruct `json:"folders"`
 	Files   []*ListDeletedFileStruct   `json:"files"`
-}
-
-type ListFileFolderResp struct {
-	Folders []*ListFolderStruct `json:"folders"`
-	Files   []*ListFileStruct   `json:"files"`
 }
 
 type ListFolderStruct struct {

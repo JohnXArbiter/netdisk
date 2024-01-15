@@ -1,10 +1,6 @@
 syntax = "v1"
 
 type (
-    listFileReq {
-        folderId int64 `path:"folderId"`
-    }
-
     updateFileReq {
         fileId int64 `json:"fileId"`
         name string `json:"name"`
@@ -28,6 +24,10 @@ type (
     deleteBatchTrulyReq {
         FolderIdsStruct
         FileIdsStruct
+    }
+
+    FileTypeReq {
+        FileType int64 `path:"fileType"`
     }
 
     parentFolderIdReq {
@@ -64,11 +64,6 @@ type (
     listDeletedItemsResp {
         Folders []*ListDeletedFolderStruct `json:"folders"`
         Files []*ListDeletedFileStruct `json:"files"`
-    }
-
-    listFileFolderResp {
-        folders []*ListFolderStruct `json:"folders"`
-        files []*ListFileStruct `json:"files"`
     }
 )
 
