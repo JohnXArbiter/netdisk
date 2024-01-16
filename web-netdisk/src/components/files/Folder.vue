@@ -276,7 +276,7 @@ onMounted(() => {
 
 <style scoped>
 .button-group {
-    margin-bottom: 13px;
+    margin-bottom: 15px;
 }
 
 .file-folder-row:hover {

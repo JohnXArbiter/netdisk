@@ -6,7 +6,7 @@ type (
     }
 
     getUserDetailReq {
-        userId int64 `path:"userId"`
+        UserId int64 `path:"userId"`
     }
 
     updateAvatarReq {

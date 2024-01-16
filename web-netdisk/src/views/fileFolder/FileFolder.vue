@@ -1,7 +1,7 @@
 <template>
     <el-row>
         <el-col :span="19">
-            <router-view/>
+            <router-view :key="$route.fullPath"/>
         </el-col>
 
         <el-col :span="5">
@@ -11,11 +11,9 @@
 </template>
 
 <script lang="ts" setup>
-
-
 import FileInfo from "../../components/files/fileInfo/FileInfo.vue";
-</script>
 
+</script>
 
 <style scoped>
 

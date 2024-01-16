@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 	"errors"
+	"lc/netdisk/common/constant"
 	"lc/netdisk/model"
 
 	"lc/netdisk/internal/svc"
@@ -25,14 +26,20 @@ func NewGetDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetDeta
 	}
 }
 
-// GetDetail TODO
 func (l *GetDetailLogic) GetDetail(req *types.GetUserDetailReq) (interface{}, error) {
 	var (
-		engine = l.svcCtx.Xorm
-		user   model.User
+		loginUserId = l.ctx.Value(constant.UserIdKey).(int64)
+		engine      = l.svcCtx.Xorm
+		user        model.User
 	)
 
-	has, err := engine.ID(req.UserId).Get(&user)
+	targetUserId := req.UserId
+	if req.UserId == 0 {
+		targetUserId = loginUserId
+	}
+
+	cols := "id, name, avatar, email, signature, status"
+	has, err := engine.Select(cols).ID(targetUserId).Get(&user)
 	if err != nil {
 		return nil, err
 	}
@@ -40,6 +47,5 @@ func (l *GetDetailLogic) GetDetail(req *types.GetUserDetailReq) (interface{}, er
 	if !has {
 		return nil, errors.New("未找到该用户信息")
 	}
-
 	return user, nil
 }

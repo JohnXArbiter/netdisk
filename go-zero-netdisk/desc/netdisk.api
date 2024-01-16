@@ -67,7 +67,7 @@ service netdisk-api {
 	post /detail (updateUserDetailReq) returns ()
 	
 	@handler getDetail
-	get /detail (getUserDetailReq) returns ()
+	get /detail/:userId (getUserDetailReq) returns ()
 	
 	@handler updateAvatar
 	post /avatar (updateAvatarReq) returns ()
@@ -83,7 +83,7 @@ service netdisk-api {
 	get /list/:parentFolderId (parentFolderIdReq) returns ([]*ListFileStruct)
 	
 	@handler listFileByType
-	get /type/:fileType (parentFolderIdReq) returns ([]*ListFileStruct)
+	get /type/:fileType (FileTypeReq) returns ([]*ListFileStruct)
 	
 	@handler listFolder
 	get /folder-list/:parentFolderId (parentFolderIdReq) returns ([]*ListFolderStruct)

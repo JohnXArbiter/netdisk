@@ -2,7 +2,6 @@ package file
 
 import (
 	"context"
-	"fmt"
 	"lc/netdisk/common/constant"
 	"lc/netdisk/model"
 
@@ -33,13 +32,12 @@ func (l *ListFileLogic) ListFile(req *types.ParentFolderIdReq) ([]*types.ListFil
 		files  []*model.File
 		resp   []*types.ListFileStruct
 	)
-	fmt.Println("asd")
+
 	if err := engine.Where("folder_id = ?", req.ParentFolderId).
 		And("user_id = ?", userId).And("del_flag = ?",
 		constant.StatusFileUndeleted).Find(&files); err != nil {
 		return nil, err
 	}
-	fmt.Println(files)
 
 	for _, file := range files {
 		resp = append(resp, &types.ListFileStruct{

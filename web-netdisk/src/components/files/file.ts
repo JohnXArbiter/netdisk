@@ -15,7 +15,7 @@ export function listFilesByFolderId(parentFolderId: number) {
 }
 
 export function listFilesByFileType(fileType: number) {
-    return api.get<any, Resp<File[]>>(`/file/list/${fileType}`)
+    return api.get<any, Resp<File[]>>(`/file/type/${fileType}`)
 }
 
 export function updateFileName(file: File) {

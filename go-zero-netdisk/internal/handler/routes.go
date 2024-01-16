@@ -98,7 +98,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodGet,
-					Path:    "/detail",
+					Path:    "/detail/:userId",
 					Handler: user.GetDetailHandler(serverCtx),
 				},
 				{

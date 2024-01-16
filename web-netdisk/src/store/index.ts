@@ -29,9 +29,10 @@ export const useBaseStore = defineStore('base', () => {
 
     async function getUserInfo() {
         if (user === null) {
-            const resp = await api.get<any, Resp<UserInfo>>('/detail')
+            const resp = await api.get<any, Resp<UserInfo>>(`/user/detail/0`)
             if (resp.code === 0) {
-                user = resp.data
+                Object.assign(user, resp.data)
+                // user = resp.data
             }
         }
         return user
