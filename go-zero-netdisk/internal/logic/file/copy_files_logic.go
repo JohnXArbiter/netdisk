@@ -36,14 +36,16 @@ func (l *CopyFilesLogic) CopyFiles(req *types.CopyFilesReq) error {
 		files    []*model.File
 	)
 
-	has, err := engine.ID(folderId).And("user_id = ?", userId).Get(&model.Folder{})
-	if err != nil {
-		return errors.New("发生错误！" + err.Error())
-	} else if !has {
-		return errors.New("该目录不存在")
+	if folderId != 0 {
+		has, err := engine.ID(folderId).And("user_id = ?", userId).Get(&model.Folder{})
+		if err != nil {
+			return errors.New("发生错误！" + err.Error())
+		} else if !has {
+			return errors.New("该目录不存在")
+		}
 	}
 
-	if err = engine.In("id", req.FileIds).Find(&files); err != nil {
+	if err := engine.In("id", req.FileIds).Find(&files); err != nil {
 		return errors.New("发生错误！" + err.Error())
 	}
 

@@ -38,7 +38,11 @@
                     </template>
                 </div>
 
-                <el-table ref="fileTableRef"
+                <el-empty v-if="fileList == [] || fileList.length==0"
+                          description="文件列表为空，上传你的第一个文件吧！😺"/>
+
+                <el-table v-if="fileList != [] && fileList.length!=0"
+                          ref="fileTableRef"
                           :data="fileList" style="width: 100%"
                           @selection-change="fileSelectionChange"
                 >
@@ -89,7 +93,7 @@
         <template #footer>
       <span class="dialog-footer">
         <el-button @click="fileDialogVisible[1] = false">取消</el-button>
-        <el-button type="primary" @click="renameFile()">
+        <el-button type="primary" @click="renameFile(1)">
           确定
         </el-button>
       </span>
@@ -141,7 +145,7 @@
 </template>
 
 <script lang="ts" setup>
-import {ElTable, UploadFile, UploadFiles, UploadInstance} from "element-plus";
+import {ElMessage, ElTable, UploadFile, UploadFiles, UploadInstance} from "element-plus";
 import {
     CopyDocument,
     DeleteFilled,
@@ -163,6 +167,7 @@ import {
 } from "./file.ts";
 import axios, {AxiosProgressEvent} from "axios";
 import {Folder} from "./folder.ts";
+import {codeOk, msgOk, promptSuccess} from "../../utils/apis/base.ts";
 
 let forFolder = false
 let folderId: number
@@ -247,6 +252,7 @@ function asd(e: Event) {
     }
 }
 
+console.log(fileList != [], fileList.length != 0)
 // const uploadProcedure = (options: UploadRequestOptions) => {
 //     console.log(options.files)
 //     options.files
@@ -275,14 +281,18 @@ function fileButton(option: number) {
     fileDialogVisible[option] = true
 }
 
-async function renameFile() {
-    await updateFileName(selectedFiles[0])
+async function renameFile(option: number) {
+    const resp = await updateFileName(selectedFiles[0])
+    if (resp && resp.code === codeOk) {
+        promptSuccess()
+    }
     await listFiles()
+    fileDialogVisible[option] = false
 }
 
 async function toFolder(folderId: number) {
     const resp = await listFileMovableFolders(folderId)
-    if (resp && resp.code === 0) {
+    if (resp && resp.code === codeOk) {
         Object.assign(fileMovableFolderList, resp.data)
         listFoldersCurrentFolderId = folderId
     }
@@ -290,12 +300,17 @@ async function toFolder(folderId: number) {
 
 async function fileCopyAndMoveConfirm() {
     const fileIds = selectedFiles.map(file => file.id);
+    let resp
     if (fileCopyAndMoveFlag === 2) {
-        await moveFiles(listFoldersCurrentFolderId, fileIds)
+        resp = await moveFiles(listFoldersCurrentFolderId, fileIds)
     } else if (fileCopyAndMoveFlag === 3) {
-        await copyFiles(listFoldersCurrentFolderId, fileIds)
+        resp = await copyFiles(listFoldersCurrentFolderId, fileIds)
     }
-    listFoldersCurrentFolderId = 0
+    if (resp && resp.code == codeOk) {
+        promptSuccess()
+        fileCopyAndMoveDialog.value = false
+        listFoldersCurrentFolderId = 0
+    }
 }
 
 async function deleteFilesConfirm() {

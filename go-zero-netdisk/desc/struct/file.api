@@ -1,9 +1,9 @@
 syntax = "v1"
 
 type (
-    updateFileReq {
-        fileId int64 `json:"fileId"`
-        name string `json:"name"`
+    UpdateFileReq {
+        Id int64 `json:"id"`
+        Name string `json:"name"`
     }
 
     CopyFilesReq {

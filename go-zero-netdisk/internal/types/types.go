@@ -53,8 +53,8 @@ type CheckFileResp struct {
 }
 
 type UpdateFileReq struct {
-	FileId int64  `json:"fileId"`
-	Name   string `json:"name"`
+	Id   int64  `json:"id"`
+	Name string `json:"name"`
 }
 
 type CopyFilesReq struct {

@@ -33,7 +33,7 @@ func (l *UpdateFileLogic) UpdateFile(req *types.UpdateFileReq) error {
 	)
 
 	// TODO: 文件格式
-	if affected, err := engine.ID(req.FileId).And("user_id = ?", userId).
+	if affected, err := engine.ID(req.Id).And("user_id = ?", userId).
 		Update(&model.File{Name: req.Name}); err != nil {
 		return err
 	} else if affected != 1 {

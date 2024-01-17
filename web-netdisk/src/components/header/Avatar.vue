@@ -27,15 +27,17 @@
 <script lang="ts" setup>
 import {onMounted} from "vue";
 import {useBaseStore, UserInfo} from "../../store";
+
 const url = "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
 
 let user: UserInfo | null = null
 
-const showUserInfo = async () => {
+async function showUserInfo() {
     if (!user) {
         user = await useBaseStore().getUserInfo()
     }
 }
+
 onMounted(() => {
     showUserInfo()
 })
