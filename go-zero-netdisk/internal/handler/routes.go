@@ -137,7 +137,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodPost,
-					Path:    "/folder-move/:parentFolderId",
+					Path:    "/folder-move",
 					Handler: file.ListFolderMovableFolderHandler(serverCtx),
 				},
 				{

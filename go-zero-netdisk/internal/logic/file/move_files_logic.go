@@ -3,6 +3,7 @@ package file
 import (
 	"context"
 	"errors"
+	"fmt"
 	"lc/netdisk/common/constant"
 	"lc/netdisk/model"
 
@@ -44,8 +45,11 @@ func (l *MoveFilesLogic) MoveFiles(req *types.MoveFilesReq) error {
 
 	file := &model.File{FolderId: folderId}
 	affected, err := engine.In("id", req.FileIds).Update(file)
-	if err != nil || affected != int64(len(req.FileIds)) {
+	fmt.Println(affected, err)
+	if err != nil {
 		return errors.New("移动出错！" + err.Error())
+	} else if affected != int64(len(req.FileIds)) {
+		return errors.New("移动出错！")
 	}
 	return nil
 }

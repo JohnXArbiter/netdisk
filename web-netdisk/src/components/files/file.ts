@@ -26,19 +26,19 @@ export function updateFileName(file: File) {
 }
 
 export function listFileMovableFolders(folderId: number) {
-    return api.get<any, Resp<{ id: number, name: string }[]>>(`/move/${folderId}`)
+    return api.get<any, Resp<{ id: number, name: string }[]>>(`/file/move/${folderId}`)
 }
 
 export function moveFiles(parentFolderId: number, fileIds: number[]) {
-    return api.put<any, Resp<any>>('/move', {
-        'parentFolderId': parentFolderId,
+    return api.put<any, Resp<any>>('/file/move', {
+        'folderId': parentFolderId,
         'fileIds': fileIds
     })
 }
 
 export function copyFiles(parentFolderId: number, fileIds: number[]) {
-    return api.post<any, Resp<any>>('/copy', {
-        'parentFolderId': parentFolderId,
+    return api.post<any, Resp<any>>('/file/copy', {
+        'folderId': parentFolderId,
         'fileIds': fileIds
     })
 }

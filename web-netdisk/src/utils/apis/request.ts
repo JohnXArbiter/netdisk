@@ -80,6 +80,7 @@ api.interceptors.response.use(
             case 401:
                 // 401 一般是token过期
                 msg = 'TOKEN过期'
+                jumpLogin()
                 break
             case 403:
                 msg = '无权访问'

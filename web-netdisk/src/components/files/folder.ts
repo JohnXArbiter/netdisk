@@ -27,7 +27,7 @@ export function updateFolderName(folder: Folder) {
 }
 
 export function listFolderMovableFolders(folderId: number) {
-    return api.get<any, Resp<{ id: number, name: string }[]>>(`/folder-move/${folderId}`)
+    return api.post<any, Resp<{ id: number, name: string }[]>>(`/file/folder-move`)
 }
 
 export function moveFolders(parentFolderId: number, folderIds: number[]) {

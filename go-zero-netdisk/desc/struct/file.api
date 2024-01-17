@@ -54,7 +54,7 @@ type (
         FolderIdsStruct
     }
 
-    listFolderMovableFolderReq {
+    ListFolderMovableFolderReq {
         parentFolderId int64 `json:"parentFolderId"`
         SelectedFolderIds []int64 `json:"selectedFolderIds"`
     }

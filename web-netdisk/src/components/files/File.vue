@@ -141,7 +141,7 @@
 </template>
 
 <script lang="ts" setup>
-import {ElMessage, ElTable, UploadFile, UploadFiles, UploadInstance} from "element-plus";
+import {ElTable, UploadFile, UploadFiles, UploadInstance} from "element-plus";
 import {
     CopyDocument,
     DeleteFilled,
