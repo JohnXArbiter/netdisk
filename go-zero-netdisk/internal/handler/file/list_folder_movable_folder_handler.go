@@ -1,6 +1,7 @@
 package file
 
 import (
+	"fmt"
 	xhttp "github.com/zeromicro/x/http"
 	"net/http"
 
@@ -13,11 +14,11 @@ import (
 func ListFolderMovableFolderHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req types.ListFolderMovableFolderReq
-		if err := httpx.ParsePath(r, &req); err != nil {
+		if err := httpx.ParseJsonBody(r, &req); err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return
 		}
-
+		fmt.Println(req)
 		l := file.NewListFolderMovableFolderLogic(r.Context(), svcCtx)
 		if resp, err := l.ListFolderMovableFolder(&req); err != nil {
 			xhttp.JsonBaseResponseCtx(r.Context(), w, err)

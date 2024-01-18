@@ -52,7 +52,11 @@ type CheckFileResp struct {
 	Status int8  `json:"status"` // 0：文件未上传，1：文件已存在
 }
 
-type UpdateFileReq struct {
+type IdsReq struct {
+	Ids []int64 `json:"ids"`
+}
+
+type UpdateNameReq struct {
 	Id   int64  `json:"id"`
 	Name string `json:"name"`
 }
@@ -88,11 +92,6 @@ type ParentFolderIdReq struct {
 type CreateFolderReq struct {
 	Name           string `json:"name"`
 	ParentFolderId int64  `json:"parentFolderId"`
-}
-
-type UpdateFolderReq struct {
-	FolderId int64  `json:"folderId"`
-	Name     string `json:"name"`
 }
 
 type MoveFilesReq struct {

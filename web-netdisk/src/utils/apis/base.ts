@@ -1,6 +1,6 @@
 import {ElMessage} from "element-plus";
 
-export interface Resp<T> {
+ interface Resp<T> {
     code: number
     msg: string
     data: T | []
@@ -15,6 +15,10 @@ function promptSuccess() {
         type: "success",
         message: msgOk,
     })
+}
+
+export type {
+    Resp
 }
 
 export {

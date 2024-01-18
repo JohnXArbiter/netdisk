@@ -27,18 +27,20 @@ func NewCreateFolderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Crea
 
 func (l *CreateFolderLogic) CreateFolder(req *types.CreateFolderReq) error {
 	var (
-		userId   = l.ctx.Value(constant.UserIdKey).(int64)
-		engine   = l.svcCtx.Xorm
-		parentId = req.ParentFolderId
+		userId         = l.ctx.Value(constant.UserIdKey).(int64)
+		engine         = l.svcCtx.Xorm
+		parentFolderId = req.ParentFolderId
 	)
 
-	if exist, err := engine.ID(parentId).And("user_id = ?", userId).
-		Exist(&model.Folder{}); err != nil || !exist {
-		return errors.New("发生错误！")
+	if parentFolderId != 0 {
+		if exist, err := engine.ID(parentFolderId).And("user_id = ?", userId).
+			Exist(&model.Folder{}); err != nil || !exist {
+			return errors.New("发生错误！")
+		}
 	}
 
 	newFolder := &model.Folder{
-		ParentId: parentId,
+		ParentId: parentFolderId,
 		Name:     req.Name,
 		UserId:   userId,
 		DelFlag:  constant.StatusFolderUndeleted,

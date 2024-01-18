@@ -27,19 +27,21 @@ func NewDeleteFoldersLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Del
 	}
 }
 
-func (l *DeleteFoldersLogic) DeleteFolders(req *types.FolderIdsStruct) error {
+func (l *DeleteFoldersLogic) DeleteFolders(req *types.IdsReq) error {
 	var (
 		userId = l.ctx.Value(constant.UserIdKey).(int64)
 		engine = l.svcCtx.Xorm
 	)
 
-	cond := &model.Folder{
+	bean := &model.Folder{
 		DelFlag: constant.StatusFileDeleted,
 		DelTime: time.Now().Local().Unix(),
 	}
-	if affected, err := engine.In("id", req.FolderIds).And("user_id = ?", userId).
-		Update(cond); err != nil || affected != int64(len(req.FolderIds)) {
+	if affected, err := engine.In("id", req.Ids).
+		And("user_id = ?", userId).Update(bean); err != nil {
 		return errors.New("删除过程出错！" + err.Error())
+	} else if affected != int64(len(req.Ids)) {
+		return errors.New("无法删除，可能信息有误？😵‍💫")
 	}
 	return nil
 }

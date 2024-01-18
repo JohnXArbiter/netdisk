@@ -12,22 +12,25 @@ export function listFoldersByParentFolderId(parentFolderId: number) {
     return api.get<any, Resp<Folder[]>>(`/file/folder-list/${parentFolderId}`)
 }
 
-export function createFolder(folder: Folder) {
-    return api.post<any, Resp<any>>('/folder', {
-        'id': folder.id,
-        'name': folder.name
+export function createFolder(parentFolderId: number, name: string) {
+    return api.post<any, Resp<any>>('/file/folder', {
+        'parentFolderId': parentFolderId,
+        'name': name
     })
 }
 
 export function updateFolderName(folder: Folder) {
-    return api.put<any, Resp<any>>('/folder', {
+    return api.put<any, Resp<any>>('/file/folder', {
         'id': folder.id,
         'name': folder.name
     })
 }
 
-export function listFolderMovableFolders(folderId: number) {
-    return api.post<any, Resp<{ id: number, name: string }[]>>(`/file/folder-move`)
+export function listFolderMovableFolders(parentFolderId: number, selectedFolderIds: number[]) {
+    return api.post<any, Resp<{ id: number, name: string }[]>>(`/file/folder-move`, {
+        'parentFolderId': parentFolderId,
+        'selectedFolderIds': selectedFolderIds
+    })
 }
 
 export function moveFolders(parentFolderId: number, folderIds: number[]) {
@@ -45,5 +48,5 @@ export function copyFolders(parentFolderId: number, folderIds: number[]) {
 }
 
 export function deleteFolders(ids: number[]) {
-    return api.post<any, Resp<any>>('/folder', {'id': ids})
+    return api.put<any, Resp<any>>('/file/folder-delete', {'ids': ids})
 }

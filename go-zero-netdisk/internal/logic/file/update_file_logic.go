@@ -26,7 +26,7 @@ func NewUpdateFileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Update
 	}
 }
 
-func (l *UpdateFileLogic) UpdateFile(req *types.UpdateFileReq) error {
+func (l *UpdateFileLogic) UpdateFile(req *types.UpdateNameReq) error {
 	var (
 		userId = l.ctx.Value(constant.UserIdKey).(int64)
 		engine = l.svcCtx.Xorm

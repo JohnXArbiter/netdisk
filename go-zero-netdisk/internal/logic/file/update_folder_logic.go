@@ -26,13 +26,13 @@ func NewUpdateFolderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upda
 	}
 }
 
-func (l *UpdateFolderLogic) UpdateFolder(req *types.UpdateFolderReq) error {
+func (l *UpdateFolderLogic) UpdateFolder(req *types.UpdateNameReq) error {
 	var (
 		userId = l.ctx.Value(constant.UserIdKey).(int64)
 		engine = l.svcCtx.Xorm
 	)
 
-	if affected, err := engine.ID(req.FolderId).And("user_id = ?", userId).
+	if affected, err := engine.ID(req.Id).And("user_id = ?", userId).
 		Update(&model.Folder{Name: req.Name}); err != nil {
 		return err
 	} else if affected != 1 {

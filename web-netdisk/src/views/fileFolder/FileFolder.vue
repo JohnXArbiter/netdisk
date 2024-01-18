@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts" setup>
-import FileInfo from "../../components/files/fileInfo/FileInfo.vue";
+import FileInfo from "../../components/files/info/FileInfo.vue";
 
 </script>
 

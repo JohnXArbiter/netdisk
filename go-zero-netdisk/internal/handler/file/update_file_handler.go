@@ -12,7 +12,7 @@ import (
 
 func UpdateFileHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.UpdateFileReq
+		var req types.UpdateNameReq
 		if err := httpx.ParseJsonBody(r, &req); err != nil {
 			xhttp.JsonBaseResponseCtx(r.Context(), w, err)
 			return

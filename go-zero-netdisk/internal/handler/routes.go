@@ -166,22 +166,22 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: file.CopyFilesHandler(serverCtx),
 				},
 				{
-					Method:  http.MethodDelete,
-					Path:    "/",
+					Method:  http.MethodPut,
+					Path:    "/delete",
 					Handler: file.DeleteFilesHandler(serverCtx),
 				},
 				{
-					Method:  http.MethodDelete,
+					Method:  http.MethodPost,
 					Path:    "/delete",
 					Handler: file.DeleteFilesTrulyHandler(serverCtx),
 				},
 				{
-					Method:  http.MethodDelete,
-					Path:    "/folder",
+					Method:  http.MethodPut,
+					Path:    "/folder-delete",
 					Handler: file.DeleteFoldersHandler(serverCtx),
 				},
 				{
-					Method:  http.MethodDelete,
+					Method:  http.MethodPost,
 					Path:    "/folder-delete",
 					Handler: file.DeleteFoldersTrulyHandler(serverCtx),
 				},
