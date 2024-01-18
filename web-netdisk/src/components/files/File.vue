@@ -158,10 +158,10 @@ import {
 } from "@element-plus/icons-vue";
 import {onMounted, reactive, ref} from "vue";
 import {
-  copyFiles, deleteFiles,
-  listFilesByFolderId,
-  listFileMovableFolders, moveFiles,
-  updateFileName, listFilesByFileType
+    copyFiles, deleteFiles,
+    listFilesByFolderId,
+    listFileMovableFolders, moveFiles,
+    updateFileName, listFilesByFileType
 } from "./file.ts";
 import type {File} from '/file.ts'
 import axios, {AxiosProgressEvent} from "axios";
@@ -178,53 +178,53 @@ let fileButtonsState = ref(0)
 const fileTableRef = ref<InstanceType<typeof ElTable>>()
 
 let folderList = reactive<{ arr: Folder[] }>({
-  arr: [{
-    id: 111,
-    updated: '2016-05-03',
-    name: 'Jerry',
-  },
-    {
-      id: 222,
-      updated: '2016-05-02',
-      name: 'Tom',
+    arr: [{
+        id: 111,
+        updated: '2016-05-03',
+        name: 'Jerry',
     },
-    {
-      id: 333,
-      updated: '2016-05-04',
-      name: 'Sam',
-    }
-  ]
+        {
+            id: 222,
+            updated: '2016-05-02',
+            name: 'Tom',
+        },
+        {
+            id: 333,
+            updated: '2016-05-04',
+            name: 'Sam',
+        }
+    ]
 })
 let fileList = reactive<{ arr: File[] }>({
-  arr: [
-    {
-      id: 4444,
-      name: '43',
-      size: 43,
-      url: 'qwe',
-      status: 2,
-      updated: '2016-05-07'
-    },
-    {
-      id: 44,
-      name: 'adsasd',
-      size: 423,
-      url: 'qwe',
-      status: 2,
-      updated: '2016-05-07'
-    }
-  ]
+    arr: [
+        {
+            id: 4444,
+            name: '43',
+            size: 43,
+            url: 'qwe',
+            status: 2,
+            updated: '2016-05-07'
+        },
+        {
+            id: 44,
+            name: 'adsasd',
+            size: 423,
+            url: 'qwe',
+            status: 2,
+            updated: '2016-05-07'
+        }
+    ]
 })
 
 const listFiles = async () => {
-    let resp:Resp<any>
+    let resp: Resp<any>
     if (forFolder) {
         resp = await listFilesByFolderId(folderId)
     } else {
         resp = await listFilesByFileType(fileType)
     }
     if (resp.code === 0 && resp.data) {
-      fileList.arr = resp.data
+        fileList.arr = resp.data
     }
 }
 
@@ -266,7 +266,7 @@ let listFoldersCurrentFolderId = 0
 let fileCopyAndMoveDialog = ref(false)
 let fileCopyAndMoveFlag: number
 let selectedFiles: File[]
-let fileMovableFolderList = reactive<{arr: Folder[]}>({arr: folderList.arr})
+let fileMovableFolderList = reactive<{ arr: Folder[] }>({arr: folderList.arr})
 
 // 对话框
 function fileButton(option: number) {
@@ -275,8 +275,8 @@ function fileButton(option: number) {
         return
     }
     if (option === 1) {
-      Object.assign(renamingFile,selectedFiles[0])
-    }else if (option === 2 || option === 3) {
+        Object.assign(renamingFile, selectedFiles[0])
+    } else if (option === 2 || option === 3) {
         toFolder(0)
         fileCopyAndMoveDialog.value = true
         fileCopyAndMoveFlag = option
@@ -286,17 +286,17 @@ function fileButton(option: number) {
 }
 
 async function renameFile(option: number) {
-  const resp = await updateFileName(renamingFile)
-  if (resp && resp.code === codeOk) {
-    for (const idx in folderList.arr) {
-      if (fileList.arr[idx].id == renamingFile.id) {
-        fileList.arr[idx].name = renamingFile.name
-        break
-      }
+    const resp = await updateFileName(renamingFile)
+    if (resp && resp.code === codeOk) {
+        for (const idx in folderList.arr) {
+            if (fileList.arr[idx].id == renamingFile.id) {
+                fileList.arr[idx].name = renamingFile.name
+                break
+            }
+        }
+        promptSuccess()
+        fileDialogVisible[option] = false
     }
-    promptSuccess()
-    fileDialogVisible[option] = false
-  }
 }
 
 async function toFolder(folderId: number) {
