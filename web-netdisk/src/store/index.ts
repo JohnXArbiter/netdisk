@@ -13,7 +13,7 @@ export interface UserInfo {
 
 export const useBaseStore = defineStore('base', () => {
     let token = localStorage.getItem("token") || ''
-    let user: UserInfo | null = null
+    let user: { data: UserInfo } = {data: {id: 0, name: '', avatar: '', email: '', signature: '', status: 0}}
 
     function updateToken(tokenStr: string) {
         token = tokenStr
@@ -28,18 +28,17 @@ export const useBaseStore = defineStore('base', () => {
     }
 
     async function getUserInfo() {
-        if (user === null) {
+        if (user.data.id == 0) {
             const resp = await api.get<any, Resp<UserInfo>>(`/user/detail/0`)
             if (resp.code === 0) {
-                Object.assign(user, resp.data)
-                // user = resp.data
+                user.data = resp.data
             }
         }
         return user
     }
 
     function updateUserInfo(userInfo: UserInfo) {
-        user = userInfo
+        user.data = userInfo
     }
 
     return {

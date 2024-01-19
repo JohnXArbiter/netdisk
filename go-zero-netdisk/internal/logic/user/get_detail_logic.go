@@ -26,15 +26,15 @@ func NewGetDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetDeta
 	}
 }
 
-func (l *GetDetailLogic) GetDetail(req *types.GetUserDetailReq) (interface{}, error) {
+func (l *GetDetailLogic) GetDetail(req *types.IdPathReq) (interface{}, error) {
 	var (
 		loginUserId = l.ctx.Value(constant.UserIdKey).(int64)
 		engine      = l.svcCtx.Xorm
 		user        model.User
 	)
 
-	targetUserId := req.UserId
-	if req.UserId == 0 {
+	targetUserId := req.Id
+	if req.Id == 0 {
 		targetUserId = loginUserId
 	}
 

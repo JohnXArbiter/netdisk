@@ -26,7 +26,7 @@ export function updateFileName(file: File) {
 }
 
 export function listFileMovableFolders(folderId: number) {
-    return api.get<any, Resp<{ id: number, name: string }[]>>(`/file/move/${folderId}`)
+    return api.get<any, Resp<{ id: number, name: string, updated: string | '' }[]>>(`/file/move/${folderId}`)
 }
 
 export function moveFiles(parentFolderId: number, fileIds: number[]) {

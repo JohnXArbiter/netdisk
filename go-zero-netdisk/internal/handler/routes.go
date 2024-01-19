@@ -98,7 +98,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodGet,
-					Path:    "/detail/:userId",
+					Path:    "/detail/:id",
 					Handler: user.GetDetailHandler(serverCtx),
 				},
 				{
@@ -115,6 +115,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		rest.WithMiddlewares(
 			[]rest.Middleware{serverCtx.Auth},
 			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/:id",
+					Handler: file.GetFileDetailHandler(serverCtx),
+				},
 				{
 					Method:  http.MethodGet,
 					Path:    "/list/:parentFolderId",

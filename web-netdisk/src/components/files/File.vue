@@ -2,23 +2,18 @@
     <el-row>
         <el-col :span="24">
             <div class="file-table">
-                <el-upload v-if="fileButtonsState === 0"
-                           ref="uploadFiless"
-                           class="upload-demo"
-                           action="actionUrl"
-                           multiple
-                           :limit="20"
-                           :auto-upload="false"
-                           :on-change="change"
-                           :http-request="a"
-                >
-                    <template #trigger>
-                        <el-button type="primary" :icon="Select" round>选择文件</el-button>
-                    </template>
-                    <el-button type="success" :icon="Upload" round @click="">
-                        确认上传
-                    </el-button>
-                </el-upload>
+              <el-upload v-if="fileButtonsState === 0"
+                         ref="uploadFiless"
+                         class="upload-demo"
+                         action="actionUrl"
+                         multiple
+                         :limit="20"
+                         :auto-upload="false"
+                         :on-change="change"
+                         :http-request="a"
+              >
+                <el-button type="primary" :icon="Upload" round>选择上传</el-button>
+              </el-upload>
 
                 <div class="button-group">
                     <template v-if="fileButtonsState !== 0">
@@ -38,12 +33,12 @@
                     </template>
                 </div>
 
-                <el-empty v-if="!fileList.arr || fileList.arr.length==0"
+                <el-empty v-if="!fileList.data || fileList.data.length==0"
                           description="文件列表为空，上传你的第一个文件吧！😺"/>
 
-                <el-table v-if="fileList && fileList.arr.length!=0"
+                <el-table v-if="fileList && fileList.data.length!=0"
                           ref="fileTableRef"
-                          :data="fileList.arr" style="width: 100%"
+                          :data="fileList.data" style="width: 100%"
                           @selection-change="fileSelectionChange"
                 >
                     <el-table-column type="selection" width="55"/>
@@ -101,7 +96,7 @@
     </el-dialog>
 
     <el-dialog v-model="fileCopyAndMoveDialog" title="选择文件夹">
-        <el-table :data="fileMovableFolderList.arr" highlight-current-row>
+        <el-table :data="fileMovableFolderList.data" highlight-current-row>
             <el-table-column label="" width="180">
                 <template #default="scope">
                     <div style="display: flex; align-items: center">
@@ -164,21 +159,20 @@ import {
     updateFileName, listFilesByFileType
 } from "./file.ts";
 import type {File} from '/file.ts'
-import axios, {AxiosProgressEvent} from "axios";
 import type {Folder} from "./folder.ts";
 import {codeOk, promptSuccess, Resp} from "../../utils/apis/base.ts";
 
 let forFolder = false
 let folderId: number
 let fileType: number
-const props = defineProps(['fileType', 'folderId']);
-
+const props = defineProps(['fileType', 'folderId'])
+const emits = defineEmits(['selectedIds'])
 
 let fileButtonsState = ref(0)
 const fileTableRef = ref<InstanceType<typeof ElTable>>()
 
-let folderList = reactive<{ arr: Folder[] }>({
-    arr: [{
+let folderList = reactive<{ data: Folder[] }>({
+    data: [{
         id: 111,
         updated: '2016-05-03',
         name: 'Jerry',
@@ -195,8 +189,8 @@ let folderList = reactive<{ arr: Folder[] }>({
         }
     ]
 })
-let fileList = reactive<{ arr: File[] }>({
-    arr: [
+let fileList = reactive<{ data: File[] }>({
+    data: [
         {
             id: 4444,
             name: '43',
@@ -224,7 +218,7 @@ const listFiles = async () => {
         resp = await listFilesByFileType(fileType)
     }
     if (resp.code === 0 && resp.data) {
-        fileList.arr = resp.data
+        fileList.data = resp.data
     }
 }
 
@@ -236,23 +230,23 @@ function change(uploadFile: UploadFile, uploadFiles: UploadFiles) {
     console.log("333", uploadFiles)
 }
 
-function asd(e: Event) {
-    const target = e.target
-    if (target instanceof HTMLInputElement) {
-        const file = target.files
-        if (file) {
-            const form = new FormData()
-            for (let i = 1; i < file.length; i++) {
-                form.append("file", file[i])
-            }
-            axios.post("/", form, {
-                onUploadProgress: (progressEvent: AxiosProgressEvent) => {
-                    Math.round((progressEvent.loaded / (progressEvent.total as number) * 100))
-                }
-            })
-        }
-    }
-}
+// function asd(e: Event) {
+//     const target = e.target
+//     if (target instanceof HTMLInputElement) {
+//         const file = target.files
+//         if (file) {
+//             const form = new FormData()
+//             for (let i = 1; i < file.length; i++) {
+//                 form.append("file", file[i])
+//             }
+//             axios.post("/", form, {
+//                 onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+//                     Math.round((progressEvent.loaded / (progressEvent.total as number) * 100))
+//                 }
+//             })
+//         }
+//     }
+// }
 
 // const uploadProcedure = (options: UploadRequestOptions) => {
 //     console.log(options.files)
@@ -266,7 +260,7 @@ let listFoldersCurrentFolderId = 0
 let fileCopyAndMoveDialog = ref(false)
 let fileCopyAndMoveFlag: number
 let selectedFiles: File[]
-let fileMovableFolderList = reactive<{ arr: Folder[] }>({arr: folderList.arr})
+let fileMovableFolderList = reactive<{ data: Folder[] }>({data: folderList.data})
 
 // 对话框
 function fileButton(option: number) {
@@ -288,9 +282,9 @@ function fileButton(option: number) {
 async function renameFile(option: number) {
     const resp = await updateFileName(renamingFile)
     if (resp && resp.code === codeOk) {
-        for (const idx in folderList.arr) {
-            if (fileList.arr[idx].id == renamingFile.id) {
-                fileList.arr[idx].name = renamingFile.name
+        for (const idx in folderList.data) {
+            if (fileList.data[idx].id == renamingFile.id) {
+                fileList.data[idx].name = renamingFile.name
                 break
             }
         }
@@ -302,7 +296,7 @@ async function renameFile(option: number) {
 async function toFolder(folderId: number) {
     const resp = await listFileMovableFolders(folderId)
     if (resp && resp.code === codeOk) {
-        fileMovableFolderList.arr = resp.data
+        fileMovableFolderList.data = resp.data
         listFoldersCurrentFolderId = folderId
     }
 }
@@ -312,7 +306,7 @@ async function fileCopyAndMoveConfirm() {
     let resp: Resp<any>
     if (fileCopyAndMoveFlag === 2) {
         resp = await moveFiles(listFoldersCurrentFolderId, fileIds)
-    } else if (fileCopyAndMoveFlag === 3) {
+    } else {
         resp = await copyFiles(listFoldersCurrentFolderId, fileIds)
     }
     if (resp && resp.code == codeOk) {
@@ -337,6 +331,8 @@ function fileSelectionChange(items: File[]) {
             fileButtonsState.value = 2
         }
     }
+    console.log(111, items, items.map(item => item.id))
+    emits('selectedIds', items.map(item => item.id), true)
 }
 
 onMounted(() => {

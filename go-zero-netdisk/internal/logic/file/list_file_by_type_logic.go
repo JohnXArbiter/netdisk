@@ -25,12 +25,12 @@ func NewListFileByTypeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Li
 	}
 }
 
-func (l *ListFileByTypeLogic) ListFileByType(req *types.FileTypeReq) ([]*types.ListFileStruct, error) {
+func (l *ListFileByTypeLogic) ListFileByType(req *types.FileTypeReq) ([]*types.FileResp, error) {
 	var (
 		userId = l.ctx.Value(constant.UserIdKey).(int64)
 		engine = l.svcCtx.Xorm
 		files  []*model.File
-		resp   []*types.ListFileStruct
+		resp   []*types.FileResp
 	)
 
 	if err := engine.Where("type = ?", req.FileType).
@@ -40,7 +40,7 @@ func (l *ListFileByTypeLogic) ListFileByType(req *types.FileTypeReq) ([]*types.L
 	}
 
 	for _, file := range files {
-		resp = append(resp, &types.ListFileStruct{
+		resp = append(resp, &types.FileResp{
 			Id:      file.Id,
 			Name:    file.Name,
 			Url:     file.Url,

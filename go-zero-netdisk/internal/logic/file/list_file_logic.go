@@ -25,12 +25,12 @@ func NewListFileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ListFile
 	}
 }
 
-func (l *ListFileLogic) ListFile(req *types.ParentFolderIdReq) ([]*types.ListFileStruct, error) {
+func (l *ListFileLogic) ListFile(req *types.ParentFolderIdReq) ([]*types.FileResp, error) {
 	var (
 		userId = l.ctx.Value(constant.UserIdKey).(int64)
 		engine = l.svcCtx.Xorm
 		files  []*model.File
-		resp   []*types.ListFileStruct
+		resp   []*types.FileResp
 	)
 
 	if err := engine.Where("folder_id = ?", req.ParentFolderId).
@@ -40,7 +40,7 @@ func (l *ListFileLogic) ListFile(req *types.ParentFolderIdReq) ([]*types.ListFil
 	}
 
 	for _, file := range files {
-		resp = append(resp, &types.ListFileStruct{
+		resp = append(resp, &types.FileResp{
 			Id:      file.Id,
 			Name:    file.Name,
 			Url:     file.Url,

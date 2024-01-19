@@ -64,6 +64,17 @@ type (
         Folders []*ListDeletedFolderStruct `json:"folders"`
         Files []*ListDeletedFileStruct `json:"files"`
     }
+
+    FileResp {
+        Id int64 `json:"id"`
+        Name string `json:"name"`
+        Url string `json:"url"`
+        Status int8 `json:"status"`
+        Size int64 `json:"size"`
+        FolderId int64 `json:"folderId,omitempty"`
+        Created string `json:"created"`
+        Updated string `json:"updated"`
+    }
 )
 
 type (
@@ -71,15 +82,6 @@ type (
         Id int64 `json:"id"`
         Name string `json:"name"`
         Updated string `json:"updated,omitempty"`
-    }
-
-    ListFileStruct {
-        Id int64 `json:"id"`
-        Name string `json:"name"`
-        Url string `json:"url"`
-        Status int8 `json:"status"`
-        Size int64 `json:"size"`
-        Updated string `json:"updated"`
     }
 
     ListDeletedFolderStruct {

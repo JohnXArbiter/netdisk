@@ -67,7 +67,7 @@ service netdisk-api {
 	post /detail (updateUserDetailReq) returns ()
 
 	@handler getDetail
-	get /detail/:userId (getUserDetailReq) returns ()
+	get /detail/:id (IdPathReq) returns ()
 
 	@handler updateAvatar
 	post /avatar (updateAvatarReq) returns ()
@@ -79,11 +79,14 @@ service netdisk-api {
 	middleware: Auth
 )
 service netdisk-api {
+	@handler getFileDetail
+	get /:id (IdPathReq) returns (FileResp)
+
 	@handler listFile
-	get /list/:parentFolderId (parentFolderIdReq) returns ([]*ListFileStruct)
+	get /list/:parentFolderId (parentFolderIdReq) returns ([]*FileResp)
 
 	@handler listFileByType
-	get /type/:fileType (FileTypeReq) returns ([]*ListFileStruct)
+	get /type/:fileType (FileTypeReq) returns ([]*FileResp)
 
 	@handler listFolder
 	get /folder-list/:parentFolderId (parentFolderIdReq) returns ([]*ListFolderStruct)
@@ -135,6 +138,10 @@ service netdisk-api {
 }
 
 type (
+	IdPathReq {
+		Id int64 `path:"id"`
+	}
+
 	loginReq {
 		Username string `json:"username"`
 		Password string `json:"password"`
