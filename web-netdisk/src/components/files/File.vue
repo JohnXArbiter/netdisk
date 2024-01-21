@@ -2,18 +2,9 @@
     <el-row>
         <el-col :span="24">
             <div class="file-table">
-              <el-upload v-if="fileButtonsState === 0"
-                         ref="uploadFiless"
-                         class="upload-demo"
-                         action="actionUrl"
-                         multiple
-                         :limit="20"
-                         :auto-upload="false"
-                         :on-change="change"
-                         :http-request="a"
-              >
-                <el-button type="primary" :icon="Upload" round>选择上传</el-button>
-              </el-upload>
+                <template v-if="fileButtonsState === 0">
+                    <uploading></uploading>
+                </template>
 
                 <div class="button-group">
                     <template v-if="fileButtonsState !== 0">
@@ -142,14 +133,8 @@
 <script lang="ts" setup>
 import {ElTable, UploadFile, UploadFiles, UploadInstance} from "element-plus";
 import {
-    CopyDocument,
-    DeleteFilled,
-    Download,
-    EditPen,
-    FolderOpened,
-    Rank,
-    Select,
-    Upload, Warning
+    CopyDocument, DeleteFilled, Download,
+    EditPen, FolderOpened, Rank, Warning
 } from "@element-plus/icons-vue";
 import {onMounted, reactive, ref} from "vue";
 import {
@@ -161,6 +146,7 @@ import {
 import type {File} from '/file.ts'
 import type {Folder} from "./folder.ts";
 import {codeOk, promptSuccess, Resp} from "../../utils/apis/base.ts";
+import Uploading from "./Uploading.vue";
 
 let forFolder = false
 let folderId: number
@@ -221,38 +207,6 @@ const listFiles = async () => {
         fileList.data = resp.data
     }
 }
-
-let uploadFiless = ref<UploadInstance[]>([])
-
-function change(uploadFile: UploadFile, uploadFiles: UploadFiles) {
-    console.log("111", uploadFiless)
-    console.log("222", uploadFile)
-    console.log("333", uploadFiles)
-}
-
-// function asd(e: Event) {
-//     const target = e.target
-//     if (target instanceof HTMLInputElement) {
-//         const file = target.files
-//         if (file) {
-//             const form = new FormData()
-//             for (let i = 1; i < file.length; i++) {
-//                 form.append("file", file[i])
-//             }
-//             axios.post("/", form, {
-//                 onUploadProgress: (progressEvent: AxiosProgressEvent) => {
-//                     Math.round((progressEvent.loaded / (progressEvent.total as number) * 100))
-//                 }
-//             })
-//         }
-//     }
-// }
-
-// const uploadProcedure = (options: UploadRequestOptions) => {
-//     console.log(options.files)
-//     options.files
-//     return XMLHttpRequest
-// }
 
 const fileDialogVisible = reactive([false, false, false, false, false])
 let renamingFile = reactive<any>({})

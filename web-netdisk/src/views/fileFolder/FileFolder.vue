@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts" setup>
-import FileInfo from "../../components/files/info/FileInfo.vue";
+import FileInfo from "../../components/files/Info.vue";
 import {reactive, watch} from "vue";
 
 const ids: {

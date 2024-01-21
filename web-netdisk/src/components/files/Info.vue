@@ -34,8 +34,8 @@
 <script lang="ts" setup>
 import {Search} from '@element-plus/icons-vue';
 import {ref, watch} from "vue";
-import {getFileDetailById} from "./fileInfo.ts";
-import {codeOk} from '../../../utils/apis/base.ts';
+import {getFileDetailById} from "./Info.ts";
+import {codeOk} from '../../utils/apis/base.ts';
 
 const props = defineProps(['idObj'])
 
