@@ -131,7 +131,7 @@
 </template>
 
 <script lang="ts" setup>
-import {ElTable, UploadFile, UploadFiles, UploadInstance} from "element-plus";
+import {ElTable} from "element-plus";
 import {
     CopyDocument, DeleteFilled, Download,
     EditPen, FolderOpened, Rank, Warning
@@ -147,12 +147,13 @@ import type {File} from '/file.ts'
 import type {Folder} from "./folder.ts";
 import {codeOk, promptSuccess, Resp} from "../../utils/apis/base.ts";
 import Uploading from "./Uploading.vue";
+import {useFileFolderStore} from "../../store/fileFolder.ts";
 
+let fileFolderStore = useFileFolderStore()
 let forFolder = false
 let folderId: number
 let fileType: number
 const props = defineProps(['fileType', 'folderId'])
-const emits = defineEmits(['selectedIds'])
 
 let fileButtonsState = ref(0)
 const fileTableRef = ref<InstanceType<typeof ElTable>>()
@@ -275,18 +276,18 @@ async function deleteFilesConfirm() {
     await listFiles()
 }
 
-function fileSelectionChange(items: File[]) {
-    if (!items || items.length == 0) {
+function fileSelectionChange(files: File[]) {
+    if (!files || files.length == 0) {
         fileButtonsState.value = 0
-    } else if (items) {
-        if (items.length === 1) {
+    } else if (files) {
+        if (files.length === 1) {
             fileButtonsState.value = 1
         } else {
             fileButtonsState.value = 2
         }
     }
-    console.log(111, items, items.map(item => item.id))
-    emits('selectedIds', items.map(item => item.id), true)
+
+    fileFolderStore.selectChange(files.map(file => file.id), true)
 }
 
 onMounted(() => {

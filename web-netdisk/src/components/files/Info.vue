@@ -3,9 +3,9 @@
         <el-col :span="22">
             <div class="search-box">
                 <el-input placeholder="搜索我的文件"
-                          v-model="asd" clearable @clear="getUserList">
+                          v-model="searchStr" clearable>
                     <template #append>
-                        <el-button @click="getUserList">
+                        <el-button @click="searchConfirm">
                             <el-icon>
                                 <search/>
                             </el-icon>
@@ -18,11 +18,11 @@
                 <div style="margin: 3% 0 3% 0; font-size: 0.8rem">文件详情</div>
                 <el-image style="border-radius: 5px;width: 100%; height: auto" :src="url" :fit="'contain'"/>
                 <div style="margin-top: 4%;padding-left: 4%;">
-                    <div class="file-name">{{ exampleFile.data.name }}</div>
-                    <div class="file-info">创建时间：{{ exampleFile.data.created }}</div>
-                    <div class="file-info">修改时间：{{ exampleFile.data.updated }}</div>
-                    <div class="file-info">文件格式：{{ exampleFile.data.ext }}</div>
-                    <div class="file-info">文件大小：{{ exampleFile.data.size }}</div>
+                    <div class="file-name">{{ fileDetail.data.name }}</div>
+                    <div class="file-info">创建时间：{{ fileDetail.data.created }}</div>
+                    <div class="file-info">修改时间：{{ fileDetail.data.updated }}</div>
+                    <div class="file-info">文件格式：{{ fileDetail.data.ext }}</div>
+                    <div class="file-info">文件大小：{{ fileDetail.data.size }}</div>
                 </div>
             </div>
 
@@ -33,48 +33,66 @@
 
 <script lang="ts" setup>
 import {Search} from '@element-plus/icons-vue';
-import {ref, watch} from "vue";
-import {getFileDetailById} from "./Info.ts";
-import {codeOk} from '../../utils/apis/base.ts';
+import {onUnmounted, reactive, ref} from "vue";
+import {useFileFolderStore} from "../../store/fileFolder.ts";
+import {getFileDetailById, listFolderDetailById, search} from "./Info.ts";
+import {codeOk} from "../../utils/apis/base.ts";
 
-const props = defineProps(['idObj'])
+const fileFolderStore = useFileFolderStore()
 
 let forFile = true
 const url = 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
-const exampleFile = {
+const fileDetail: { data: {} } = reactive({
   data: {
     name: '小猫咪.jpeg',
     created: "2023-01-24 05:21",
     updated: '2023-10-05 23:50',
     ext: '.jpeg',
-    size: '12kb',
+    size: 0,
+    sizeStr: '12kb',
+  }
+})
+
+let searchStr = ref('')
+
+async function searchConfirm() {
+  const resp = await search(searchStr.value)
+  if (resp && resp.code === codeOk) {
+// TODO
   }
 }
-let asd = ref('')
 
-async function getFileDetail(fileId:number) {
+async function getFileDetail(fileId: number) {
   const resp = await getFileDetailById(fileId)
   if (resp && resp.code === codeOk) {
-    exampleFile.data = resp.data
+    fileDetail.data = resp.data
   }
 }
 
-watch(() => props.idObj.data, (newV) => {
-  switch (newV.type) {
-    case 0:
-      console.log('asdasd')
-      forFile = true
-      getFileDetail(newV.id)
-      break
-    case 1:
-      forFile = false
-
-      break
-    default:
-
-      break
+async function getFolderDetail(fileId: number) {
+  const resp = await listFolderDetailById(fileId)
+  if (resp && resp.code === codeOk) {
+    fileDetail.data = resp.data
   }
-}, {deep:true})
+}
+
+const unsubscribe = fileFolderStore.$subscribe((_, state) => {
+  const filesLen = state.selectedItems.files.length
+  const foldersLen = state.selectedItems.folders.length;
+  if (filesLen === 1 && foldersLen < 1) {
+    getFileDetail(state.selectedItems.files[0])
+  } else if (foldersLen == 1 && filesLen < 1) {
+    getFolderDetail(state.selectedItems.folders[0])
+  } else if (filesLen === 0 && foldersLen === 0) {
+
+  }
+  console.log(filesLen, foldersLen)
+})
+
+onUnmounted(() => {
+  unsubscribe()
+})
+
 </script>
 
 <style scoped>

@@ -3,7 +3,7 @@ import {ElMessage} from "element-plus";
  interface Resp<T> {
     code: number
     msg: string
-    data: T | []
+    data: T
 }
 
 const codeOk = 0

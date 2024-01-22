@@ -50,53 +50,69 @@ async function handleUpload(param: UploadRequestOptions) {
     }
 }
 
-async function checkBeforeUpload(param) {
-    const res: CheckRes = {
-        success: false,
-        type: 0
-    }
-    return res
-    // const fileType = file.file.name.split('.')
-    // if (fileType[fileType.length - 1] !== 'zip' && fileType[fileType.length - 1] !== 'tar') {
-    //     ElMessage.warning('文件格式错误，仅支持 .zip/.tar')
-    //     return res
-    // }
-    //
-    // // 校验文件大小
-    // const fileSize = file.file.size;
-    // // 文件大小是否超出 2G
-    // if (fileSize > 2 * 1024 * 1024 * 1024) {
-    //     ElMessage.warning('上传文件大小不能超过 2G')
-    //     return false
-    // }
-    //
-    // // 调用接口校验文件合法性，比如判断磁盘空间大小是否足够
-    // const res = await checkMirrorFileApi()
-    // if (res.code !== 200) {
-    //     ElMessage.warning('暂时无法查看磁盘可用空间，请重试')
-    //     return false
-    // }
-    // // 查看磁盘容量大小
-    // if (res.data.diskDevInfos && res.data.diskDevInfos.length > 0) {
-    //     let saveSize = 0
-    //     res.data.diskDevInfos.forEach(i => {
-    //         // 磁盘空间赋值
-    //         if (i.devName === '/dev/mapper/centos-root') {
-    //             // 返回值为GB，转为字节B
-    //             saveSize = i.free * 1024 * 1024 * 1024
-    //         }
-    //     })
-    //     // 上传的文件大小没有超出磁盘可用空间
-    //     if (fileSize < saveSize) {
-    //         return true
-    //     } else {
-    //         ElMessage.warning('文件大小超出磁盘可用空间容量')
-    //         return false
-    //     }
-    // } else {
-    //     ElMessage.warning('文件大小超出磁盘可用空间容量')
-    //     return false
-    // }
+async function checkBeforeUpload(param: UploadRequestOptions) {
+  const qwe: CheckReq = {
+    filename: param.filename,
+    size: param.file.size,
+    type: param.file.type
+    ext: param.filename.substring(param.filename.lastIndexOf('.') + 1)
+  }
+
+  var spark = new SparkMD5.ArrayBuffer();
+  spark.append(file);
+  var md5 = spark.end();
+
+
+  const res: CheckRes = {
+    success: false,
+    type: 0
+  }
+
+
+  param.filename
+
+  return res
+  // const fileType = file.file.name.split('.')
+  // if (fileType[fileType.length - 1] !== 'zip' && fileType[fileType.length - 1] !== 'tar') {
+  //     ElMessage.warning('文件格式错误，仅支持 .zip/.tar')
+  //     return res
+  // }
+  //
+  // // 校验文件大小
+  // const fileSize = file.file.size;
+  // // 文件大小是否超出 2G
+  // if (fileSize > 2 * 1024 * 1024 * 1024) {
+  //     ElMessage.warning('上传文件大小不能超过 2G')
+  //     return false
+  // }
+  //
+  // // 调用接口校验文件合法性，比如判断磁盘空间大小是否足够
+  // const res = await checkMirrorFileApi()
+  // if (res.code !== 200) {
+  //     ElMessage.warning('暂时无法查看磁盘可用空间，请重试')
+  //     return false
+  // }
+  // // 查看磁盘容量大小
+  // if (res.data.diskDevInfos && res.data.diskDevInfos.length > 0) {
+  //     let saveSize = 0
+  //     res.data.diskDevInfos.forEach(i => {
+  //         // 磁盘空间赋值
+  //         if (i.devName === '/dev/mapper/centos-root') {
+  //             // 返回值为GB，转为字节B
+  //             saveSize = i.free * 1024 * 1024 * 1024
+  //         }
+  //     })
+  //     // 上传的文件大小没有超出磁盘可用空间
+  //     if (fileSize < saveSize) {
+  //         return true
+  //     } else {
+  //         ElMessage.warning('文件大小超出磁盘可用空间容量')
+  //         return false
+  //     }
+  // } else {
+  //     ElMessage.warning('文件大小超出磁盘可用空间容量')
+  //     return false
+  // }
 
 }
 

@@ -30,7 +30,7 @@ import {useBaseStore, UserInfo} from "../../store";
 
 const url = "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
 
-let user: UserInfo | null = null
+let user: { data: UserInfo }
 
 async function showUserInfo() {
     if (!user) {

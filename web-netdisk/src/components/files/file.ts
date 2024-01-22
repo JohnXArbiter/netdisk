@@ -8,6 +8,7 @@ export interface File {
     url: string
     status: number
     updated: string
+    sizeStr?: string
 }
 
 export function listFilesByFolderId(parentFolderId: number) {

@@ -167,7 +167,9 @@ import {
 import File from './File.vue'
 import router from "../../router";
 import {codeOk, promptSuccess, Resp} from "../../utils/apis/base.ts";
+import {useFileFolderStore} from "../../store/fileFolder.ts";
 
+let fileFolderStore = useFileFolderStore()
 let props = defineProps(["folderId"]);
 let folderId = Number.parseInt(props.folderId, 10)
 let folderButtonsState = ref(0)
@@ -292,16 +294,17 @@ async function deleteFoldersConfirm(option: number) {
   folderDialogVisible[option] = false
 }
 
-function folderSelectionChange(items: Folder[]) {
-  if (!items || items.length == 0) {
+function folderSelectionChange(folders: Folder[]) {
+  if (!folders || folders.length == 0) {
     folderButtonsState.value = 0
-  } else if (items) {
-    if (items.length === 1) {
+  } else if (folders) {
+    if (folders.length === 1) {
       folderButtonsState.value = 1
     } else {
       folderButtonsState.value = 2
     }
   }
+  fileFolderStore.selectChange(folders.map(folder => folder.id), false)
 }
 
 onMounted(() => {
