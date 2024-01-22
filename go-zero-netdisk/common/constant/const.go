@@ -6,7 +6,7 @@ const (
 )
 
 const (
-	NeedShardingSize = 67108864 // 需要分片起始大小：64MB
+	ShardingSizeFloor = 4194304 // 需要分片起始大小：4MB
 )
 
 const (

@@ -1,4 +1,7 @@
-interface CheckReq {
+import api from "../../utils/apis/request.ts";
+import {Resp} from "../../utils/apis/base.ts";
+
+export interface CheckReq {
     folderId: number
     hash: string
     size: number
@@ -6,7 +9,18 @@ interface CheckReq {
     ext: string
 }
 
-interface CheckRes {
+export interface CheckResp {
+    fileId: number
+    status: number
+}
+
+export interface CheckRes extends CheckResp {
     success: boolean
-    type: number
+}
+
+
+export const sliceSize = 4194304
+
+export function checkFile(req: CheckReq) {
+    return api.post<Resp<CheckResp>>('/upload/check', req)
 }

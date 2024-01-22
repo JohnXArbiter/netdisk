@@ -40,7 +40,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Route{
 				{
 					Method:  http.MethodPost,
-					Path:    "/check_file",
+					Path:    "/check",
 					Handler: upload.CheckFileHandler(serverCtx),
 				},
 				{
@@ -50,7 +50,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodPost,
-					Path:    "/check_chunk",
+					Path:    "/check-chunk",
 					Handler: upload.CheckChunkHandler(serverCtx),
 				},
 				{
@@ -60,7 +60,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 			}...,
 		),
-		rest.WithPrefix("/file/upload"),
+		rest.WithPrefix("/upload"),
 	)
 
 	server.AddRoutes(
@@ -84,7 +84,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 			}...,
 		),
-		rest.WithPrefix("/file/download"),
+		rest.WithPrefix("/download"),
 	)
 
 	server.AddRoutes(

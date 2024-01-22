@@ -30,8 +30,12 @@
 import {Upload} from "@element-plus/icons-vue";
 import {ElMessage, UploadRequestOptions} from "element-plus";
 import {UploadRawFile} from "element-plus/es/components/upload/src/upload";
+import {useFileFolderStore} from "../../store/fileFolder.ts";
+import SparkMD5 from 'spark-md5'
+import {checkFile} from "./uploading.ts";
+import {codeOk} from "../../utils/apis/base.ts";
 
-const props = defineProps([]);
+const fileFolderStore = useFileFolderStore()
 
 async function handleUpload(param: UploadRequestOptions) {
     console.log('file', param.file);
@@ -41,7 +45,7 @@ async function handleUpload(param: UploadRequestOptions) {
     console.log('headers', param.headers);
     console.log('action', param.method);
 
-    let checkRes = await checkBeforeUpload(param)
+    let checkRes = await checkBeforeUpload(param.file)
     if (checkRes.success) {
         uploadSlice(param.file, 0);
 
@@ -50,74 +54,84 @@ async function handleUpload(param: UploadRequestOptions) {
     }
 }
 
-async function checkBeforeUpload(param: UploadRequestOptions) {
-  const qwe: CheckReq = {
-    filename: param.filename,
-    size: param.file.size,
-    type: param.file.type
-    ext: param.filename.substring(param.filename.lastIndexOf('.') + 1)
-  }
+async function checkBeforeUpload(file: UploadRawFile) {
+    const size = file.size
+    const checkReq = {
+        folderId: fileFolderStore.folderId,
+        name: file.name,
+        size: size,
+        ext: file.name.substring(file.name.lastIndexOf('.')),
+        hash: genMd5(file)
+    }
 
-  var spark = new SparkMD5.ArrayBuffer();
-  spark.append(file);
-  var md5 = spark.end();
-
-
-  const res: CheckRes = {
-    success: false,
-    type: 0
-  }
-
-
-  param.filename
-
-  return res
-  // const fileType = file.file.name.split('.')
-  // if (fileType[fileType.length - 1] !== 'zip' && fileType[fileType.length - 1] !== 'tar') {
-  //     ElMessage.warning('文件格式错误，仅支持 .zip/.tar')
-  //     return res
-  // }
-  //
-  // // 校验文件大小
-  // const fileSize = file.file.size;
-  // // 文件大小是否超出 2G
-  // if (fileSize > 2 * 1024 * 1024 * 1024) {
-  //     ElMessage.warning('上传文件大小不能超过 2G')
-  //     return false
-  // }
-  //
-  // // 调用接口校验文件合法性，比如判断磁盘空间大小是否足够
-  // const res = await checkMirrorFileApi()
-  // if (res.code !== 200) {
-  //     ElMessage.warning('暂时无法查看磁盘可用空间，请重试')
-  //     return false
-  // }
-  // // 查看磁盘容量大小
-  // if (res.data.diskDevInfos && res.data.diskDevInfos.length > 0) {
-  //     let saveSize = 0
-  //     res.data.diskDevInfos.forEach(i => {
-  //         // 磁盘空间赋值
-  //         if (i.devName === '/dev/mapper/centos-root') {
-  //             // 返回值为GB，转为字节B
-  //             saveSize = i.free * 1024 * 1024 * 1024
-  //         }
-  //     })
-  //     // 上传的文件大小没有超出磁盘可用空间
-  //     if (fileSize < saveSize) {
-  //         return true
-  //     } else {
-  //         ElMessage.warning('文件大小超出磁盘可用空间容量')
-  //         return false
-  //     }
-  // } else {
-  //     ElMessage.warning('文件大小超出磁盘可用空间容量')
-  //     return false
-  // }
+    const resp = await checkFile(checkReq)
+    if (resp && resp.code === codeOk) {
+        return {
+            success: true,
+            fileId: resp.data.fileId,
+            status: resp.data.status
+        }
+    }
+    return {
+        success: false,
+        fileId: 0,
+        status: 0
+    }
+    // const fileType = file.file.name.split('.')
+    // if (fileType[fileType.length - 1] !== 'zip' && fileType[fileType.length - 1] !== 'tar') {
+    //     ElMessage.warning('文件格式错误，仅支持 .zip/.tar')
+    //     return res
+    // }
+    //
+    // // 校验文件大小
+    // const fileSize = file.file.size;
+    // // 文件大小是否超出 2G
+    // if (fileSize > 2 * 1024 * 1024 * 1024) {
+    //     ElMessage.warning('上传文件大小不能超过 2G')
+    //     return false
+    // }
+    //
+    // // 调用接口校验文件合法性，比如判断磁盘空间大小是否足够
+    // const res = await checkMirrorFileApi()
+    // if (res.code !== 200) {
+    //     ElMessage.warning('暂时无法查看磁盘可用空间，请重试')
+    //     return false
+    // }
+    // // 查看磁盘容量大小
+    // if (res.data.diskDevInfos && res.data.diskDevInfos.length > 0) {
+    //     let saveSize = 0
+    //     res.data.diskDevInfos.forEach(i => {
+    //         // 磁盘空间赋值
+    //         if (i.devName === '/dev/mapper/centos-root') {
+    //             // 返回值为GB，转为字节B
+    //             saveSize = i.free * 1024 * 1024 * 1024
+    //         }
+    //     })
+    //     // 上传的文件大小没有超出磁盘可用空间
+    //     if (fileSize < saveSize) {
+    //         return true
+    //     } else {
+    //         ElMessage.warning('文件大小超出磁盘可用空间容量')
+    //         return false
+    //     }
+    // } else {
+    //     ElMessage.warning('文件大小超出磁盘可用空间容量')
+    //     return false
+    // }
 
 }
+
+function genMd5(file: UploadRawFile) {
+    const spark = new SparkMD5.ArrayBuffer()
+    spark.append(file)
+    return spark.end()
+}
+
 
 function uploadSlice(file: UploadRawFile, idx: number) {
+
 }
+
 
 // function asd(e: Event) {
 //     const target = e.target

@@ -5,7 +5,6 @@
         </el-col>
 
         <el-col :span="5">
-<!--            <file-info v-model:idObj="idObj"/>-->
           <file-info/>
         </el-col>
     </el-row>

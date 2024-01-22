@@ -62,7 +62,7 @@ func (l *CheckFileLogic) CheckFile(req *types.CheckFileReq) (*types.CheckFileRes
 		// 用户上传过，提示并返回
 		if !has {
 			// 用户未上传，信息落库
-			if fileFs.Size > constant.NeedShardingSize {
+			if fileFs.Size > constant.ShardingSizeFloor {
 				file.IsBig = constant.BigFileFlag
 			}
 			file.Id = idgen.NextId()
@@ -98,12 +98,12 @@ func (l *CheckFileLogic) createFsAndFileRecord(req *types.CheckFileReq) xorm.TxF
 			err    error
 		)
 
-		if req.Size > constant.NeedShardingSize {
+		if req.Size > constant.ShardingSizeFloor {
 			status = constant.StatusFsBigFileUnuploaded
 			isBig = constant.BigFileFlag
 		}
 
-		chunkNum := math.Ceil(float64(req.Size / constant.NeedShardingSize))
+		chunkNum := math.Ceil(float64(req.Size / constant.ShardingSizeFloor))
 		fileFs := &model.FileFs{
 			Bucket:   l.svcCtx.Minio.BucketName,
 			Ext:      req.Ext,
