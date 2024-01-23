@@ -18,7 +18,10 @@ export interface CheckRes extends CheckResp {
     success: boolean
 }
 
-export const sliceSize = 4194304
+export const uploadConst = {
+    sliceSize: 4194304,
+    codeNeedUpload: 0
+}
 
 export function checkFile(req: CheckReq) {
     return api.post<any, Resp<CheckResp>>('/upload/check', req)

@@ -9,6 +9,7 @@ import (
 	"lc/netdisk/internal/svc"
 	"lc/netdisk/internal/types"
 	"lc/netdisk/model"
+	"strconv"
 	"time"
 )
 
@@ -43,17 +44,18 @@ func (l *CheckFileLogic) CheckFile(req *types.CheckFileReq) (*types.CheckFileRes
 	// 文件不存在时
 	if !has {
 		fileId := idgen.NextId()
-		m := map[string]interface{}{
+		fileInfo := map[string]interface{}{
 			"fileId":   fileId,
 			"folderId": req.FolderId,
 			"hash":     req.Hash,
 			"ext":      req.Ext,
 			"name":     req.Name,
 			"size":     req.Size,
-			"user_id":  userId,
+			"userId":   userId,
 		}
 
-		_, err = rdb.HSet(l.ctx, redis.UploadCheckKey, m).Result()
+		key := redis.UploadCheckKey + strconv.FormatInt(fileId, 10)
+		_, err = rdb.HSet(l.ctx, key, fileInfo).Result()
 		if err != nil {
 			return nil, err
 		}
@@ -90,7 +92,7 @@ func (l *CheckFileLogic) CheckFile(req *types.CheckFileReq) (*types.CheckFileRes
 		}
 	}
 
-	resp.Status = constant.StatusFileUploaded,
+	resp.Status = constant.StatusFileUploaded
 	return &resp, nil
 }
 
