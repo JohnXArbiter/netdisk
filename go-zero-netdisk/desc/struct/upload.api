@@ -8,7 +8,7 @@ type (
     }
 
     uploadReq {
-        fileId int64 `json:"fileId"`
+        fileId int64 `form:"fileId"`
     }
 
     checkChunkReq {

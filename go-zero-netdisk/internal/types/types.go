@@ -39,7 +39,7 @@ type CheckFileReq struct {
 }
 
 type UploadReq struct {
-	FileId int64 `json:"fileId"`
+	FileId int64 `form:"fileId"`
 }
 
 type CheckChunkReq struct {

@@ -32,23 +32,19 @@ import {ElMessage, UploadRequestOptions} from "element-plus";
 import {UploadRawFile} from "element-plus/es/components/upload/src/upload";
 import {useFileFolderStore} from "../../store/fileFolder.ts";
 import SparkMD5 from 'spark-md5'
-import {checkFile} from "./uploading.ts";
+import {checkFile, upload} from "./uploading.ts";
 import {codeOk} from "../../utils/apis/base.ts";
 
 const fileFolderStore = useFileFolderStore()
 
 async function handleUpload(param: UploadRequestOptions) {
-    console.log('file', param.file);
-    console.log('data', param.data);
-    console.log('action', param.action);
-    console.log('filename', param.filename);
-    console.log('headers', param.headers);
-    console.log('action', param.method);
-
-    let checkRes = await checkBeforeUpload(param.file)
+    const checkRes = await checkBeforeUpload(param.file)
     if (checkRes.success) {
-        uploadSlice(param.file, 0);
-
+      if (checkRes.status === 0) {
+        uploadSlice(param.file, checkRes.fileId,0);
+      } else if (checkRes.status === 1) {
+        uploadSingle(param.file, checkRes.fileId)
+      }
     } else {
         ElMessage.error('请检查文件是否合法！');
     }
@@ -91,33 +87,6 @@ async function checkBeforeUpload(file: UploadRawFile) {
     //     return false
     // }
     //
-    // // 调用接口校验文件合法性，比如判断磁盘空间大小是否足够
-    // const res = await checkMirrorFileApi()
-    // if (res.code !== 200) {
-    //     ElMessage.warning('暂时无法查看磁盘可用空间，请重试')
-    //     return false
-    // }
-    // // 查看磁盘容量大小
-    // if (res.data.diskDevInfos && res.data.diskDevInfos.length > 0) {
-    //     let saveSize = 0
-    //     res.data.diskDevInfos.forEach(i => {
-    //         // 磁盘空间赋值
-    //         if (i.devName === '/dev/mapper/centos-root') {
-    //             // 返回值为GB，转为字节B
-    //             saveSize = i.free * 1024 * 1024 * 1024
-    //         }
-    //     })
-    //     // 上传的文件大小没有超出磁盘可用空间
-    //     if (fileSize < saveSize) {
-    //         return true
-    //     } else {
-    //         ElMessage.warning('文件大小超出磁盘可用空间容量')
-    //         return false
-    //     }
-    // } else {
-    //     ElMessage.warning('文件大小超出磁盘可用空间容量')
-    //     return false
-    // }
 
 }
 
@@ -127,11 +96,19 @@ function genMd5(file: UploadRawFile) {
     return spark.end()
 }
 
-
-function uploadSlice(file: UploadRawFile, idx: number) {
+function uploadSlice(file: UploadRawFile, fileId: number, idx: number) {
 
 }
 
+async function uploadSingle(file: UploadRawFile, fileId: number) {
+  const formData = new FormData();
+  formData.append('file', file)
+  formData.append('fileId', fileId.toString())
+  const resp = await upload(formData)
+  if (resp && resp.code === codeOk) {
+    ElMessage.success('上传成功')
+  }
+}
 
 // function asd(e: Event) {
 //     const target = e.target

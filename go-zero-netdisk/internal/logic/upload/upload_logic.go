@@ -5,10 +5,12 @@ import (
 	"errors"
 	"github.com/zeromicro/go-zero/core/logx"
 	"lc/netdisk/common/constant"
+	"lc/netdisk/common/redis"
 	"lc/netdisk/common/xorm"
 	"lc/netdisk/internal/svc"
 	"lc/netdisk/internal/types"
 	"lc/netdisk/model"
+	"strconv"
 )
 
 type UploadLogic struct {
@@ -27,23 +29,23 @@ func NewUploadLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UploadLogi
 
 func (l *UploadLogic) Upload(req *types.UploadReq, fileParam *types.FileParam) (interface{}, error) {
 	var (
-		userId = l.ctx.Value(constant.UserIdKey).(int64)
-		engine = l.svcCtx.Xorm
-		file   model.File
-		fileFs model.FileFs
-		has    bool
-		err    error
+		userId    = l.ctx.Value(constant.UserIdKey).(int64)
+		engine    = l.svcCtx.Xorm
+		rdb       = l.svcCtx.Redis
+		fileIdStr = strconv.FormatInt(req.FileId, 10)
+		file      model.File
+		fileFs    model.FileFs
+		has       bool
+		err       error
 	)
 
-	if has, err = engine.ID(req.FileId).And("user_id = ?", userId).
-		Get(&file); err != nil {
+	fileInfo, err := rdb.HGetAll(l.ctx, redis.UploadCheckKey).Result()
+	if err != nil {
 		return nil, err
-	} else if !has {
-		return nil, errors.New("文件上传发生错误！")
 	}
 
-	if file.Status == constant.StatusFileUploaded {
-		return nil, nil
+	if fileInfo["fileId"] != fileIdStr {
+		return nil, err
 	}
 
 	if has, err = engine.ID(file.FsId).Get(&fileFs); err != nil {

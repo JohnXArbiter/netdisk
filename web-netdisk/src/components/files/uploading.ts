@@ -18,9 +18,12 @@ export interface CheckRes extends CheckResp {
     success: boolean
 }
 
-
 export const sliceSize = 4194304
 
 export function checkFile(req: CheckReq) {
-    return api.post<Resp<CheckResp>>('/upload/check', req)
+    return api.post<any, Resp<CheckResp>>('/upload/check', req)
+}
+
+export function upload(formData: FormData) {
+    return api.post<any, Resp<any>>('/upload', formData, {headers: {'Content-Type': 'multipart/form-data'}})
 }

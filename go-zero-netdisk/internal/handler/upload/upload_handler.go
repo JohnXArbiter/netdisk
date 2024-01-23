@@ -13,7 +13,7 @@ import (
 func UploadHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req types.UploadReq
-		if err := httpx.ParseJsonBody(r, &req); err != nil {
+		if err := httpx.ParseForm(r, &req); err != nil {
 			xhttp.JsonBaseResponseCtx(r.Context(), w, err)
 			return
 		}
