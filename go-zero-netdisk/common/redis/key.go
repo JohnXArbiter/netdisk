@@ -5,10 +5,12 @@ import "time"
 const (
 	UserLogin = "user:login:"
 
-	UploadCheckKey   = "upload:file:"
+	UploadCheckKey        = "upload:file:"
+	UploadCheckBigFileKey = "upload:file-shard:"
+
 	DownloadGetFsKey = "download:fs:fn:"
 )
 
 const (
-	UploadCheckExpire = 10 * time.Minute
+	UploadCheckExpire = 24 * time.Hour
 )

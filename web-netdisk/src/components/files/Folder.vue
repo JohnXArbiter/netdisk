@@ -176,23 +176,7 @@ let folderButtonsState = ref(0)
 const folderTableRef = ref<InstanceType<typeof ElTable>>()
 
 let folderList = reactive<{ arr: Folder[] }>({
-    arr: [
-        {
-            id: 111,
-            updated: '2016-05-03',
-            name: 'Jerry',
-        },
-        {
-            id: 222,
-            updated: '2016-05-02',
-            name: 'Tom',
-        },
-        {
-            id: 333,
-            updated: '2016-05-04',
-            name: 'Sam',
-        }
-    ]
+  arr: []
 })
 
 const listFolders = async () => {

@@ -12,15 +12,25 @@ export interface CheckReq {
 export interface CheckResp {
     fileId: number
     status: number
+    confirmShard: number
 }
 
 export interface CheckRes extends CheckResp {
     success: boolean
+    hash: string
+}
+
+export interface CheckChunkReq {
+    fileId: number
+    hash: string
+    chunkId: number
 }
 
 export const uploadConst = {
-    sliceSize: 4194304,
-    codeNeedUpload: 0
+    shardingSize: 5242880,
+    shardingFloor: 10485760,
+    codeNeedUpload: 0,
+    shardConfirmed: 1
 }
 
 export function checkFile(req: CheckReq) {
@@ -29,4 +39,12 @@ export function checkFile(req: CheckReq) {
 
 export function upload(formData: FormData) {
     return api.post<any, Resp<any>>('/upload', formData, {headers: {'Content-Type': 'multipart/form-data'}})
+}
+
+export function checkChunk(req: CheckChunkReq) {
+    return api.post<any, Resp<any>>('/upload/chunk-check', req)
+}
+
+export function uploadChunk(formData: FormData) {
+    return api.post<any, Resp<any>>('/upload/chunk', formData, {headers: {'Content-Type': 'multipart/form-data'}})
 }

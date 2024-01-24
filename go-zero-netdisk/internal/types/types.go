@@ -52,8 +52,9 @@ type UploadChunkReq struct {
 }
 
 type CheckFileResp struct {
-	FileId int64 `json:"fileId"`
-	Status int8  `json:"status"` // 0：文件未上传，1：文件已存在
+	FileId       int64 `json:"fileId"`
+	Status       int8  `json:"status"`       // 0：文件未上传，1：文件已存在
+	ConfirmShard int8  `json:"confirmShard"` // 0：不分片，1：分片
 }
 
 type IdsReq struct {

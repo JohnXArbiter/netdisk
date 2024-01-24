@@ -3,6 +3,7 @@ package upload
 import (
 	"context"
 	"errors"
+	"github.com/yitter/idgenerator-go/idgen"
 	"github.com/zeromicro/go-zero/core/logx"
 	"lc/netdisk/common/constant"
 	"lc/netdisk/common/redis"
@@ -58,7 +59,7 @@ func (l *UploadLogic) Upload(req *types.UploadReq, fileParam *types.FileParam) (
 		}
 	}
 
-	_, err = engine.DoTransaction(l.store2dbAndFs(fileInfo, fileParam))
+	_, err = engine.DoTransaction(l.saveAndUpload(fileInfo, fileParam))
 	if err != nil {
 		return nil, err
 	}
@@ -67,35 +68,42 @@ func (l *UploadLogic) Upload(req *types.UploadReq, fileParam *types.FileParam) (
 	return nil, nil
 }
 
-func (l *UploadLogic) store2dbAndFs(fileInfo map[string]string, fileParam *types.FileParam) xorm.TxFn {
+func (l *UploadLogic) saveAndUpload(fileInfo map[string]string, fileParam *types.FileParam) xorm.TxFn {
 	return func(session *xorm.Session) (interface{}, error) {
 		var (
+			userId   = l.ctx.Value(constant.UserIdKey).(int64)
 			minioSvc = l.svcCtx.Minio.NewService()
-			header   = fileParam.FileHeader
 			fileData = fileParam.File
-			err      error
 		)
 
-		filename, objectName := l.svcCtx.Minio.GenObjectName(fileInfo["hash"], header.Filename)
-
-		file := &model.File{}
-		file.Name = filename
-		file.Url = ""
-		file.Status = constant.StatusFileUploaded
-		if _, err = session.Insert(file); err != nil {
-			return nil, err
-		}
-
+		size, _ := strconv.ParseInt(fileInfo["size"], 10, 64)
+		filename, objectName := l.svcCtx.Minio.GenObjectName(fileInfo["hash"], fileInfo["ext"])
+		fsId := idgen.NextId()
 		fileFs := &model.FileFs{}
+		fileFs.Id = fsId
 		fileFs.Name = filename
 		fileFs.ObjectName = objectName
+		fileFs.Ext = fileInfo["ext"]
+		fileFs.Hash = fileInfo["hash"]
+		fileFs.Size = size
 		fileFs.Url = ""
 		fileFs.Status = constant.StatusFsUploaded
-		if _, err = session.Insert(file); err != nil {
+		if _, err := session.Insert(fileFs); err != nil {
 			return nil, err
 		}
 
-		if err = minioSvc.UploadFile(l.ctx, objectName, fileData); err != nil {
+		file := &model.File{}
+		file.Name = fileInfo["name"]
+		file.Url = ""
+		file.Size = size
+		file.FsId = fsId
+		file.UserId = userId
+		file.Status = constant.StatusFileUploaded
+		if _, err := session.Insert(file); err != nil {
+			return nil, err
+		}
+
+		if err := minioSvc.UploadFile(l.ctx, objectName, fileData); err != nil {
 			return nil, err
 		}
 		return nil, nil

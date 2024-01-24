@@ -159,42 +159,10 @@ let fileButtonsState = ref(0)
 const fileTableRef = ref<InstanceType<typeof ElTable>>()
 
 let folderList = reactive<{ data: Folder[] }>({
-    data: [{
-        id: 111,
-        updated: '2016-05-03',
-        name: 'Jerry',
-    },
-        {
-            id: 222,
-            updated: '2016-05-02',
-            name: 'Tom',
-        },
-        {
-            id: 333,
-            updated: '2016-05-04',
-            name: 'Sam',
-        }
-    ]
+  data: []
 })
 let fileList = reactive<{ data: File[] }>({
-    data: [
-        {
-            id: 4444,
-            name: '43',
-            size: 43,
-            url: 'qwe',
-            status: 2,
-            updated: '2016-05-07'
-        },
-        {
-            id: 44,
-            name: 'adsasd',
-            size: 423,
-            url: 'qwe',
-            status: 2,
-            updated: '2016-05-07'
-        }
-    ]
+  data: []
 })
 
 const listFiles = async () => {

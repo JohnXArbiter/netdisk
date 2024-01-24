@@ -24,7 +24,7 @@ service netdisk-api {
 service netdisk-api {
 	// 检查该用户文件是否已存在（秒传）
 	@handler checkFile
-	post /check (checkFileReq) returns (checkFileResp)
+	post /check (checkFileReq) returns (CheckFileResp)
 
 	// 上传小文件
 	@handler upload
@@ -32,7 +32,7 @@ service netdisk-api {
 
 	// 检查分片
 	@handler checkChunk
-	post /check-chunk (checkChunkReq) returns ()
+	post /chunk-check (checkChunkReq) returns ()
 
 	@handler uploadChunk
 	post /chunk (uploadChunkReq) returns ()

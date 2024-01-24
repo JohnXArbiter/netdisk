@@ -50,7 +50,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodPost,
-					Path:    "/check-chunk",
+					Path:    "/chunk-check",
 					Handler: upload.CheckChunkHandler(serverCtx),
 				},
 				{
