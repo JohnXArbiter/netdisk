@@ -2,7 +2,7 @@ package upload
 
 import (
 	"context"
-
+	"lc/netdisk/common/constant"
 	"lc/netdisk/internal/svc"
 	"lc/netdisk/internal/types"
 
@@ -23,8 +23,12 @@ func NewCheckChunkLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CheckC
 	}
 }
 
-func (l *CheckChunkLogic) CheckChunk(req *types.CheckChunkReq) error {
-	// todo: add your logic here and delete this line
+func (l *CheckChunkLogic) CheckChunk(req *types.CheckChunkReq) (interface{}, error) {
+	var (
+		userId   = l.ctx.Value(constant.UserIdKey).(int64)
+		engine   = l.svcCtx.Xorm
+		minioSvc = l.svcCtx.Minio
+	)
 
 	return nil
 }

@@ -41,10 +41,10 @@ async function handleUpload(param: UploadRequestOptions) {
     const res = await checkBeforeUpload(param.file)
     if (res.success) {
         if (res.status === uploadConst.codeNeedUpload) {
-          if (
+            if (
                 param.file.size > uploadConst.shardingFloor &&
                 res.confirmShard == uploadConst.shardConfirmed
-          ) {
+            ) {
                 await uploadSlice(param.file, res.fileId, res.hash)
             } else {
                 await uploadSingle(param.file, res.fileId)
@@ -58,41 +58,41 @@ async function handleUpload(param: UploadRequestOptions) {
 }
 
 async function checkBeforeUpload(file: UploadRawFile) {
-  const md5 = genMd5(file);
-  const resp = await checkFile({
-    folderId: fileFolderStore.folderId,
-    name: file.name,
-    size: file.size,
-    ext: file.name.substring(file.name.lastIndexOf('.')),
-    hash: md5
-  })
+    const md5 = genMd5(file);
+    const resp = await checkFile({
+        folderId: fileFolderStore.folderId,
+        name: file.name,
+        size: file.size,
+        ext: file.name.substring(file.name.lastIndexOf('.')),
+        hash: md5
+    })
 
-  const res = {
-    success: true,
-    fileId: resp.data.fileId,
-    status: resp.data.status,
-    confirmShard: resp.data.confirmShard,
-    hash: md5
-  }
-  if (resp && resp.code === codeOk) {
+    const res = {
+        success: true,
+        fileId: resp.data.fileId,
+        status: resp.data.status,
+        confirmShard: resp.data.confirmShard,
+        hash: md5
+    }
+    if (resp && resp.code === codeOk) {
+        return res
+    }
+    res.success = false
     return res
-  }
-  res.success = false
-  return res
 }
 
 async function uploadSingle(file: UploadRawFile, fileId: number) {
-  const formData = new FormData();
-  formData.append('file', file)
-  formData.append('fileId', fileId.toString())
-  const resp = await upload(formData)
-  if (resp && resp.code === codeOk) {
-    promptSuccess(file.name + ' 上传成功！😺')
-  }
+    const formData = new FormData();
+    formData.append('file', file)
+    formData.append('fileId', fileId.toString())
+    const resp = await upload(formData)
+    if (resp && resp.code === codeOk) {
+        promptSuccess(file.name + ' 上传成功！😺')
+    }
 }
 
 async function uploadSlice(file: UploadRawFile, fileId: number, hash: string) {
-    const chunkNum = Math.ceil(file.size/uploadConst.shardingSize)
+    const chunkNum = Math.ceil(file.size / uploadConst.shardingSize)
     let start = 0
     let end = 0
     const chunks = []

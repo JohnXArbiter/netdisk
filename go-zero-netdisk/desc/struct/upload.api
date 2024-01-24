@@ -11,21 +11,22 @@ type (
         fileId int64 `form:"fileId"`
     }
 
-    checkChunkReq {
-        hash string `json:"hash"`
-        chunkSeq int64 `json:"chunkSeq"`
+    CheckChunkReq {
+        FileId int64 `json:"fileId"`
+        Hash string `json:"hash"`
+        ChunkId int64 `json:"chunkId"`
     }
 
     UploadChunkReq {
-        FileId int64 `json:"fileId"`
-        ChunkId
+        FileId int64 `form:"fileId"`
+        ChunkId int64 `form:"chunkId"`
     }
 )
 
 type (
     CheckFileResp {
         FileId int64 `json:"fileId"`
-        Status int8 `json:"status"` // 0：文件未上传，1：文件已存在
+        Status int8 `json:"status"`             // 0：文件未上传，1：文件已存在
         ConfirmShard int8 `json:"confirmShard"` // 0：不分片，1：分片
     }
 )
