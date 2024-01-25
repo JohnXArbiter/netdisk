@@ -69,6 +69,7 @@ func (l *CheckFileLogic) doWhenNotExist(req *types.CheckFileReq) (*types.CheckFi
 		resp.ConfirmShard = constant.ConfirmShard
 		key = redis.UploadCheckBigFileKey + fileIdStr
 		fileInfo["chunkNum"] = math.Ceil(float64(req.Size) / constant.ShardingSize)
+		fileInfo["chunkSum"] = 0
 		if _, err := rdb.HSet(l.ctx, key, fileInfo).Result(); err != nil {
 			return nil, err
 		}

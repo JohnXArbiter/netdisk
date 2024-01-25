@@ -103,7 +103,7 @@ func (l *UploadLogic) saveAndUpload(fileInfo map[string]string, fileParam *types
 			return nil, err
 		}
 
-		if err := minioSvc.UploadFile(l.ctx, objectName, fileData); err != nil {
+		if err := minioSvc.Upload(l.ctx, objectName, fileData); err != nil {
 			return nil, err
 		}
 		return nil, nil

@@ -14,12 +14,12 @@ type (
     CheckChunkReq {
         FileId int64 `json:"fileId"`
         Hash string `json:"hash"`
-        ChunkId int64 `json:"chunkId"`
+        ChunkSeq int64 `json:"chunkSeq"`
     }
 
     UploadChunkReq {
         FileId int64 `form:"fileId"`
-        ChunkId int64 `form:"chunkId"`
+        ChunkSeq int64 `form:"chunkSeq"`
     }
 )
 

@@ -2,6 +2,7 @@ package upload
 
 import (
 	xhttp "github.com/zeromicro/x/http"
+	"lc/netdisk/common/utils"
 	"net/http"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
@@ -18,14 +19,9 @@ func UploadHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		file, header, err := r.FormFile("file")
+		fileParam, err := utils.GetSingleFile(r)
 		if err != nil {
 			xhttp.JsonBaseResponseCtx(r.Context(), w, err)
-		}
-
-		fileParam := &types.FileParam{
-			File:       file,
-			FileHeader: header,
 		}
 
 		l := upload.NewUploadLogic(r.Context(), svcCtx)

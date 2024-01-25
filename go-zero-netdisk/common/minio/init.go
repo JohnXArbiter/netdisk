@@ -3,6 +3,7 @@ package minio
 import (
 	"github.com/minio/minio-go"
 	"log"
+	"strconv"
 	"time"
 )
 
@@ -41,9 +42,15 @@ func Init(conf *Conf) *Client {
 	return &Client{bucketName, client}
 }
 
-// GenObjectName ext can only be one string variable
+// GenObjectName 生成objectName
 func (c *Client) GenObjectName(hash string, ext string) (string, string) {
 	filename := hash + ext
 	return filename, "/" + time.Now().Format("2006-01") + "/" +
-		string(hash[0]) + "/" + string(hash[0]) + "/" + filename
+		string(hash[0]) + "/" + string(hash[0]) + "/" + hash + "/" + filename
+}
+
+func (c *Client) GenChunkObjectName(hash string, chunkId int64) string {
+	return "/" + time.Now().Format("2006-01") + "/" +
+		string(hash[0]) + "/" + string(hash[0]) + "/" + hash +
+		"/" + hash + "@" + strconv.FormatInt(chunkId, 10)
 }

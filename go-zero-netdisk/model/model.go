@@ -49,12 +49,12 @@ type (
 		Size       int64     `xorm:"bigint notnull default 0 'size' comment('文件大小')"`
 		ChunkNum   int64     `xorm:"bigint notnull default 0 'chunk_num' comment('分片数量')"`
 		Url        string    `xorm:"varchar(255) notnull default '' 'url' comment('访问地址')"`
-		Status     int8      `xorm:"tinyint notnull default 0 'status'  comment('文件状态，0：大文件未上传，1：大文件待合并，2：小文件未上传，3：上传成功')"` //
+		Status     int8      `xorm:"tinyint notnull default 0 'status' comment('文件状态，0：大文件未上传，1：大文件待合并，2：小文件未上传，3：上传成功')"` //
 		DoneAt     time.Time `xorm:"datetime 'done_at' comment('大文件合并完成时间')"`
 	}
 
-	// FileUploading 上传中间态
-	FileUploading struct {
+	// FileSchedule 任务表
+	FileSchedule struct {
 		Model    `xorm:"extends"`
 		FileId   int64 `xorm:"bigint notnull default 0 'file_id'"`
 		FsId     int64 `xorm:"bigint notnull default 0 'fs_id'"`

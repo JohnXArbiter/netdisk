@@ -43,14 +43,14 @@ type UploadReq struct {
 }
 
 type CheckChunkReq struct {
-	FileId  int64  `json:"fileId"`
-	Hash    string `json:"hash"`
-	ChunkId int64  `json:"chunkId"`
+	FileId   int64  `json:"fileId"`
+	Hash     string `json:"hash"`
+	ChunkSeq int64  `json:"chunkSeq"`
 }
 
 type UploadChunkReq struct {
-	FileId  int64 `form:"fileId"`
-	ChunkId int64 `form:"chunkId"`
+	FileId   int64 `form:"fileId"`
+	ChunkSeq int64 `form:"chunkSeq"`
 }
 
 type CheckFileResp struct {

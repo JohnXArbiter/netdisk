@@ -1,6 +1,8 @@
 package upload
 
 import (
+	xhttp "github.com/zeromicro/x/http"
+	"lc/netdisk/common/utils"
 	"net/http"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
@@ -12,17 +14,21 @@ import (
 func UploadChunkHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req types.UploadChunkReq
-		if err := httpx.Parse(r, &req); err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
+		if err := httpx.ParseForm(r, &req); err != nil {
+			xhttp.JsonBaseResponseCtx(r.Context(), w, err)
 			return
 		}
 
-		l := upload.NewUploadChunkLogic(r.Context(), svcCtx)
-		err := l.UploadChunk(&req)
+		fileParam, err := utils.GetSingleFile(r)
 		if err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
+			xhttp.JsonBaseResponseCtx(r.Context(), w, err)
+		}
+
+		l := upload.NewUploadChunkLogic(r.Context(), svcCtx)
+		if err := l.UploadChunk(&req, fileParam); err != nil {
+			xhttp.JsonBaseResponseCtx(r.Context(), w, err)
 		} else {
-			httpx.Ok(w)
+			xhttp.JsonBaseResponseCtx(r.Context(), w, nil)
 		}
 	}
 }

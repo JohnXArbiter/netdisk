@@ -2,9 +2,11 @@ package upload
 
 import (
 	"context"
-	"lc/netdisk/common/constant"
+	"fmt"
+	"lc/netdisk/common/redis"
 	"lc/netdisk/internal/svc"
 	"lc/netdisk/internal/types"
+	"strconv"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -23,12 +25,28 @@ func NewCheckChunkLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CheckC
 	}
 }
 
-func (l *CheckChunkLogic) CheckChunk(req *types.CheckChunkReq) (interface{}, error) {
+func (l *CheckChunkLogic) CheckChunk(req *types.CheckChunkReq) error {
 	var (
-		userId   = l.ctx.Value(constant.UserIdKey).(int64)
-		engine   = l.svcCtx.Xorm
-		minioSvc = l.svcCtx.Minio
+		rdb      = l.svcCtx.Redis
+		minio    = l.svcCtx.Minio
+		minioSvc = l.svcCtx.Minio.NewService()
 	)
+
+	fileIdStr := strconv.FormatInt(req.FileId, 10)
+	_, err := rdb.Exists(l.ctx, redis.UploadCheckBigFileKey+fileIdStr).Result()
+	if err != nil {
+		return err
+	}
+
+	objectName := minio.GenChunkObjectName(req.Hash, req.ChunkSeq)
+	if err = minioSvc.IfExist(objectName); err != nil {
+		return err
+	}
+
+	if err = rdb.Set(l.ctx, fmt.Sprintf(redis.UploadCheckChunkKeyF, req.FileId, req.ChunkSeq),
+		objectName, redis.UploadCheckChunkExpire).Err(); err != nil {
+		return err
+	}
 
 	return nil
 }
