@@ -32,7 +32,7 @@ import {UploadRequestOptions} from "element-plus";
 import {UploadRawFile} from "element-plus/es/components/upload/src/upload";
 import {useFileFolderStore} from "../../store/fileFolder.ts";
 import SparkMD5 from 'spark-md5'
-import {checkChunk, checkFile, CheckRes, upload, uploadChunk, uploadConst} from "./uploading.ts";
+import {checkChunk, checkFile, upload, uploadChunk, uploadConst} from "./uploading.ts";
 import {codeOk, promptError, promptSuccess} from "../../utils/apis/base.ts";
 
 const fileFolderStore = useFileFolderStore()
@@ -107,18 +107,19 @@ async function uploadSlice(file: UploadRawFile, fileId: number, hash: string) {
     await Promise.all(chunks.map(checkChunkAndUpload))
 }
 
-async function checkChunkAndUpload({chunk, fileId, hash}: any, chunkId: number) {
+async function checkChunkAndUpload({chunk, fileId, hash}: any, chunkSeq: number) {
     let resp = await checkChunk({
         fileId: fileId,
         hash: hash,
-        chunkId: chunkId
+        chunkSeq: chunkSeq
     })
-    if (resp) {
-
+    if (resp && resp.code === codeOk && resp.data.status !== 1) {
+        return
     }
     const formData = new FormData();
     formData.append('file', chunk)
     formData.append('fileId', fileId.toString())
+    formData.append('chunkSeq', chunkSeq.toString())
     resp = await uploadChunk(formData)
     // TODO
 }

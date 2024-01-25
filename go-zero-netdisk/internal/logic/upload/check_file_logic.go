@@ -100,13 +100,17 @@ func (l *CheckFileLogic) doWhenExist(req *types.CheckFileReq, fileFs *model.File
 	}
 
 	// 该文件夹无该文件，信息落库
-	file.Id = idgen.NextId()
+	isBigFlag := constant.SmallFileFlag
+	if fileFs.Size > int64(constant.ShardingFloor) {
+		isBigFlag = constant.BigFileFlag
+	}
 	file.UserId = userId
 	file.FsId = fileFs.Id
 	file.Name = req.Name
 	file.FolderId = req.FolderId
 	file.Status = constant.StatusFileUploaded
 	file.Url = fileFs.Url
+	file.IsBig = isBigFlag
 	file.DoneAt = time.Now().Local()
 	file.DelFlag = constant.StatusFileUndeleted
 	if fileFs.Size > int64(constant.ShardingFloor) {

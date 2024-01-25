@@ -11,7 +11,9 @@ import (
 	"lc/netdisk/internal/svc"
 	"lc/netdisk/internal/types"
 	"lc/netdisk/model"
+	"mime/multipart"
 	"strconv"
+	"time"
 )
 
 type UploadLogic struct {
@@ -59,7 +61,7 @@ func (l *UploadLogic) Upload(req *types.UploadReq, fileParam *types.FileParam) (
 		}
 	}
 
-	_, err = engine.DoTransaction(l.saveAndUpload(fileInfo, fileParam))
+	_, err = engine.DoTransaction(l.saveAndUpload(fileInfo, fileParam.File))
 	if err != nil {
 		return nil, err
 	}
@@ -68,19 +70,15 @@ func (l *UploadLogic) Upload(req *types.UploadReq, fileParam *types.FileParam) (
 	return nil, nil
 }
 
-func (l *UploadLogic) saveAndUpload(fileInfo map[string]string, fileParam *types.FileParam) xorm.TxFn {
+func (l *UploadLogic) saveAndUpload(fileInfo map[string]string, fileData multipart.File) xorm.TxFn {
 	return func(session *xorm.Session) (interface{}, error) {
-		var (
-			userId   = l.ctx.Value(constant.UserIdKey).(int64)
-			minioSvc = l.svcCtx.Minio.NewService()
-			fileData = fileParam.File
-		)
 
 		size, _ := strconv.ParseInt(fileInfo["size"], 10, 64)
 		filename, objectName := l.svcCtx.Minio.GenObjectName(fileInfo["hash"], fileInfo["ext"])
 		fsId := idgen.NextId()
 		fileFs := &model.FileFs{}
 		fileFs.Id = fsId
+		fileFs.Bucket = l.svcCtx.Minio.BucketName
 		fileFs.Name = filename
 		fileFs.ObjectName = objectName
 		fileFs.Ext = fileInfo["ext"]
@@ -92,18 +90,23 @@ func (l *UploadLogic) saveAndUpload(fileInfo map[string]string, fileParam *types
 			return nil, err
 		}
 
+		userId, _ := strconv.ParseInt(fileInfo["userId"], 10, 64)
+		folderId, _ := strconv.ParseInt(fileInfo["folderId"], 10, 64)
 		file := &model.File{}
 		file.Name = fileInfo["name"]
 		file.Url = ""
 		file.Size = size
 		file.FsId = fsId
+		file.FolderId = folderId
 		file.UserId = userId
+		file.IsBig = constant.SmallFileFlag
+		file.DoneAt = time.Now().Local()
 		file.Status = constant.StatusFileUploaded
 		if _, err := session.Insert(file); err != nil {
 			return nil, err
 		}
 
-		if err := minioSvc.Upload(l.ctx, objectName, fileData); err != nil {
+		if err := l.svcCtx.Minio.NewService().Upload(l.ctx, objectName, fileData); err != nil {
 			return nil, err
 		}
 		return nil, nil

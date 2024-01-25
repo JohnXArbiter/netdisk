@@ -59,6 +59,10 @@ type CheckFileResp struct {
 	ConfirmShard int8  `json:"confirmShard"` // 0：不分片，1：分片
 }
 
+type CheckChunkResp struct {
+	Status int8 `json:"status"`
+}
+
 type IdsReq struct {
 	Ids []int64 `json:"ids"`
 }

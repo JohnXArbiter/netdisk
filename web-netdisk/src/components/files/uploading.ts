@@ -23,7 +23,7 @@ export interface CheckRes extends CheckResp {
 export interface CheckChunkReq {
     fileId: number
     hash: string
-    chunkId: number
+    chunkSeq: number
 }
 
 export const uploadConst = {
