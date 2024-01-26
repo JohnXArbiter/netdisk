@@ -2,10 +2,12 @@ package minio
 
 import (
 	"context"
+	"fmt"
 	"github.com/minio/minio-go"
 	"io"
 	"log"
 	"os"
+	"strings"
 )
 
 type (
@@ -22,6 +24,7 @@ func (c *Client) NewService() *Service {
 // Upload 上传文件
 func (s *Service) Upload(ctx context.Context, objectName string, file io.Reader) error {
 	_, err := s.client.PutObjectWithContext(ctx, s.BucketName, objectName, file, -1, minio.PutObjectOptions{})
+	fmt.Println(s.BucketName)
 	if err != nil {
 		log.Println("putObject fail: ", err)
 		return err
@@ -29,13 +32,15 @@ func (s *Service) Upload(ctx context.Context, objectName string, file io.Reader)
 	return nil
 }
 
-func (s *Service) IfExist(objectName string) error {
-	_, err := s.client.StatObject(objectName, objectName, minio.StatObjectOptions{})
-	if err != nil {
+func (s *Service) IfExist(objectName string) (bool, error) {
+	_, err := s.client.StatObject(s.BucketName, objectName, minio.StatObjectOptions{})
+	if strings.Contains(err.Error(), "The specified key does not exist") {
+		return false, nil
+	} else if err != nil {
 		log.Println("statObject fail: ", err)
-		return err
+		return false, err
 	}
-	return nil
+	return true, nil
 }
 
 // DownloadFile 下载文件

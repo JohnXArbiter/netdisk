@@ -54,6 +54,9 @@ func (l *UploadChunkLogic) UploadChunk(req *types.UploadChunkReq, fileParam *typ
 	if chunkSum+1 == chunkNum {
 		_, err = engine.DoTransaction(l.createSchedule(req, fileParam.File, objectName, chunkNum, fileInfo))
 	} else {
+		if err = l.svcCtx.Minio.NewService().Upload(l.ctx, objectName, fileParam.File); err != nil {
+			return err
+		}
 		_, err = l.incr(key, 1)
 	}
 	return nil

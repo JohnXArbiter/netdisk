@@ -2,10 +2,9 @@ import {ElMessage} from 'element-plus'
 import axios from 'axios'
 import router from "../../router";
 import {useBaseStore} from "../../store";
+import {promptError} from "./base.ts";
 
 function jumpLogin() {
-    // window.location.href = "#/login" // 跳转登录
-    // store.state.user.utils = ""
     useBaseStore().updateToken('')
     router.push("/login")
 }
@@ -16,7 +15,7 @@ const api = axios.create({
     // 基础路径
     baseURL: '/api',
     // import.meta.env.BASE_URL.VITE_APP_BASE_API, //请求路径上都会写带上这个url  但是这里不知道为什么读取不到
-    timeout: 5 * 1000, // 请求超时时间
+    timeout: 60 * 1000, // 请求超时时间
 })
 
 // 2.request实例添加请求和拦截器
@@ -41,7 +40,6 @@ api.interceptors.response.use(
         const {code: code, msg: message} = resp.data
 
         if (code === 401 || code === 403) {
-            // store.state.user.utils = ""
             localStorage.clear()
             jumpLogin()
         }
@@ -52,10 +50,7 @@ api.interceptors.response.use(
             code.toString() !== "401" &&
             code.toString() !== "403"
         ) {
-            ElMessage({
-                type: "error",
-                message: message,
-            })
+            promptError(message)
             return Promise.reject(resp.data)
         }
 
@@ -67,7 +62,7 @@ api.interceptors.response.use(
         }
 
         // 这里是简化了数据
-        return resp.data
+        return Promise.resolve(resp.data)
     },
     error => {
 
@@ -95,12 +90,7 @@ api.interceptors.response.use(
                 msg = '网络出现问题'
                 break
         }
-        // 提示错误信息
-        ElMessage({
-            type: 'error',
-            message: msg,
-        })
-        console.error("请求出错", error)
+        promptError(msg)
         return Promise.resolve(error)
     },
 )

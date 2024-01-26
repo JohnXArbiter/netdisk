@@ -40,9 +40,12 @@ func (l *CheckChunkLogic) CheckChunk(req *types.CheckChunkReq) (*types.CheckChun
 	}
 
 	objectName := minio.GenChunkObjectName(req.Hash, req.ChunkSeq)
-	if err = minioSvc.IfExist(objectName); err != nil {
-		resp.Status = 1
+	exist, err := minioSvc.IfExist(objectName)
+	if err != nil {
 		return resp, err
+	} else if exist {
+		resp.Status = 1
+		return resp, nil
 	}
 
 	if err = rdb.Set(l.ctx, fmt.Sprintf(redis.UploadCheckChunkKeyF, req.FileId, req.ChunkSeq),

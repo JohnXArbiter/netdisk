@@ -113,14 +113,14 @@ async function checkChunkAndUpload({chunk, fileId, hash}: any, chunkSeq: number)
         hash: hash,
         chunkSeq: chunkSeq
     })
-    if (resp && resp.code === codeOk && resp.data.status !== 1) {
+    if (resp.code === codeOk && resp.data.status === 1) {
         return
     }
     const formData = new FormData();
     formData.append('file', chunk)
     formData.append('fileId', fileId.toString())
     formData.append('chunkSeq', chunkSeq.toString())
-    resp = await uploadChunk(formData)
+     await uploadChunk(formData)
     // TODO
 }
 
