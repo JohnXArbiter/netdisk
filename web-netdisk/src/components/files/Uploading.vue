@@ -24,6 +24,9 @@
         <!--        />-->
 
     </el-upload>
+  <button type="button" @click="dl">下载</button>
+
+  <a href="http://localhost:8888/test" download="file.txt">下载</a>
 </template>
 
 <script lang="ts" setup>
@@ -34,6 +37,11 @@ import {useFileFolderStore} from "../../store/fileFolder.ts";
 import SparkMD5 from 'spark-md5'
 import {checkChunk, checkFile, upload, uploadChunk, uploadConst} from "./uploading.ts";
 import {codeOk, promptError, promptSuccess} from "../../utils/apis/base.ts";
+import api from "../../utils/apis/request.ts";
+
+function dl () {
+  api.post('/test')
+}
 
 const fileFolderStore = useFileFolderStore()
 
@@ -130,6 +138,22 @@ function genMd5(file: UploadRawFile | Blob) {
     const md5 = spark.end();
     console.log('file', md5)
     return md5
+}
+
+function formatSize(file) {
+  //console.log("size",file.size);
+  var size = file.size;
+  var unit;
+  var units = [" B", " K", " M", " G"];
+  var pointLength = 2;
+  while ((unit = units.shift()) && size > 1024) {
+    size = size / 1024;
+  }
+  return (
+      (unit === "B"
+          ? size
+          : size.toFixed(pointLength === undefined ? 2 : pointLength)) + unit
+  );
 }
 
 // function asd(e: Event) {

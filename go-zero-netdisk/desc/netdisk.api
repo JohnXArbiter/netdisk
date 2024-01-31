@@ -8,12 +8,15 @@ import (
 service netdisk-api {
 	@handler login
 	post /login (loginReq) returns (LoginResp)
-	
+
 	@handler register
 	post /register (registerReq) returns ()
-	
+
 	@handler ping
 	get /ping () returns ()
+
+	@handler test
+	get /test () returns ()
 }
 
 @server(
@@ -25,15 +28,15 @@ service netdisk-api {
 	// 检查该用户文件是否已存在（秒传）
 	@handler checkFile
 	post /check (checkFileReq) returns (CheckFileResp)
-	
+
 	// 上传小文件
 	@handler upload
 	post / (uploadReq) returns ()
-	
+
 	// 检查分片
 	@handler checkChunk
 	post /chunk-check (CheckChunkReq) returns (CheckChunkResp)
-	
+
 	@handler uploadChunk
 	post /chunk (UploadChunkReq) returns ()
 }
@@ -47,11 +50,11 @@ service netdisk-api {
 	// 检查大小
 	@handler checkSize
 	post /check_size (checkSizeReq) returns (checkSizeResp)
-	
+
 	// 下载小文件
 	@handler download
 	post / (downloadReq) returns ()
-	
+
 	// 下载分片
 	@handler chunkDownload
 	post /chunk (chunkDownloadReq) returns ()
@@ -65,10 +68,10 @@ service netdisk-api {
 service netdisk-api {
 	@handler updateDetail
 	post /detail (updateUserDetailReq) returns ()
-	
+
 	@handler getDetail
 	get /detail/:id (IdPathReq) returns ()
-	
+
 	@handler updateAvatar
 	post /avatar (updateAvatarReq) returns ()
 }
@@ -81,58 +84,58 @@ service netdisk-api {
 service netdisk-api {
 	@handler getFileDetail
 	get /:id (IdPathReq) returns (FileResp)
-	
+
 	@handler listFile
 	get /list/:parentFolderId (parentFolderIdReq) returns ([]*FileResp)
-	
+
 	@handler listFileByType
 	get /type/:fileType (FileTypeReq) returns ([]*FileResp)
-	
+
 	@handler listFolder
 	get /folder-list/:parentFolderId (parentFolderIdReq) returns ([]*ListFolderStruct)
-	
+
 	@handler listFileMovableFolder
 	get /move/:parentFolderId (parentFolderIdReq) returns ([]ListFolderStruct)
-	
+
 	@handler listFolderMovableFolder
 	post /folder-move (ListFolderMovableFolderReq) returns ([]ListFolderStruct)
-	
+
 	@handler moveFiles
 	put /move (moveFilesReq) returns ()
-	
+
 	@handler moveFolders
 	put /folder-move (moveFoldersReq) returns ()
-	
+
 	@handler updateFile
 	put / (UpdateNameReq) returns ()
-	
+
 	@handler updateFolder
 	put /folder (UpdateNameReq) returns ()
-	
+
 	@handler copyFiles
 	post /copy (CopyFilesReq) returns ()
-	
+
 	@handler deleteFiles
 	put /delete (IdsReq) returns ()
-	
+
 	@handler deleteFilesTruly
 	post /delete (IdsReq) returns ()
-	
+
 	@handler deleteFolders
 	put /folder-delete (IdsReq) returns ()
-	
+
 	@handler deleteFoldersTruly
 	post /folder-delete (IdsReq) returns ()
-	
+
 	@handler recoverFiles
 	put /recover (FileIdsStruct) returns ()
-	
+
 	@handler recoverFolders
 	put /folder-recover (FolderIdsStruct) returns ()
-	
+
 	@handler createFolder
 	post /folder (createFolderReq) returns ()
-	
+
 	@handler listDeletedItems
 	get /delete () returns (listDeletedItemsResp)
 }
