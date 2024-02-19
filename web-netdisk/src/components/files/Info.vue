@@ -14,9 +14,15 @@
                 </el-input>
             </div>
 
-            <div v-if="forFile">
+            <div v-if="showCase[0]">
                 <div style="margin: 3% 0 3% 0; font-size: 0.8rem">文件详情</div>
-                <el-image style="border-radius: 5px;width: 100%; height: auto" :src="url" :fit="'contain'"/>
+                <div>已选择 {{ selectedNum }} 个项目</div>
+            </div>
+
+            <div v-if="showCase[1]">
+                <div style="margin: 3% 0 3% 0; font-size: 0.8rem">文件详情</div>
+                <el-image style="border-radius: 5px;width: 100%; height: auto" :src="fileDetail.data.url"
+                          :fit="'contain'"/>
                 <div style="margin-top: 4%;padding-left: 4%;">
                     <div class="file-name">{{ fileDetail.data.name }}</div>
                     <div class="file-info">创建时间：{{ fileDetail.data.created }}</div>
@@ -26,7 +32,10 @@
                 </div>
             </div>
 
-          <div v-if="!forFile"></div>
+            <div v-if="showCase[2]">
+                <div style="margin: 3% 0 3% 0; font-size: 0.8rem">文件夹内容</div>
+
+            </div>
         </el-col>
     </el-row>
 </template>
@@ -40,57 +49,53 @@ import {codeOk} from "../../utils/apis/base.ts";
 
 const fileFolderStore = useFileFolderStore()
 
-let forFile = true
+let showCase = ref([true, false, false])
 const url = 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
 const fileDetail: { data: {} } = reactive({
-  data: {
-    name: '小猫咪.jpeg',
-    created: "2023-01-24 05:21",
-    updated: '2023-10-05 23:50',
-    ext: '.jpeg',
-    size: 0,
-    sizeStr: '12kb',
-  }
+    data: {}
 })
 
 let searchStr = ref('')
+let selectedNum = ref(0)
 
 async function searchConfirm() {
-  const resp = await search(searchStr.value)
-  if (resp && resp.code === codeOk) {
+    const resp = await search(searchStr.value)
+    if (resp && resp.code === codeOk) {
 // TODO
-  }
+    }
 }
 
 async function getFileDetail(fileId: number) {
-  const resp = await getFileDetailById(fileId)
-  if (resp && resp.code === codeOk) {
-    fileDetail.data = resp.data
-  }
+    const resp = await getFileDetailById(fileId)
+    if (resp.code === codeOk) {
+        fileDetail.data = resp.data
+    }
 }
 
 async function getFolderDetail(fileId: number) {
-  const resp = await listFolderDetailById(fileId)
-  if (resp && resp.code === codeOk) {
-    fileDetail.data = resp.data
-  }
+    const resp = await listFolderDetailById(fileId)
+    if (resp.code === codeOk) {
+        fileDetail.data = resp.data
+    }
 }
 
 const unsubscribe = fileFolderStore.$subscribe((_, state) => {
-  const filesLen = state.selectedItems.files.length
-  const foldersLen = state.selectedItems.folders.length;
-  if (filesLen === 1 && foldersLen < 1) {
-    getFileDetail(state.selectedItems.files[0])
-  } else if (foldersLen == 1 && filesLen < 1) {
-    getFolderDetail(state.selectedItems.folders[0])
-  } else if (filesLen === 0 && foldersLen === 0) {
-
-  }
-  console.log(filesLen, foldersLen)
+    const filesLen = state.selectedItems.files.length
+    const foldersLen = state.selectedItems.folders.length;
+    if (filesLen === 1 && foldersLen < 1) {
+        showCase.value = [false, true, false]
+        getFileDetail(state.selectedItems.files[0])
+    } else if (foldersLen == 1 && filesLen < 1) {
+        showCase.value = [false, false, true]
+        getFolderDetail(state.selectedItems.folders[0])
+    } else {
+        selectedNum.value = filesLen + foldersLen
+        showCase.value = [true, false, false]
+    }
 })
 
 onUnmounted(() => {
-  unsubscribe()
+    unsubscribe()
 })
 
 </script>

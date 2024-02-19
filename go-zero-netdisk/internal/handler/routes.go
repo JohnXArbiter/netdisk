@@ -213,7 +213,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				{
 					Method:  http.MethodGet,
 					Path:    "/delete",
-					Handler: file.ListDeletedItemsHandler(serverCtx),
+					Handler: file.ListDeletedFilesHandler(serverCtx),
 				},
 			}...,
 		),

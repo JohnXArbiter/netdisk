@@ -34,9 +34,10 @@ func (s *Service) Upload(ctx context.Context, objectName string, file io.Reader)
 
 func (s *Service) IfExist(objectName string) (bool, error) {
 	_, err := s.client.StatObject(s.BucketName, objectName, minio.StatObjectOptions{})
-	if strings.Contains(err.Error(), "The specified key does not exist") {
-		return false, nil
-	} else if err != nil {
+	if err != nil {
+		if strings.Contains(err.Error(), "The specified key does not exist") {
+			return false, nil
+		}
 		log.Println("statObject fail: ", err)
 		return false, err
 	}

@@ -11,5 +11,5 @@ export function getFileDetailById(id: number) {
 }
 
 export function listFolderDetailById(id: number) {
-    return api.get<any, Resp<File>>(`/file/folder/${id}`)
+    return api.get<any, Resp<File>>(`/file/list/${id}`)
 }

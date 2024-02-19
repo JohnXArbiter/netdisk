@@ -32,17 +32,18 @@ func NewUploadChunkLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Uploa
 
 func (l *UploadChunkLogic) UploadChunk(req *types.UploadChunkReq, fileParam *types.FileParam) error {
 	var (
-		rdb    = l.svcCtx.Redis
-		engine = l.svcCtx.Xorm
+		rdb      = l.svcCtx.Redis
+		engine   = l.svcCtx.Xorm
+		checkKey = fmt.Sprintf(redis.UploadCheckChunkKeyF, req.FileId, req.ChunkSeq)
 	)
 
-	objectName, err := rdb.Get(l.ctx, fmt.Sprintf(redis.UploadCheckChunkKeyF, req.FileId, req.ChunkSeq)).Result()
+	objectName, err := rdb.Get(l.ctx, checkKey).Result()
 	if err != nil {
 		return err
 	}
 
-	key := redis.UploadCheckBigFileKey + strconv.FormatInt(req.FileId, 10)
-	fileInfo, err := rdb.HGetAll(l.ctx, key).Result()
+	bigFileKey := redis.UploadCheckBigFileKey + strconv.FormatInt(req.FileId, 10)
+	fileInfo, err := rdb.HGetAll(l.ctx, bigFileKey).Result()
 	if err != nil {
 		return err
 	}
@@ -50,15 +51,15 @@ func (l *UploadChunkLogic) UploadChunk(req *types.UploadChunkReq, fileParam *typ
 	chunkSum, _ := strconv.ParseInt(fileInfo["chunkSum"], 10, 64)
 	chunkNum, _ := strconv.ParseInt(fileInfo["chunkNum"], 10, 64)
 
-	// 还有fs
 	if chunkSum+1 == chunkNum {
 		_, err = engine.DoTransaction(l.createSchedule(req, fileParam.File, objectName, chunkNum, fileInfo))
 	} else {
 		if err = l.svcCtx.Minio.NewService().Upload(l.ctx, objectName, fileParam.File); err != nil {
 			return err
 		}
-		_, err = l.incr(key, 1)
+		_, err = l.incr(bigFileKey, 1)
 	}
+	_, _ = rdb.Del(l.ctx, checkKey).Result()
 	return nil
 }
 

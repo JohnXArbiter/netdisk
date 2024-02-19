@@ -120,9 +120,15 @@ type ListFolderMovableFolderReq struct {
 	SelectedFolderIds []int64 `json:"selectedFolderIds"`
 }
 
-type ListDeletedItemsResp struct {
-	Folders []*ListDeletedFolderStruct `json:"folders"`
-	Files   []*ListDeletedFileStruct   `json:"files"`
+type DeletedFilesResp struct {
+	Id         int64  `json:"id"`
+	Name       string `json:"name"`
+	Url        string `json:"url"`
+	Status     int8   `json:"status"`
+	Size       int64  `json:"size"`
+	FolderId   int64  `json:"folderId,omitempty"`
+	FolderName string `json:"folderName"`
+	DelTime    int64  `json:"delTime"`
 }
 
 type FileResp struct {
@@ -140,19 +146,6 @@ type ListFolderStruct struct {
 	Id      int64  `json:"id"`
 	Name    string `json:"name"`
 	Updated string `json:"updated,omitempty"`
-}
-
-type ListDeletedFolderStruct struct {
-	Id      int64  `json:"id"`
-	Name    string `json:"name"`
-	DelTime int64  `json:"delTime"`
-}
-
-type ListDeletedFileStruct struct {
-	Id      int64  `json:"id"`
-	Name    string `json:"name"`
-	Url     string `json:"url"`
-	DelTime int64  `json:"delTime"`
 }
 
 type FolderIdsStruct struct {

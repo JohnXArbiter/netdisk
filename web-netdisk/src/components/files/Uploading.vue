@@ -24,9 +24,9 @@
         <!--        />-->
 
     </el-upload>
-  <button type="button" @click="dl">下载</button>
+    <button type="button" @click="dl">下载</button>
 
-  <a href="http://localhost:8888/test" download="file.txt">下载</a>
+    <a href="http://localhost:8888/test" download="file.txt">下载</a>
 </template>
 
 <script lang="ts" setup>
@@ -39,8 +39,8 @@ import {checkChunk, checkFile, upload, uploadChunk, uploadConst} from "./uploadi
 import {codeOk, promptError, promptSuccess} from "../../utils/apis/base.ts";
 import api from "../../utils/apis/request.ts";
 
-function dl () {
-  api.post('/test')
+function dl() {
+    api.post('/test')
 }
 
 const fileFolderStore = useFileFolderStore()
@@ -112,7 +112,11 @@ async function uploadSlice(file: UploadRawFile, fileId: number, hash: string) {
     if (chunks.length != chunkNum) {
         promptError('上传' + file.name + '过程出错！😿')
     }
-    await Promise.all(chunks.map(checkChunkAndUpload))
+    // await Promise.all(chunks.map(checkChunkAndUpload))
+
+    for (let i = 0; i < chunkNum; i++) {
+        await checkChunkAndUpload(chunks[i], i)
+    }
 }
 
 async function checkChunkAndUpload({chunk, fileId, hash}: any, chunkSeq: number) {
@@ -128,7 +132,7 @@ async function checkChunkAndUpload({chunk, fileId, hash}: any, chunkSeq: number)
     formData.append('file', chunk)
     formData.append('fileId', fileId.toString())
     formData.append('chunkSeq', chunkSeq.toString())
-     await uploadChunk(formData)
+    await uploadChunk(formData)
     // TODO
 }
 
@@ -141,19 +145,19 @@ function genMd5(file: UploadRawFile | Blob) {
 }
 
 function formatSize(file) {
-  //console.log("size",file.size);
-  var size = file.size;
-  var unit;
-  var units = [" B", " K", " M", " G"];
-  var pointLength = 2;
-  while ((unit = units.shift()) && size > 1024) {
-    size = size / 1024;
-  }
-  return (
-      (unit === "B"
-          ? size
-          : size.toFixed(pointLength === undefined ? 2 : pointLength)) + unit
-  );
+    //console.log("size",file.size);
+    let size = file.size;
+    let unit;
+    const units = [" B", " K", " M", " G"];
+    let pointLength = 2;
+    while ((unit = units.shift()) && size > 1024) {
+        size = size / 1024;
+    }
+    return (
+        (unit === "B"
+            ? size
+            : size.toFixed(pointLength === undefined ? 2 : pointLength)) + unit
+    );
 }
 
 // function asd(e: Event) {
