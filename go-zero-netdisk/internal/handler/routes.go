@@ -192,18 +192,13 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodPost,
-					Path:    "/folder-delete",
-					Handler: file.DeleteFoldersTrulyHandler(serverCtx),
+					Path:    "/clear",
+					Handler: file.DeleteAllFilesTrulyHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodPut,
 					Path:    "/recover",
 					Handler: file.RecoverFilesHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodPut,
-					Path:    "/folder-recover",
-					Handler: file.RecoverFoldersHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodPost,

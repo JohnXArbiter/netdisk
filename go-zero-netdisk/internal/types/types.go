@@ -120,6 +120,10 @@ type ListFolderMovableFolderReq struct {
 	SelectedFolderIds []int64 `json:"selectedFolderIds"`
 }
 
+type RecoverFilesReq struct {
+	Files []*RecoverFilesStruct `json:"files"`
+}
+
 type DeletedFilesResp struct {
 	Id         int64  `json:"id"`
 	Name       string `json:"name"`
@@ -154,6 +158,11 @@ type FolderIdsStruct struct {
 
 type FileIdsStruct struct {
 	FileIds []int64 `json:"fileIds"`
+}
+
+type RecoverFilesStruct struct {
+	FileId   int64 `json:"fileId"`
+	FolderId int64 `json:"folderId"`
 }
 
 type CheckSizeReq struct {

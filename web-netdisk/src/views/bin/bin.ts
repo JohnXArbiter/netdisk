@@ -17,3 +17,7 @@ export function getDeletedFiles() {
 export function deleteFilesTruly() {
     return api.get<any, Resp<DeleteFile[]>>('/file/delete')
 }
+
+export function deleteAllFilesTruly() {
+    return api.post<any, Resp<DeleteFile[]>>('/file/clear')
+}

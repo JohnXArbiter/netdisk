@@ -124,14 +124,11 @@ service netdisk-api {
 	@handler deleteFolders
 	put /folder-delete (IdsReq) returns ()
 	
-	@handler deleteFoldersTruly
-	post /folder-delete (IdsReq) returns ()
+	@handler deleteAllFilesTruly
+	post /clear () returns ()
 	
 	@handler recoverFiles
-	put /recover (FileIdsStruct) returns ()
-	
-	@handler recoverFolders
-	put /folder-recover (FolderIdsStruct) returns ()
+	put /recover (RecoverFilesReq) returns ()
 	
 	@handler createFolder
 	post /folder (createFolderReq) returns ()

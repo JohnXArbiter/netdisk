@@ -55,13 +55,13 @@
                     </el-table-column>
                     <el-table-column label="Operations">
                         <template #default="scope">
-                            <el-button size="small" @click="handleEdit(scope.$index, scope.row)"
+                            <el-button size="small" @click=""
                             >Edit
                             </el-button>
                             <el-button
                                     size="small"
                                     type="danger"
-                                    @click="handleDelete(scope.$index, scope.row)"
+                                    @click=""
                             >Delete
                             </el-button>
                         </template>
@@ -135,7 +135,7 @@
                 <Warning/>
             </el-icon>
             确定要<span style="color: red"> 删除 {{ selectedFolders.map(folder => folder.name).join('，') }} </span>吗？
-            你可以在回收站中找到他们。
+            你可以在回收站中找到文件。
         </h3>
         <template #footer>
       <span class="dialog-footer">
@@ -176,7 +176,7 @@ let folderButtonsState = ref(0)
 const folderTableRef = ref<InstanceType<typeof ElTable>>()
 
 let folderList = reactive<{ arr: Folder[] }>({
-  arr: []
+    arr: []
 })
 
 const listFolders = async () => {
@@ -189,7 +189,7 @@ const listFolders = async () => {
 let listFoldersCurrentFolderId = 0
 
 const folderDialogVisible = reactive([false, false, false, false, false, false])
-let createFolderName = ref<string>()
+let createFolderName = ref<string>('')
 let renamingFolder = reactive<any>({})
 let folderCopyAndMoveDialog = ref(false)
 let folderCopyAndMoveFlag: number
@@ -211,11 +211,11 @@ async function toFolder(folderId: number, option: number) {
 
 // 对话框
 function folderButton(option: number) {
-    selectedFolders = folderTableRef.value!.getSelectionRows()
     if (option === 0) {
         folderDialogVisible[option] = true
         return
     }
+    selectedFolders = folderTableRef.value!.getSelectionRows()
     if (!selectedFolders) {
         return
     }
@@ -232,7 +232,11 @@ function folderButton(option: number) {
 
 // 创建请求
 async function createFolderConfirm(option: number) {
-    await createFolder(folderId, createFolderName.value)
+    let name
+    if (createFolderName.value) {
+        name = createFolderName.value
+    }
+    await createFolder(folderId, name)
     await listFolders()
     promptSuccess()
     folderDialogVisible[option] = false

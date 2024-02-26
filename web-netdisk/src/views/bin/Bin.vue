@@ -4,7 +4,7 @@
             <div class="file-table">
                 <el-button v-if="fileList && fileList.data.length!=0"
                            type="primary" round :icon="Download"
-                           @click="cleanBin">清空回收站
+                           @click="dialogButtons(0)">清空回收站
                 </el-button>
 
                 <el-empty v-if="!fileList.data || fileList.data.length==0"
@@ -52,19 +52,42 @@
             </div>
         </el-col>
     </el-row>
+
+    <el-dialog v-model="dialogVisible.option[0]" title="清空回收站">
+        <h3>
+            <el-icon>
+                <Warning/>
+            </el-icon>
+            确定清空你的回收站吗，删除的文件不可再被找回！😶
+        </h3>
+        <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogVisible.option[0] = false">取消</el-button>
+        <el-button type="primary" @click="clearBin">
+          确定
+        </el-button>
+      </span>
+        </template>
+    </el-dialog>
 </template>
 
 <script lang="ts" setup>
 import {ElTable} from "element-plus";
 import {onMounted, reactive} from "vue";
-import {DeleteFile, deleteFilesTruly, getDeletedFiles} from "./bin.ts";
-import {Download} from "@element-plus/icons-vue";
-import {codeError, codeOk, promptError} from "../../utils/apis/base.ts";
+import {deleteAllFilesTruly, DeleteFile, deleteFilesTruly, getDeletedFiles} from "./bin.ts";
+import {Download, Warning} from "@element-plus/icons-vue";
+import {codeOk, promptError} from "../../utils/apis/base.ts";
 
 const fileList: { data: DeleteFile[] } = reactive({
     data: []
 })
 
+const dialogVisible = reactive({option: [false]})
+
+function dialogButtons(option: number) {
+    dialogVisible.option = [false]
+    dialogVisible.option[option] = true
+}
 
 async function listDeletedFiles() {
     const resp = await getDeletedFiles()
@@ -75,12 +98,15 @@ async function listDeletedFiles() {
     }
 }
 
-async function cleanBin() {
-    const resp = await deleteFilesTruly()
-    if (resp.code === codeError) {
+async function clearBin() {
+    const resp = await deleteAllFilesTruly()
+    if (resp.code === codeOk) {
+        dialogVisible.option[0] = false
+        fileList.data = []
+    } else {
         promptError(resp.msg)
     }
-        }
+}
 
 onMounted(() => {
     listDeletedFiles()

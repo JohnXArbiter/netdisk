@@ -37,9 +37,12 @@ func (l *DeleteFilesLogic) DeleteFiles(req *types.IdsReq) error {
 		DelFlag: constant.StatusFileDeleted,
 		DelTime: time.Now().Local().Unix(),
 	}
-	if affected, err := engine.In("id", req.Ids).And("user_id = ?", userId).
-		Update(cond); err != nil || affected != int64(len(req.Ids)) {
-		return errors.New("删除过程出错！" + err.Error())
+	if affected, err := engine.In("id", req.Ids).
+		And("user_id = ?", userId).Update(cond); err != nil {
+		logx.Errorf("删除文件失败，err: %v", err)
+		return errors.New("删除过程出错，" + err.Error())
+	} else if affected != int64(len(req.Ids)) {
+		return errors.New("删除过程出错！")
 	}
 	return nil
 }

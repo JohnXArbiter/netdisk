@@ -57,6 +57,10 @@ type (
         parentFolderId int64 `json:"parentFolderId"`
         SelectedFolderIds []int64 `json:"selectedFolderIds"`
     }
+
+    RecoverFilesReq {
+        Files []*RecoverFilesStruct `json:"files"`
+    }
 )
 
 type (
@@ -96,5 +100,10 @@ type (
 
     FileIdsStruct {
         fileIds []int64 `json:"fileIds"`
+    }
+
+    RecoverFilesStruct {
+        FileId int64 `json:"fileId"`
+        FolderId int64 `json:"folderId"`
     }
 )

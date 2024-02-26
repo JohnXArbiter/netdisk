@@ -44,8 +44,10 @@ func (l *DeleteFilesTrulyLogic) DeleteFilesTruly(req *types.IdsReq) error {
 	}
 
 	if affected, err := engine.In("id", req.Ids).
-		Delete(&model.File{}); err != nil || affected != int64(length) {
-		return errors.New("发生错误！" + err.Error())
+		Delete(&model.File{}); err != nil {
+		return errors.New("发生错误，" + err.Error())
+	} else if affected != int64(length) {
+		return errors.New("发生错误！")
 	}
 
 	// TODO: MQ
