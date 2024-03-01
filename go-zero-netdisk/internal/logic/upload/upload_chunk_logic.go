@@ -7,6 +7,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"lc/netdisk/common/constant"
 	"lc/netdisk/common/redis"
+	"lc/netdisk/common/variable"
 	"lc/netdisk/common/xorm"
 	"lc/netdisk/internal/svc"
 	"lc/netdisk/internal/types"
@@ -77,6 +78,7 @@ func (l *UploadChunkLogic) createSchedule(req *types.UploadChunkReq, fileData mu
 		fileFs.Hash = fileInfo["hash"]
 		fileFs.Size = size
 		fileFs.Url = ""
+		fileFs.ObjectName = objectName
 		fileFs.ChunkNum = chunkNum
 		fileFs.Status = constant.StatusFsBigFileNeedMerge
 		if _, err := session.Insert(fileFs); err != nil {
@@ -91,7 +93,10 @@ func (l *UploadChunkLogic) createSchedule(req *types.UploadChunkReq, fileData mu
 		file.FsId = fsId
 		file.FolderId = folderId
 		file.Url = ""
+		file.Ext = fileInfo["ext"]
+		file.ObjectName = objectName
 		file.Size = size
+		file.Type = variable.GetTypeByBruteForce(fileInfo["ext"])
 		file.Status = constant.StatusFileUploaded
 		file.IsBig = constant.BigFileFlag
 		file.DoneAt = time.Now().Local()

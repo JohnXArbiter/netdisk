@@ -77,9 +77,9 @@ type CopyFilesReq struct {
 	FileIdsStruct
 }
 
-type DeleteBatchReq struct {
-	FolderIdsStruct
+type DeleteFilesReq struct {
 	FileIdsStruct
+	FolderId int64 `json:"folderId"`
 }
 
 type RecoverReq struct {
@@ -139,6 +139,8 @@ type FileResp struct {
 	Id       int64  `json:"id"`
 	Name     string `json:"name"`
 	Url      string `json:"url"`
+	Type     int8   `json:"type"`
+	Ext      string `json:"ext"`
 	Status   int8   `json:"status"`
 	Size     int64  `json:"size"`
 	FolderId int64  `json:"folderId,omitempty"`

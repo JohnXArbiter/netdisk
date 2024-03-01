@@ -28,9 +28,10 @@ func NewGetFileDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Get
 
 func (l *GetFileDetailLogic) GetFileDetail(req *types.IdPathReq) (*types.FileResp, error) {
 	var (
-		userId = l.ctx.Value(constant.UserIdKey).(int64)
-		engine = l.svcCtx.Xorm
-		file   = &model.File{}
+		userId   = l.ctx.Value(constant.UserIdKey).(int64)
+		engine   = l.svcCtx.Xorm
+		minioSvc = l.svcCtx.Minio.NewService()
+		file     = &model.File{}
 	)
 
 	has, err := engine.ID(req.Id).And("user_id = ?", userId).Get(file)
@@ -40,11 +41,17 @@ func (l *GetFileDetailLogic) GetFileDetail(req *types.IdPathReq) (*types.FileRes
 		return nil, errors.New("未能找到该文件信息！😿")
 	}
 
+	url, err := minioSvc.GenUrl(file.ObjectName, false)
+	if err != nil {
+		return nil, err
+	}
+
 	resp := &types.FileResp{}
 	resp.Id = file.Id
 	resp.Name = file.Name
-	resp.Url = file.Url
-	resp.Size = file.Id
+	resp.Url = url
+	resp.Ext = file.Ext
+	resp.Size = file.Size
 	resp.Status = file.Status
 	resp.FolderId = file.FolderId
 	resp.Created = file.Created.Format(constant.TimeFormat1)

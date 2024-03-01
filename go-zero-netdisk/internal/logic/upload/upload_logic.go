@@ -7,6 +7,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"lc/netdisk/common/constant"
 	"lc/netdisk/common/redis"
+	"lc/netdisk/common/variable"
 	"lc/netdisk/common/xorm"
 	"lc/netdisk/internal/svc"
 	"lc/netdisk/internal/types"
@@ -95,10 +96,13 @@ func (l *UploadLogic) saveAndUpload(fileInfo map[string]string, fileData multipa
 		file := &model.File{}
 		file.Name = fileInfo["name"]
 		file.Url = ""
+		file.ObjectName = objectName
 		file.Size = size
+		file.Ext = fileInfo["ext"]
 		file.FsId = fsId
 		file.FolderId = folderId
 		file.UserId = userId
+		file.Type = variable.GetTypeByBruteForce(fileInfo["ext"])
 		file.IsBig = constant.SmallFileFlag
 		file.DoneAt = time.Now().Local()
 		file.Status = constant.StatusFileUploaded

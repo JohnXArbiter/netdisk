@@ -33,26 +33,33 @@
                           @selection-change="fileSelectionChange"
                 >
                     <el-table-column type="selection" width="55"/>
-                    <el-table-column label="文件名" width="180">
+                    <el-table-column label="文件名" min-width="400">
                         <template #default="scope">
-                            <div class="file-folder-row" style="display: flex; align-items: center">
-                                <span>{{ scope.row.name }}</span>
-                            </div>
+                            <el-image v-if="scope.row.type === typeImage"
+                                      class="small-pic"
+                                      :src="scope.row.url"
+                                      alt="../../assets/alter_type1.jpg"
+                                      :fit="'cover'"/>
+                            <el-image v-else
+                                      :src="`../../assets/alter_type${scope.row.type}.jpg`"
+                                      alt=""
+                                      class="small-pic"
+                                      :fit="'cover'"/>
+                            <span style="margin-left: 5px">{{ scope.row.name }}</span>
+
                         </template>
                     </el-table-column>
-                    <el-table-column label="修改时间" width="180">
+                    <el-table-column label="修改时间" min-width="200">
                         <template #default="scope">
                             <div>{{ scope.row.updated }}</div>
                         </template>
                     </el-table-column>
-                    <el-table-column label="大小" width="180">
+                    <el-table-column label="大小" min-width="200">
                         <template #default="scope">
-                            <template>
-                                <div>{{ scope.row.size }}</div>
-                            </template>
+                            <div>{{ scope.row.sizeStr }}</div>
                         </template>
                     </el-table-column>
-                    <el-table-column label="Operations">
+                    <el-table-column label="Operations" min-width="200">
                         <template #default="scope">
                             <el-button size="small" @click="handleEdit(scope.$index, scope.row)"
                             >Edit
@@ -148,6 +155,8 @@ import type {Folder} from "./folder.ts";
 import {codeOk, promptSuccess, Resp} from "../../utils/apis/base.ts";
 import Uploading from "./Uploading.vue";
 import {useFileFolderStore} from "../../store/fileFolder.ts";
+import {formatSize} from "../../utils/util.ts";
+import {type1, typeImage, typeMap} from "../../utils/constant.ts";
 
 let fileFolderStore = useFileFolderStore()
 let forFolder = false
@@ -159,14 +168,14 @@ let fileButtonsState = ref(0)
 const fileTableRef = ref<InstanceType<typeof ElTable>>()
 
 let folderList = reactive<{ data: Folder[] }>({
-  data: []
+    data: []
 })
 let fileList = reactive<{ data: File[] }>({
-  data: []
+    data: []
 })
 
 const listFiles = async () => {
-    let resp: Resp<any>
+    let resp
     if (forFolder) {
         resp = await listFilesByFolderId(folderId)
     } else {
@@ -175,6 +184,9 @@ const listFiles = async () => {
     if (resp.code === 0 && resp.data) {
         fileList.data = resp.data
     }
+    fileList.data.forEach(file => {
+        file.sizeStr = formatSize(file.size)
+    })
 }
 
 const fileDialogVisible = reactive([false, false, false, false, false])
@@ -240,7 +252,7 @@ async function fileCopyAndMoveConfirm() {
 }
 
 async function deleteFilesConfirm() {
-    await deleteFiles(selectedFiles.map(file => file.id))
+    await deleteFiles(selectedFiles.map(file => file.id), folderId)
     await listFiles()
 }
 
@@ -274,5 +286,11 @@ onMounted(() => {
 <style scoped>
 .button-group {
     margin-bottom: 15px;
+}
+
+.small-pic {
+    width: 35px;
+    height: 35px;
+    border-radius: 5px;
 }
 </style>

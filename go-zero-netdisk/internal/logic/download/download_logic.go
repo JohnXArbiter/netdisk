@@ -26,11 +26,11 @@ func NewDownloadLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Download
 
 func (l *DownloadLogic) Download(req *types.DownloadReq) (string, error) {
 	var (
-		userId       = l.ctx.Value(constant.UserIdKey).(int64)
-		engine       = l.svcCtx.Xorm
-		minioService = l.svcCtx.Minio.NewService()
-		file         model.File
-		fileFs       model.FileFs
+		userId = l.ctx.Value(constant.UserIdKey).(int64)
+		engine = l.svcCtx.Xorm
+		//minioService = l.svcCtx.Minio.NewService()
+		file   model.File
+		fileFs model.FileFs
 	)
 
 	//key := redis.DownloadGetFsKey + strconv.FormatInt(req.FileNetdiskId, 10)
@@ -52,10 +52,5 @@ func (l *DownloadLogic) Download(req *types.DownloadReq) (string, error) {
 		return "", err
 	}
 
-	filename, err := minioService.DownloadFile(l.ctx, fileFs.ObjectName)
-	if err != nil {
-		return "", err
-	}
-
-	return filename, nil
+	return "", nil
 }

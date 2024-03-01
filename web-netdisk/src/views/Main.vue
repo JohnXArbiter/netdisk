@@ -1,20 +1,21 @@
 <template>
-  <div class="common-layout">
-    <el-container>
-      <el-header style="background-color: lightsalmon">
-        <avatar/>
+    <div class="common-layout">
+        <el-container>
+            <el-header style="background-color: lightsalmon;">
+                <avatar/>
+            </el-header>
 
-      </el-header>
-      <el-container>
-        <el-aside style="width: 10%;">
-          <navigator/>
-        </el-aside>
-        <el-main style="background-color: #fff2e3; padding: 15px 0 0 0">
-          <router-view/>
-        </el-main>
-      </el-container>
-    </el-container>
-  </div>
+            <el-container>
+                <el-aside style="width: 10%;">
+                    <navigator/>
+                </el-aside>
+
+                <el-main style="background-color: #fff2e3; padding: 15px 0 0 0">
+                    <router-view/>
+                </el-main>
+            </el-container>
+        </el-container>
+    </div>
 
 </template>
 
@@ -25,10 +26,16 @@ import Navigator from "../components/aside/Navigator.vue";
 </script>
 
 <style scoped>
-.common-layout{
+.common-layout {
     margin: 0;
 }
-.el-header{
-    height: 6vh;
+
+.header {
+    top: 0;
+    width: 100%;
+    position: fixed;
+    box-shadow: 0 2px 6px 0 #ddd;
+    background-color: #fff;
+    z-index: 1000;
 }
 </style>

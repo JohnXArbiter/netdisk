@@ -116,7 +116,7 @@ service netdisk-api {
 	post /copy (CopyFilesReq) returns ()
 	
 	@handler deleteFiles
-	put /delete (IdsReq) returns ()
+	put /delete (DeleteFilesReq) returns ()
 	
 	@handler deleteFilesTruly
 	post /delete (IdsReq) returns ()

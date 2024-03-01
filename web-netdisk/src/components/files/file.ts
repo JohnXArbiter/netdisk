@@ -6,8 +6,10 @@ export interface File {
     name: string
     size: number
     url: string
+    type: number
     status: number
     updated: string
+    ext?: string
     sizeStr?: string
 }
 
@@ -44,6 +46,9 @@ export function copyFiles(parentFolderId: number, fileIds: number[]) {
     })
 }
 
-export function deleteFiles(ids: number[]) {
-    return api.post<any, Resp<any>>('', {'id': ids})
+export function deleteFiles(fileIds: number[], folderId: number) {
+    return api.post<any, Resp<any>>('', {
+        'fileIds': fileIds,
+        'folderId': folderId
+    })
 }

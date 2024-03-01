@@ -1,23 +1,25 @@
 <template>
-  <!--  <el-row :gutter="20" class="demo-avatar demo-basic">-->
-  <!--    <el-col :span="6" :offset="6">-->
-  <!--      <div class="demo-basic&#45;&#45;circle">-->
-  <!--        <div class="block head-pic">-->
-  <!--          <el-avatar :size="50" :src="url" />-->
-  <!--        </div>-->
-  <!--      </div>-->
-  <!--    </el-col>-->
-  <!--  </el-row>-->
     <el-row class="el-row">
         <el-col :span="23">
-            <div class="grid-content ep-bg-purple"/>
+            <div class="grid-content ep-bg-purple"></div>
         </el-col>
         <el-col :span="1">
             <div class="grid-content ep-bg-purple-light">
                 <div class="demo-basic--circle">
-                    <div class="block head-pic">
-                        <el-avatar :size="50" :src="url"/>
-                    </div>
+                    <el-popover
+                            placement="top-start"
+                            title="Title"
+                            :width="200"
+                            trigger="hover"
+                            content="this is content, this is content, this is content"
+                    >
+                        <template #reference>
+                            <div class="block head-pic">
+                                <el-avatar :size="50" :src="url"/>
+                            </div>
+                        </template>
+                    </el-popover>
+
                 </div>
             </div>
         </el-col>

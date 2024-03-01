@@ -6,8 +6,6 @@
                 class="el-menu-vertical-demo"
                 default-active="2"
                 text-color="black"
-                @open="handleOpen"
-                @close="handleClose"
                 style="width: 100%"
         >
             <el-sub-menu index="1">
@@ -71,7 +69,7 @@
                     <el-icon>
                         <Delete/>
                     </el-icon>
-                    <span>回收站</span>
+                    回收站
                 </router-link>
             </el-menu-item>
             <el-menu-item index="3" disabled>
@@ -94,12 +92,6 @@ import {
     Delete, VideoCameraFilled
 } from '@element-plus/icons-vue'
 
-const handleOpen = (key: string, keyPath: string[]) => {
-    console.log(key, keyPath)
-}
-const handleClose = (key: string, keyPath: string[]) => {
-    console.log(key, keyPath)
-}
 </script>
 <style>
 .tac {

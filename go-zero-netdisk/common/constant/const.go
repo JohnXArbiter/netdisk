@@ -6,7 +6,7 @@ const (
 )
 
 const (
-	ShardingFloor float64 = 10485760 // 需要分片起始大小：10MB
+	ShardingFloor float64 = 20971520 // 需要分片起始大小：20MB
 	ShardingSize  float64 = 5242880  // 分片大小： 5MB
 )
 
@@ -50,4 +50,12 @@ const (
 const (
 	TimeFormat1 = "2006-01-02 15:04:05"
 	TimeFormat2 = "2006-01-02/15:04:05"
+)
+
+const (
+	TypeDocs = iota
+	TypeImage
+	TypeVideo
+	TypeAudio
+	TypeOther
 )

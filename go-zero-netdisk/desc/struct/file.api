@@ -15,9 +15,9 @@ type (
         FileIdsStruct
     }
 
-    deleteBatchReq {
-        FolderIdsStruct
+    DeleteFilesReq {
         FileIdsStruct
+        FolderId int64 `json:"folderId"`
     }
 
     recoverReq {
@@ -79,6 +79,8 @@ type (
         Id int64 `json:"id"`
         Name string `json:"name"`
         Url string `json:"url"`
+        Type int8 `json:"type"`
+        Ext string `json:"ext"`
         Status int8 `json:"status"`
         Size int64 `json:"size"`
         FolderId int64 `json:"folderId,omitempty"`

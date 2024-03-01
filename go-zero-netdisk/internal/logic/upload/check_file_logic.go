@@ -7,6 +7,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"lc/netdisk/common/constant"
 	"lc/netdisk/common/redis"
+	"lc/netdisk/common/variable"
 	"lc/netdisk/internal/svc"
 	"lc/netdisk/internal/types"
 	"lc/netdisk/model"
@@ -108,8 +109,10 @@ func (l *CheckFileLogic) doWhenExist(req *types.CheckFileReq, fileFs *model.File
 	file.FsId = fileFs.Id
 	file.Name = req.Name
 	file.FolderId = req.FolderId
+	file.Type = variable.GetTypeByBruteForce(req.Ext)
 	file.Status = constant.StatusFileUploaded
 	file.Url = fileFs.Url
+	file.ObjectName = fileFs.ObjectName
 	file.IsBig = isBigFlag
 	file.DoneAt = time.Now().Local()
 	file.DelFlag = constant.StatusFileUndeleted

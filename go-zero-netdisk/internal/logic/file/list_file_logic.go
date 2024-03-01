@@ -2,8 +2,12 @@ package file
 
 import (
 	"context"
+	"fmt"
+	redis2 "github.com/redis/go-redis/v9"
 	"lc/netdisk/common/constant"
+	"lc/netdisk/common/redis"
 	"lc/netdisk/model"
+	"time"
 
 	"lc/netdisk/internal/svc"
 	"lc/netdisk/internal/types"
@@ -27,28 +31,61 @@ func NewListFileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ListFile
 
 func (l *ListFileLogic) ListFile(req *types.ParentFolderIdReq) ([]*types.FileResp, error) {
 	var (
-		userId = l.ctx.Value(constant.UserIdKey).(int64)
-		engine = l.svcCtx.Xorm
-		files  []*model.File
-		resp   []*types.FileResp
+		userId   = l.ctx.Value(constant.UserIdKey).(int64)
+		engine   = l.svcCtx.Xorm
+		rdb      = l.svcCtx.Redis
+		minioSvc = l.svcCtx.Minio.NewService()
+		key      = fmt.Sprintf(redis.FileFolderDownloadUrlKey, userId, req.ParentFolderId)
+		files    []*model.File
+		resp     []*types.FileResp
 	)
 
-	if err := engine.Where("folder_id = ?", req.ParentFolderId).
-		And("user_id = ?", userId).And("del_flag = ?",
-		constant.StatusFileUndeleted).Find(&files); err != nil {
+	if err := engine.Desc("created").
+		Select("id, name, size, object_name, type, status, created, updated").
+		Where("folder_id = ?", req.ParentFolderId).
+		And("user_id = ?", userId).
+		And("del_flag = ?", constant.StatusFileUndeleted).
+		Find(&files); err != nil {
 		return nil, err
 	}
 
-	for _, file := range files {
+	zs, redisErr := rdb.ZRevRangeWithScores(l.ctx, key, 0, -1).Result()
+	if redisErr != nil && redisErr != redis2.Nil {
+		logx.Errorf("通过文件夹id获取文件列表，redis获取set失败，ERR: [%v]", redisErr)
+	}
+
+	var urls []redis2.Z
+	for i, file := range files {
+		var url string
+		if len(zs) == len(files) && redisErr == nil {
+			url = zs[i].Member.(string)
+		} else {
+			url2, err := minioSvc.GenUrl(file.ObjectName, true)
+			if err != nil {
+				logx.Errorf("通过文件夹id获取文件列表，[%d]获取url失败，ERR: [%v]", file.Id, err)
+			} else {
+				url = url2
+				urls = append(urls, redis2.Z{Member: url, Score: float64(file.Created.Unix())})
+				if i == len(files)-1 {
+					if err = rdb.ZAdd(l.ctx, key, urls...).Err(); err != nil {
+						logx.Errorf("通过文件夹id获取文件列表，redis缓存url失败，ERR: [%v]", err)
+					}
+					if err = rdb.Expire(l.ctx, key, 7*24*time.Hour).Err(); err != nil {
+						logx.Errorf("通过文件夹id获取文件列表，设置缓存expire失败，ERR: [%v]", err)
+					}
+				}
+			}
+		}
+
 		resp = append(resp, &types.FileResp{
 			Id:      file.Id,
 			Name:    file.Name,
-			Url:     file.Url,
+			Url:     url,
+			Type:    file.Type,
 			Size:    file.Size,
 			Status:  file.Status,
 			Updated: file.Updated.Format(constant.TimeFormat1),
 		})
 	}
-
 	return resp, nil
 }

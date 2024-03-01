@@ -1,6 +1,9 @@
 package variable
 
-import "regexp"
+import (
+	"lc/netdisk/common/constant"
+	"regexp"
+)
 
 var (
 	Upattern, _ = regexp.Compile("^[a-zA-Z0-9]{6,20}$")
@@ -9,11 +12,14 @@ var (
 
 var (
 	DocSuffix = map[string]bool{
-		".doc": true, ".docx": true,
-		".xlsx": true, ".xls": true,
-		".ppt": true, " pptx": true,
-		".pdf": true,
-		".txt": true,
+		".doc":  true,
+		".docx": true,
+		".xlsx": true,
+		".xls":  true,
+		".ppt":  true,
+		".pptx": true,
+		".pdf":  true,
+		".txt":  true,
 	}
 
 	ImageSuffix = map[string]bool{
@@ -54,3 +60,17 @@ var (
 		".m4v":  true,
 	}
 )
+
+func GetTypeByBruteForce(ext string) int8 {
+	if DocSuffix[ext] {
+		return constant.TypeDocs
+	} else if ImageSuffix[ext] {
+		return constant.TypeImage
+	} else if AudioSuffix[ext] {
+		return constant.TypeAudio
+	} else if VideoSuffix[ext] {
+		return constant.TypeVideo
+	} else {
+		return constant.TypeOther
+	}
+}
