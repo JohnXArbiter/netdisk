@@ -35,6 +35,13 @@
                             </template>
                         </template>
                     </el-table-column>
+                    <el-table-column label="来源" width="180">
+                        <template #default="scope">
+                            <template>
+                                <div>{{ scope.row.folderName }}</div>
+                            </template>
+                        </template>
+                    </el-table-column>
                     <el-table-column label="Operations">
                         <template #default="scope">
                             <el-button size="small" @click="handleEdit(scope.$index, scope.row)"

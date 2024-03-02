@@ -204,7 +204,9 @@ function fileButton(option: number) {
     if (!selectedFiles) {
         return
     }
-    if (option === 1) {
+    if (option === 0) {
+
+    } else if (option === 1) {
         Object.assign(renamingFile, selectedFiles[0])
     } else if (option === 2 || option === 3) {
         toFolder(0)

@@ -34,7 +34,6 @@ import {useFileFolderStore} from "../../store/fileFolder.ts";
 import SparkMD5 from 'spark-md5'
 import {checkChunk, checkFile, upload, uploadChunk, uploadConst} from "./uploading.ts";
 import {codeOk, promptError, promptSuccess} from "../../utils/apis/base.ts";
-import api from "../../utils/apis/request.ts";
 
 const fileFolderStore = useFileFolderStore()
 

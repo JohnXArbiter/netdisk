@@ -18,6 +18,7 @@
                                 <el-avatar :size="50" :src="url"/>
                             </div>
                         </template>
+                        <button @click="logout">退出登录</button>
                     </el-popover>
 
                 </div>
@@ -29,7 +30,9 @@
 <script lang="ts" setup>
 import {onMounted} from "vue";
 import {useBaseStore, UserInfo} from "../../store";
+import router from "../../router";
 
+const baseStore = useBaseStore()
 const url = "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
 
 let user: { data: UserInfo }
@@ -38,6 +41,12 @@ async function showUserInfo() {
     if (!user) {
         user = await useBaseStore().getUserInfo()
     }
+}
+
+function logout () {
+    // baseStore.updateToken('')
+    router.push('/login')
+    window.location.reload()
 }
 
 onMounted(() => {

@@ -47,7 +47,7 @@ export function copyFiles(parentFolderId: number, fileIds: number[]) {
 }
 
 export function deleteFiles(fileIds: number[], folderId: number) {
-    return api.post<any, Resp<any>>('', {
+    return api.put<any, Resp<any>>('/file/delete', {
         'fileIds': fileIds,
         'folderId': folderId
     })
