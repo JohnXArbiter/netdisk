@@ -74,7 +74,7 @@
 <script lang="ts" setup>
 import {ElTable} from "element-plus";
 import {onMounted, reactive} from "vue";
-import {deleteAllFilesTruly, DeleteFile, deleteFilesTruly, getDeletedFiles} from "./bin.ts";
+import {deleteAllFilesTruly, DeleteFile, getDeletedFiles} from "./bin.ts";
 import {Download, Warning} from "@element-plus/icons-vue";
 import {codeOk, promptError} from "../../utils/apis/base.ts";
 

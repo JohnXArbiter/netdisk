@@ -35,18 +35,19 @@
                     <el-table-column type="selection" width="55"/>
                     <el-table-column label="文件名" min-width="400">
                         <template #default="scope">
-                            <el-image v-if="scope.row.type === typeImage"
-                                      class="small-pic"
-                                      :src="scope.row.url"
-                                      alt="../../assets/alter_type1.jpg"
-                                      :fit="'cover'"/>
-                            <el-image v-else
-                                      :src="`../../assets/alter_type${scope.row.type}.jpg`"
-                                      alt=""
-                                      class="small-pic"
-                                      :fit="'cover'"/>
-                            <span style="margin-left: 5px">{{ scope.row.name }}</span>
-
+                            <div style="display: flex; align-items: center">
+                                <el-image v-if="scope.row.type === typeImage"
+                                          class="small-pic"
+                                          :src="scope.row.url"
+                                          alt="../../assets/alt_type1.jpg"
+                                          :fit="'cover'"/>
+                                <el-image v-else
+                                          :src="`/src/assets/alt_type${scope.row.type}.jpg`"
+                                          alt=""
+                                          class="small-pic"
+                                          :fit="'cover'"/>
+                                <span style="margin-left: 5px">{{ scope.row.name }}</span>
+                            </div>
                         </template>
                     </el-table-column>
                     <el-table-column label="修改时间" min-width="200">
@@ -156,7 +157,7 @@ import {codeOk, promptSuccess, Resp} from "../../utils/apis/base.ts";
 import Uploading from "./Uploading.vue";
 import {useFileFolderStore} from "../../store/fileFolder.ts";
 import {formatSize} from "../../utils/util.ts";
-import {type1, typeImage, typeMap} from "../../utils/constant.ts";
+import {typeImage} from "../../utils/constant.ts";
 
 let fileFolderStore = useFileFolderStore()
 let forFolder = false

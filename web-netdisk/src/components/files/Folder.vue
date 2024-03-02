@@ -41,9 +41,9 @@
                     <el-table-column label="文件夹名" width="180">
                         <template #default="scope">
                             <div class="file-folder-row" @click="router.push(`/file/folder/${scope.row.id}`)">
-                                <el-icon>
-                                    <FolderOpened/>
-                                </el-icon>
+                                <el-image class="small-pic"
+                                          src="/src/assets/alt_folder.jpg"
+                                          alt="" :fit="'cover'"/>
                                 <span style="margin-left: 10px">{{ scope.row.name }}</span>
                             </div>
                         </template>
@@ -168,6 +168,7 @@ import File from './File.vue'
 import router from "../../router";
 import {codeOk, promptSuccess, Resp} from "../../utils/apis/base.ts";
 import {useFileFolderStore} from "../../store/fileFolder.ts";
+import {typeImage} from "../../utils/constant.ts";
 
 let fileFolderStore = useFileFolderStore()
 let props = defineProps(['folderId']);
@@ -316,6 +317,12 @@ onMounted(() => {
 .file-folder-row:hover {
     cursor: pointer;
     background-color: rgb(230, 230, 245);
+    border-radius: 5px;
+}
+
+.small-pic {
+    width: 35px;
+    height: 35px;
     border-radius: 5px;
 }
 </style>

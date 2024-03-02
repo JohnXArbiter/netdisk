@@ -65,12 +65,12 @@
                 </el-menu-item>
             </el-sub-menu>
             <el-menu-item index="2">
-                <router-link class="a" to="/bin">
+                <a class="a" href="/bin">
                     <el-icon>
                         <Delete/>
                     </el-icon>
                     回收站
-                </router-link>
+                </a>
             </el-menu-item>
             <el-menu-item index="3" disabled>
                 <el-icon>
