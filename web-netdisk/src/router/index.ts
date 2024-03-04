@@ -30,6 +30,7 @@ const routes = [
             },
             {
                 path: 'bin',
+                name: 'bin',
                 component: () => import('@/views/bin/Bin.vue')
             }
         ]
