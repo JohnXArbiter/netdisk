@@ -153,27 +153,27 @@ import {
 } from "./file.ts";
 import type {File} from '/file.ts'
 import type {Folder} from "./folder.ts";
-import {codeOk, promptSuccess, Resp} from "../../utils/apis/base.ts";
+import {codeOk, promptSuccess, Resp} from "@/utils/apis/base.ts";
 import Uploading from "./Uploading.vue";
-import {useFileFolderStore} from "../../store/fileFolder.ts";
-import {formatSize} from "../../utils/util.ts";
-import {typeImage} from "../../utils/constant.ts";
+import {useFileFolderStore} from "@/store/fileFolder.ts";
+import {formatSize} from "@/utils/util.ts";
+import {typeImage} from "@/utils/constant.ts";
 
-let fileFolderStore = useFileFolderStore()
-let forFolder = false
-let folderId: number
-let fileType: number
+let fileFolderStore = useFileFolderStore(),
+    forFolder = false,
+    folderId: number,
+    fileType: number
 const props = defineProps(['fileType', 'folderId'])
 
 let fileButtonsState = ref(0)
 const fileTableRef = ref<InstanceType<typeof ElTable>>()
 
 let folderList = reactive<{ data: Folder[] }>({
-    data: []
-})
-let fileList = reactive<{ data: File[] }>({
-    data: []
-})
+        data: []
+    }),
+    fileList = reactive<{ data: File[] }>({
+        data: []
+    })
 
 const listFiles = async () => {
     let resp
@@ -191,25 +191,26 @@ const listFiles = async () => {
 }
 
 const fileDialogVisible = reactive([false, false, false, false, false])
-let renamingFile = reactive<any>({})
-let listFoldersCurrentFolderId = 0
-let fileCopyAndMoveDialog = ref(false)
-let fileCopyAndMoveFlag: number
-let selectedFiles: File[]
-let fileMovableFolderList = reactive<{ data: Folder[] }>({data: folderList.data})
+let renamingFile = reactive<any>({}),
+    listFoldersCurrentFolderId = 0,
+    fileCopyAndMoveDialog = ref(false),
+    fileCopyAndMoveFlag: number,
+    selectedFiles: File[],
+    fileMovableFolderList = reactive<{ data: Folder[] }>({data: folderList.data})
 
 // 对话框
-function fileButton(option: number) {
+async function fileButton(option: number) {
     selectedFiles = fileTableRef.value!.getSelectionRows()
     if (!selectedFiles) {
         return
     }
     if (option === 0) {
-
+        await download(selectedFiles)
+        return
     } else if (option === 1) {
         Object.assign(renamingFile, selectedFiles[0])
     } else if (option === 2 || option === 3) {
-        toFolder(0)
+        await toFolder(0)
         fileCopyAndMoveDialog.value = true
         fileCopyAndMoveFlag = option
         return
@@ -271,6 +272,24 @@ function fileSelectionChange(files: File[]) {
     }
 
     fileFolderStore.selectChange(files.map(file => file.id), true)
+}
+
+async function download(files: File[]) {
+    for (const file of files) {
+        await window.open(file.url)
+        // console.log(file)
+        // const f = async () => {
+        //     const link = document.createElement('a')
+        //     link.href = file.url
+        //     link.download = file.name
+        //
+        //     document.body.appendChild(link)
+        //     link.click()
+        //     document.body.removeChild(link)
+        //     console.log('下载成功', file.name, file.url)
+        // }
+        // await f()
+    }
 }
 
 onMounted(() => {

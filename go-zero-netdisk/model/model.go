@@ -18,6 +18,7 @@ type User struct {
 	Email     string `xorm:"varchar(127) notnull default '' 'email'"`
 	Signature string `xorm:"varchar(255) notnull default '' 'signature'"`
 	Status    int8   `xorm:"tinyint notnull default 0 'status'"`
+	Capacity  int64  `xorm:"bigint notnull default 0 'capacity' comment('空间容量')"`
 }
 
 type (

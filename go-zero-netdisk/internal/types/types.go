@@ -14,6 +14,12 @@ type RegisterReq struct {
 	Username       string `json:"username"`
 	Password       string `json:"password"`
 	PasswordRepeat string `json:"passwordRepeat"`
+	Email          string `json:"email"`
+	Code           string `json:"code"`
+}
+
+type SendCodeReq struct {
+	Email string `json:"email"`
 }
 
 type LoginResp struct {

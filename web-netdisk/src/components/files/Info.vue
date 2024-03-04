@@ -72,7 +72,6 @@ async function getFileDetail(fileId: number) {
     if (resp.code === codeOk) {
         fileDetail.data = resp.data
         fileDetail.data.sizeStr = formatSize(resp.data.size)
-        console.log(fileDetail.data, formatSize(resp.data.size))
     }
 }
 

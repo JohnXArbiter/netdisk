@@ -8,7 +8,7 @@
                 <div class="demo-basic--circle">
                     <el-popover
                             placement="top-start"
-                            title="Title"
+                            :title="user.data.name"
                             :width="200"
                             trigger="hover"
                             content="this is content, this is content, this is content"
@@ -18,7 +18,7 @@
                                 <el-avatar :size="50" :src="url"/>
                             </div>
                         </template>
-                        <button @click="logout">退出登录</button>
+                        <button @click="baseStore.clearToken">退出登录</button>
                     </el-popover>
 
                 </div>
@@ -29,24 +29,18 @@
 
 <script lang="ts" setup>
 import {onMounted} from "vue";
-import {useBaseStore, UserInfo} from "../../store";
-import router from "../../router";
+import {useBaseStore} from "@/store";
 
-const baseStore = useBaseStore()
-const url = "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+const baseStore = useBaseStore(),
+    url = "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
 
-let user: { data: UserInfo }
+let user = baseStore.userInfoInit
 
 async function showUserInfo() {
-    if (!user) {
-        user = await useBaseStore().getUserInfo()
+    if (user.data.id === 0) {
+        user.data = await useBaseStore().getUserInfo()
+        console.log(user.data.name)
     }
-}
-
-function logout () {
-    // baseStore.updateToken('')
-    router.push('/login')
-    window.location.reload()
 }
 
 onMounted(() => {

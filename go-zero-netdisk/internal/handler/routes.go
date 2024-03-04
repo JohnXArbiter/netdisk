@@ -27,14 +27,14 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: registerHandler(serverCtx),
 			},
 			{
-				Method:  http.MethodGet,
-				Path:    "/ping",
-				Handler: pingHandler(serverCtx),
+				Method:  http.MethodPost,
+				Path:    "/code",
+				Handler: sendCodeHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
-				Path:    "/test",
-				Handler: testHandler(serverCtx),
+				Path:    "/ping",
+				Handler: pingHandler(serverCtx),
 			},
 		},
 	)

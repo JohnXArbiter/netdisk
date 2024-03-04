@@ -6,16 +6,13 @@ import (
 	"github.com/yitter/idgenerator-go/idgen"
 	"golang.org/x/crypto/bcrypt"
 	"lc/netdisk/common/redis"
-	"lc/netdisk/common/utils"
 	"lc/netdisk/common/variable"
+	"lc/netdisk/internal/svc"
+	"lc/netdisk/internal/types"
 	"lc/netdisk/model"
 	"math/rand"
 	"strconv"
 	"strings"
-	"time"
-
-	"lc/netdisk/internal/svc"
-	"lc/netdisk/internal/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -37,13 +34,25 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 func (l *RegisterLogic) Register(req *types.RegisterReq) error {
 	var (
 		engine = l.svcCtx.Xorm
+		rdb    = l.svcCtx.Redis
 	)
+
+	key := redis.RegisterCode + req.Email
+	code, err := rdb.Get(l.ctx, key).Result()
+	if err != nil {
+		return errors.New("发送错误，" + err.Error())
+	}
+
+	if req.Code != code {
+		return errors.New("验证码错误，请重新获取")
+	}
 
 	userInfo, err := l.validate(req)
 	if err != nil {
 		return err
 	}
 
+	userInfo.Email = req.Email
 	userInfo.Id = idgen.NextId()
 	userInfo.Name = "user_" + strconv.FormatInt(int64(rand.Int31()), 10)
 	//userInfo.Avatar = l.svcCtx.BgUrl + "/avatar" + strconv.Itoa(rand.Intn(3)) + ".jpg"
@@ -55,16 +64,16 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) error {
 		return errors.New("注册失败，请重试")
 	}
 
-	token, err := utils.GenToken(userInfo)
-	if err != nil {
-		return errors.New("出错啦，请重试！")
-	}
-
-	key := redis.UserLogin + strconv.FormatInt(userInfo.Id, 10)
-	if err = l.svcCtx.Redis.Set(l.ctx, key, token, 7*24*time.Hour).Err(); err != nil {
-		logx.Errorf("[REDIS ERROR] Register 保存用户token失败，userid：%v %v\n", userInfo.Id, err)
-		l.svcCtx.Redis.Set(l.ctx, key, token, 7*24*time.Hour) // 重试
-	}
+	//token, err := utils.GenToken(userInfo)
+	//if err != nil {
+	//	return errors.New("出错啦，请重试！")
+	//}
+	//
+	//key := redis.UserLogin + strconv.FormatInt(userInfo.Id, 10)
+	//if err = l.svcCtx.Redis.Set(l.ctx, key, token, 7*24*time.Hour).Err(); err != nil {
+	//	logx.Errorf("[REDIS ERROR] Register 保存用户token失败，userid：%v %v\n", userInfo.Id, err)
+	//	l.svcCtx.Redis.Set(l.ctx, key, token, 7*24*time.Hour) // 重试
+	//}
 
 	return nil
 }

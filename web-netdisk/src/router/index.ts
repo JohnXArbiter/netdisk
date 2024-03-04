@@ -34,6 +34,18 @@ const routes = [
             }
         ]
     },
+    {
+        path: '/user',
+        name: 'user',
+        component: () => import('@/views/User.vue'),
+        children: [
+            {
+                path: 'info',
+                component: () => import('@/components/user/Info.vue'),
+                props: true,
+            }
+        ]
+    }
 ]
 
 const router = createRouter({history: createWebHistory(), routes})

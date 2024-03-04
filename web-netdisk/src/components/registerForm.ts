@@ -5,11 +5,19 @@ export interface RegisterReq {
     username: string,
     password: string,
     passwordRepeat: string
+    email: string
+    code: string
 }
 
 export interface RegisterResp {
 }
 
-export const registerPost = (registerReq: RegisterReq): Resp<RegisterResp> => {
+export function registerPost(registerReq: RegisterReq) {
     return api.post<any, Resp<RegisterResp>>("/register", registerReq)
+}
+
+export function sendCode(email: string) {
+    return api.post<any, Resp<RegisterResp>>("/code", {
+        'email': email
+    })
 }

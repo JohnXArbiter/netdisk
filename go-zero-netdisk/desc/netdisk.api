@@ -10,13 +10,13 @@ service netdisk-api {
 	post /login (loginReq) returns (LoginResp)
 	
 	@handler register
-	post /register (registerReq) returns ()
+	post /register (RegisterReq) returns ()
+	
+	@handler sendCode
+	post /code (SendCodeReq) returns ()
 	
 	@handler ping
 	get /ping () returns ()
-	
-	@handler test
-	get /test () returns ()
 }
 
 @server(
@@ -147,10 +147,16 @@ type (
 		Password string `json:"password"`
 	}
 
-	registerReq {
+	RegisterReq {
 		Username       string `json:"username"`
 		Password       string `json:"password"`
 		PasswordRepeat string `json:"passwordRepeat"`
+		Email          string `json:"email"`
+		Code           string `json:"code"`
+	}
+
+	SendCodeReq {
+		Email string `json:"email"`
 	}
 )
 

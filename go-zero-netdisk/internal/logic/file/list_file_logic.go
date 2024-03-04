@@ -51,7 +51,7 @@ func (l *ListFileLogic) ListFile(req *types.ParentFolderIdReq) ([]*types.FileRes
 
 	zs, redisErr := rdb.ZRevRangeWithScores(l.ctx, key, 0, -1).Result()
 	if redisErr != nil && redisErr != redis2.Nil {
-		logx.Errorf("通过文件夹id获取文件列表，redis获取set失败，ERR: [%v]", redisErr)
+		logx.Errorf("通过文件夹id获取文件列表，redis获取zset失败，ERR: [%v]", redisErr)
 	}
 
 	var urls []redis2.Z

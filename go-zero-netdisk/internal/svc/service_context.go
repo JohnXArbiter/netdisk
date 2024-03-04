@@ -3,6 +3,7 @@ package svc
 import (
 	"github.com/yitter/idgenerator-go/idgen"
 	"github.com/zeromicro/go-zero/rest"
+	"lc/netdisk/common"
 	"lc/netdisk/common/minio"
 	"lc/netdisk/common/redis"
 	"lc/netdisk/common/xorm"
@@ -15,6 +16,7 @@ type ServiceContext struct {
 	Minio  *minio.Client
 	Xorm   *xorm.Engine
 	Redis  *redis.Client
+	Email  *common.Email
 	Auth   rest.Middleware
 }
 
@@ -31,6 +33,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Minio:  minioClient,
 		Xorm:   xormEngine,
 		Redis:  redisClient,
+		Email:  &c.Email,
 		Auth:   middleware.NewAuthMiddleware().Handle,
 	}
 }
