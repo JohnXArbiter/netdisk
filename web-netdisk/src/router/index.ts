@@ -32,6 +32,11 @@ const routes = [
                 path: 'bin',
                 name: 'bin',
                 component: () => import('@/views/bin/Bin.vue')
+            },
+            {
+                path: 'share',
+                component: () => import('@/components/files/Share.vue'),
+                props: true,
             }
         ]
     },

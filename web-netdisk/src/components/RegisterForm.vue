@@ -13,14 +13,13 @@
             <el-input v-model="form.data.email"
                       placeholder="用于接收验证码"
             >
+                <template #append>
+                    <el-button @click="sendCode2Email(form.data.code)">发送验证码</el-button>
+                </template>
             </el-input>
         </el-form-item>
         <el-form-item label="验证码" size="large">
-            <el-input v-model="form.data.code">
-                <template #append>
-                    <el-button @click="sendCode2Email(form.data.code)">发送</el-button>
-                </template>
-            </el-input>
+            <el-input v-model="form.data.code"/>
         </el-form-item>
 
         <el-form-item>

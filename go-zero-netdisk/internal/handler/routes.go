@@ -210,6 +210,21 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/delete",
 					Handler: file.ListDeletedFilesHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/share",
+					Handler: file.ListShareFilesHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/share",
+					Handler: file.ShareHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/share-cancel",
+					Handler: file.CancelShareHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithPrefix("/file"),

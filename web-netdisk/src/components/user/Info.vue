@@ -49,14 +49,13 @@
                     </el-form-item>
                     <el-form-item label="邮箱" size="large">
                         <el-input v-model="user.data.email">
-                        </el-input>
-                    </el-form-item>
-                    <el-form-item label="修改邮箱验证码" size="large">
-                        <el-input v-model="code">
                             <template #append>
-                                <el-button @click="sendCode2Email(code)">发送</el-button>
+                                <el-button @click="sendCode2Email(user.data.email)">获取验证码</el-button>
                             </template>
                         </el-input>
+                    </el-form-item>
+                    <el-form-item label="验证码" size="large">
+                        <el-input v-model="code"/>
                     </el-form-item>
                     <el-form-item label="个性简介" size="large">
                         <el-input

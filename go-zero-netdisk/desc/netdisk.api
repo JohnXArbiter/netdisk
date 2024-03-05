@@ -135,6 +135,16 @@ service netdisk-api {
 	
 	@handler listDeletedFiles
 	get /delete () returns ([]*DeletedFilesResp)
+	
+	@handler listShareFiles
+	get /share () returns ([]*ShareFileStruct)
+	
+	@handler share
+	post /share (ShareReq) returns ()
+	
+	@handler cancelShare
+	post /share-cancel (IdsReq) returns ()
+	
 }
 
 type (

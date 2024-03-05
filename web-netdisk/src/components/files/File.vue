@@ -33,7 +33,7 @@
                           @selection-change="fileSelectionChange"
                 >
                     <el-table-column type="selection" width="55"/>
-                    <el-table-column label="文件名" min-width="400">
+                    <el-table-column label="文件名" min-width="500">
                         <template #default="scope">
                             <div style="display: flex; align-items: center">
                                 <el-image v-if="scope.row.type === typeImage"
@@ -55,22 +55,9 @@
                             <div>{{ scope.row.updated }}</div>
                         </template>
                     </el-table-column>
-                    <el-table-column label="大小" min-width="200">
+                    <el-table-column label="大小" min-width="100">
                         <template #default="scope">
                             <div>{{ scope.row.sizeStr }}</div>
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="Operations" min-width="200">
-                        <template #default="scope">
-                            <el-button size="small" @click="handleEdit(scope.$index, scope.row)"
-                            >Edit
-                            </el-button>
-                            <el-button
-                                    size="small"
-                                    type="danger"
-                                    @click="handleDelete(scope.$index, scope.row)"
-                            >Delete
-                            </el-button>
                         </template>
                     </el-table-column>
                 </el-table>

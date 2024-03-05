@@ -1,5 +1,5 @@
-import api from "../../utils/apis/request.ts";
-import {Resp} from "../../utils/apis/base.ts";
+import api from "@/utils/apis/request.ts";
+import {Resp} from "@/utils/apis/base.ts";
 
 export interface File {
     id: number

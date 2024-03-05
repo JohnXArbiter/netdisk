@@ -38,7 +38,7 @@
                           @selection-change="folderSelectionChange"
                 >
                     <el-table-column type="selection" width="55"/>
-                    <el-table-column label="文件夹名" width="180">
+                    <el-table-column label="文件夹名" min-width="100">
                         <template #default="scope">
                             <div class="file-folder-row" @click="router.push(`/file/folder/${scope.row.id}`)">
                                 <el-image class="small-pic"
@@ -48,22 +48,9 @@
                             </div>
                         </template>
                     </el-table-column>
-                    <el-table-column label="修改时间" width="180">
+                    <el-table-column label="修改时间" minwidth="200">
                         <template #default="scope">
                             <div>{{ scope.row.updated }}</div>
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="Operations">
-                        <template #default="scope">
-                            <el-button size="small" @click=""
-                            >Edit
-                            </el-button>
-                            <el-button
-                                    size="small"
-                                    type="danger"
-                                    @click=""
-                            >Delete
-                            </el-button>
                         </template>
                     </el-table-column>
                 </el-table>

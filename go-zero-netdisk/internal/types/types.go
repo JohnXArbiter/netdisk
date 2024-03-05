@@ -130,6 +130,11 @@ type RecoverFilesReq struct {
 	Files []*RecoverFilesStruct `json:"files"`
 }
 
+type ShareReq struct {
+	FileId int64  `json:"fileId"`
+	Url    string `json:"url"`
+}
+
 type DeletedFilesResp struct {
 	Id         int64  `json:"id"`
 	Name       string `json:"name"`
@@ -171,6 +176,12 @@ type FileIdsStruct struct {
 type RecoverFilesStruct struct {
 	FileId   int64 `json:"fileId"`
 	FolderId int64 `json:"folderId"`
+}
+
+type ShareFileStruct struct {
+	Id     int64  `json:"id"`
+	FileId int64  `json:"fileId"`
+	Name   string `json:"name"`
 }
 
 type CheckSizeReq struct {

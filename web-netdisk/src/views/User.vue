@@ -83,6 +83,8 @@ span {
 }
 
 .menu-item {
+    text-decoration: none;
+    color: #606060;
     cursor: pointer;
     margin-left: 20px;
 }

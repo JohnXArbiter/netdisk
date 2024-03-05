@@ -20,3 +20,4 @@
 *go.mod
 *go.sum
 *node_modules
+*test.go

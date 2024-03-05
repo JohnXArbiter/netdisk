@@ -34,9 +34,9 @@ func (l *ListDeletedFilesLogic) ListDeletedFiles() (resp []*types.DeletedFilesRe
 		files   []*model.File
 	)
 
-	if err = engine.Select("id, name, url, del_time").Where("user_id = ?", userId).
-		And("del_flag = ?", constant.StatusFileDeleted).Asc("del_time").
-		Find(&files); err != nil {
+	if err = engine.Where("user_id = ?", userId).
+		And("del_flag = ?", constant.StatusFileDeleted).
+		Asc("del_time").Find(&files); err != nil {
 		return nil, err
 	}
 
@@ -53,7 +53,7 @@ func (l *ListDeletedFilesLogic) ListDeletedFiles() (resp []*types.DeletedFilesRe
 	}
 
 	if err = engine.Select("id, name").In("id", folderIds).
-		And("del_flag = ?", constant.StatusFolderUndeleted).
+		//And("del_flag = ?", constant.StatusFolderUndeleted).
 		Find(&folders); err != nil {
 		return nil, err
 	}

@@ -61,6 +61,11 @@ type (
     RecoverFilesReq {
         Files []*RecoverFilesStruct `json:"files"`
     }
+
+    ShareReq {
+        FileId int64 `json:"fileId"`
+        Url string `json:"url"`
+    }
 )
 
 type (
@@ -107,5 +112,11 @@ type (
     RecoverFilesStruct {
         FileId int64 `json:"fileId"`
         FolderId int64 `json:"folderId"`
+    }
+
+    ShareFileStruct {
+        Id int64 `json:"id"`
+        FileId int64 `json:"fileId"`
+        Name string `json:"name"`
     }
 )
