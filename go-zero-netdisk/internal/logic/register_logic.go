@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/yitter/idgenerator-go/idgen"
 	"golang.org/x/crypto/bcrypt"
+	"lc/netdisk/common/constant"
 	"lc/netdisk/common/redis"
 	"lc/netdisk/common/variable"
 	"lc/netdisk/internal/svc"
@@ -37,7 +38,7 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) error {
 		rdb    = l.svcCtx.Redis
 	)
 
-	key := redis.RegisterCode + req.Email
+	key := redis.EmailValidCode + req.Email
 	code, err := rdb.Get(l.ctx, key).Result()
 	if err != nil {
 		return errors.New("发送错误，" + err.Error())
@@ -55,25 +56,14 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) error {
 	userInfo.Email = req.Email
 	userInfo.Id = idgen.NextId()
 	userInfo.Name = "user_" + strconv.FormatInt(int64(rand.Int31()), 10)
+	userInfo.Capacity = constant.DefaultCapacity
 	//userInfo.Avatar = l.svcCtx.BgUrl + "/avatar" + strconv.Itoa(rand.Intn(3)) + ".jpg"
-	//userInfo.BackgroundImage = l.svcCtx.BgUrl + "/bg" + strconv.Itoa(rand.Intn(6)) + ".jpg"
 	if _, err = engine.Insert(userInfo); err != nil {
 		if strings.Contains(err.Error(), "Duplicate entry") {
 			return errors.New("账号已经被抢走啦🫠")
 		}
 		return errors.New("注册失败，请重试")
 	}
-
-	//token, err := utils.GenToken(userInfo)
-	//if err != nil {
-	//	return errors.New("出错啦，请重试！")
-	//}
-	//
-	//key := redis.UserLogin + strconv.FormatInt(userInfo.Id, 10)
-	//if err = l.svcCtx.Redis.Set(l.ctx, key, token, 7*24*time.Hour).Err(); err != nil {
-	//	logx.Errorf("[REDIS ERROR] Register 保存用户token失败，userid：%v %v\n", userInfo.Id, err)
-	//	l.svcCtx.Redis.Set(l.ctx, key, token, 7*24*time.Hour) // 重试
-	//}
 
 	return nil
 }

@@ -33,7 +33,7 @@ func (l *SendCodeLogic) SendCode(req *types.SendCodeReq) error {
 		rdb    = l.svcCtx.Redis
 	)
 
-	key := redis.RegisterCode + req.Email
+	key := redis.EmailValidCode + req.Email
 	//if res := rdb.Get(l.ctx, key).Val(); res != "" {
 	//	return errors.New("验证码已发送，请勿重复发送")
 	//}

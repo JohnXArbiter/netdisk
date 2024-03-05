@@ -3,8 +3,9 @@ package redis
 import "time"
 
 const (
-	UserLogin    = "user:login:"
-	RegisterCode = "user:code:"
+	UserLogin      = "user:login:"
+	EmailValidCode = "user:code:"
+	UserInfoKey    = "user:info:"
 
 	UploadCheckKey        = "upload:file:"
 	UploadCheckBigFileKey = "upload:file-shard:"
@@ -16,6 +17,7 @@ const (
 
 const (
 	RegisterCodeExpire = 5*time.Minute + 10*time.Minute
+	UserInfoExpire     = 7 * 24 * time.Hour
 
 	UploadCheckExpire      = 24 * time.Hour
 	UploadCheckChunkExpire = 10 * time.Minute

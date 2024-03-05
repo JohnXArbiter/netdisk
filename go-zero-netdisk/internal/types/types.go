@@ -192,7 +192,8 @@ type CheckSizeResp struct {
 }
 
 type UpdateUserDetailReq struct {
-}
-
-type UpdateAvatarReq struct {
+	Name      string `json:"name"`
+	Signature string `json:"signature"`
+	Email     string `json:"email"`
+	Code      string `json:"code"`
 }

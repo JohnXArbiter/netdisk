@@ -11,14 +11,15 @@ type Model struct {
 // User 用户
 type User struct {
 	Model     `xorm:"extends"`
-	Username  string `xorm:"varchar(20) notnull unique 'username' comment('账号')"`
+	Username  string `xorm:"varchar(20) notnull unique 'username' comment('账号')" redis:"capacity"`
 	Password  string `xorm:"varchar(255) notnull default '' 'password'"`
-	Name      string `xorm:"varchar(20) notnull default '' 'name'"`
-	Avatar    string `xorm:"varchar(255) notnull default '' 'avatar'"`
-	Email     string `xorm:"varchar(127) notnull default '' 'email'"`
-	Signature string `xorm:"varchar(255) notnull default '' 'signature'"`
-	Status    int8   `xorm:"tinyint notnull default 0 'status'"`
-	Capacity  int64  `xorm:"bigint notnull default 0 'capacity' comment('空间容量')"`
+	Name      string `xorm:"varchar(20) notnull default '' 'name'" redis:"capacity"`
+	Avatar    string `xorm:"varchar(255) notnull default '' 'avatar'" redis:"capacity"`
+	Email     string `xorm:"varchar(127) notnull default '' 'email'" redis:"capacity"`
+	Signature string `xorm:"varchar(255) notnull default '' 'signature'" redis:"capacity"`
+	Status    int8   `xorm:"tinyint notnull default 0 'status'" redis:"capacity"`
+	Used      int64  `xorm:"bigint notnull default 0 'used' comment('已用容量')" redis:"capacity"`
+	Capacity  int64  `xorm:"bigint notnull default 0 'capacity' comment('空间容量')" redis:"capacity"`
 }
 
 type (

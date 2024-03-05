@@ -2,8 +2,14 @@ package user
 
 import (
 	"context"
+	"lc/netdisk/common/constant"
+	"lc/netdisk/common/redis"
+	"lc/netdisk/common/xorm"
 	"lc/netdisk/internal/svc"
 	"lc/netdisk/internal/types"
+	"lc/netdisk/model"
+	"strconv"
+	"strings"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -22,28 +28,63 @@ func NewUpdateAvatarLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upda
 	}
 }
 
-func (l *UpdateAvatarLogic) UpdateAvatar(req *types.UpdateAvatarReq, fileParam *types.FileParam) (interface{}, error) {
-	//var (
-	//	loginUserId = l.ctx.Value(constant.UserIdKey).(int64)
-	//	engine      = l.svcCtx.Xorm
-	//	minioSvc    = l.svcCtx.Minio.NewService()
-	//)
-	//
-	//index := strings.LastIndex(fileParam.FileHeader.Filename, ",")
-	//ext := fileParam.FileHeader.Filename[index+1:]
-	//objectName := "/avatar/" + strconv.FormatInt(loginUserId, 10) + ext
-	//
-	//_, err := engine.DoTransaction(func(session *xorm.Session) (interface{}, error) {
-	//	if _, err := session.Where("id = ?", loginUserId).
-	//		Update(&model.User{Avatar: objectName}); err != nil {
-	//		return nil, err
-	//	}
-	//
-	//	if err := minioSvc.Upload(l.ctx, objectName, fileParam.File); err != nil {
-	//		return nil, err
-	//	}
-	//
-	//})
+func (l *UpdateAvatarLogic) UpdateAvatar(fileParam *types.FileParam) (interface{}, error) {
+	var (
+		loginUserId = l.ctx.Value(constant.UserIdKey).(int64)
+		userIdStr   = strconv.FormatInt(loginUserId, 10)
+		engine      = l.svcCtx.Xorm
+		rdb         = l.svcCtx.Redis
+		minioSvc    = l.svcCtx.Minio.NewService()
+	)
+
+	index := strings.LastIndex(fileParam.FileHeader.Filename, ",")
+	ext := fileParam.FileHeader.Filename[index+1:]
+	objectName := "/avatar/" + userIdStr + ext
+
+	var (
+		urlErr error
+		url    string
+	)
+	_, err := engine.DoTransaction(func(session *xorm.Session) (interface{}, error) {
+		user := &model.User{Avatar: objectName}
+		if _, err := session.ID(loginUserId).
+			Update(user); err != nil {
+			logx.Errorf("更新头像，更新数据库失败，ERR: [%v]", err)
+			return nil, err
+		}
+
+		if err := minioSvc.Upload(l.ctx, objectName, fileParam.File); err != nil {
+			return nil, err
+		}
+
+		url, urlErr = minioSvc.GenUrl(objectName, false)
+
+		return nil, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	if urlErr != nil {
+		logx.Errorf("更新头像，生成url失败，ERR: [%v]", urlErr)
+		return nil, nil
+	}
+
+	userInfoKey := redis.UserInfoKey + userIdStr
+	m := make(map[string]interface{})
+	if _, err = engine.Select("id, name, username, email, signature, status, used, capacity").
+		ID(loginUserId).Table(&model.User{}).Get(&m); err != nil {
+		logx.Errorf("更新头像，获取用户信息失败，ERR: [%v]", err)
+		return nil, nil
+	}
+
+	m["avatar"] = url
+	pipeline := rdb.Pipeline()
+	pipeline.HSet(l.ctx, userInfoKey, m)
+	pipeline.Expire(l.ctx, userInfoKey, redis.UserInfoExpire)
+	if _, err = pipeline.Exec(l.ctx); err != nil {
+		logx.Errorf("更新头像，用户信息->redis失败，ERR: [%v]", err)
+	}
 
 	return nil, nil
 }

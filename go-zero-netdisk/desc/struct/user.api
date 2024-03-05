@@ -1,11 +1,10 @@
 syntax = "v1"
 
 type (
-    updateUserDetailReq {
-
-    }
-
-    updateAvatarReq {
-
+    UpdateUserDetailReq {
+        Name string `json:"name"`
+        Signature string `json:"signature"`
+        Email string `json:"email"`
+        Code string `json:"code"`
     }
 )

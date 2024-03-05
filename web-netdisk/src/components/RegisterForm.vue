@@ -18,7 +18,7 @@
         <el-form-item label="验证码" size="large">
             <el-input v-model="form.data.code">
                 <template #append>
-                    <el-button @click="sendCode2Email()">发送</el-button>
+                    <el-button @click="sendCode2Email(form.data.code)">发送</el-button>
                 </template>
             </el-input>
         </el-form-item>
@@ -31,9 +31,9 @@
 
 <script lang="ts" setup>
 import {reactive} from "vue";
-import {registerPost, RegisterReq, sendCode} from "./registerForm.ts";
-import {promptError, promptSuccess} from "../utils/apis/base.ts";
-import router from "../router";
+import {registerPost} from "./registerForm.ts";
+import {promptSuccess} from "../utils/apis/base.ts";
+import {sendCode2Email} from "@/utils/util.ts";
 
 let form = reactive({
     data: {
@@ -52,13 +52,6 @@ async function register() {
         setTimeout(() => {
             window.location.reload()
         }, 2000)
-    }
-}
-
-async function sendCode2Email() {
-    const resp = await sendCode(form.data.email)
-    if (resp.code === 0) {
-        promptSuccess('验证码已发送至邮件😊')
     }
 }
 

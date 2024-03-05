@@ -8,9 +8,11 @@
                           alt="/sec/assets/alt_type1.jpg"
                           :fit="'cover'"/>
             </router-link>
-            <!-- 板块信息 -->
-            <div class="menu-panel">
-                <router-link class="menu-item home" to="/file/folder/0">首页</router-link>
+            <router-link to="/user/info" class="logo">
+                <span v-for="c in color7" :style="{ color: c.color }">{{ c.letter }}</span>
+            </router-link>
+            <div class="nav">
+                <router-link class="menu-item home" to="/file/folder/0">去首页</router-link>
             </div>
 
             <div class="user-info-panel">
@@ -26,7 +28,26 @@
 
 <script lang="ts" setup>
 import Avatar from "@/components/header/Avatar.vue";
+import {ref} from "vue";
 
+const color7 = ref([
+    {
+        letter: "我",
+        color: "#3285FF"
+    },
+    {
+        letter: "的",
+        color: "#FB3624"
+    },
+    {
+        letter: "信",
+        color: "#FFBA02"
+    },
+    {
+        letter: "息",
+        color: "#24B24E"
+    },
+])
 
 </script>
 
@@ -57,18 +78,13 @@ span {
     font-size: 30px;
 }
 
-.menu-item {
-    cursor: pointer;
-    margin-left: 20px;
-}
-
-.menu-panel {
+.nav {
     flex: 1;
 }
 
-.home {
-    text-decoration: none;
-    color: #000;
+.menu-item {
+    cursor: pointer;
+    margin-left: 20px;
 }
 
 .user-info-panel {

@@ -15,9 +15,3 @@ export interface RegisterResp {
 export function registerPost(registerReq: RegisterReq) {
     return api.post<any, Resp<RegisterResp>>("/register", registerReq)
 }
-
-export function sendCode(email: string) {
-    return api.post<any, Resp<RegisterResp>>("/code", {
-        'email': email
-    })
-}

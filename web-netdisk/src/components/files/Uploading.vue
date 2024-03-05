@@ -1,7 +1,6 @@
 <template>
     <el-upload ref="uploadFiles"
                class="upload-demo"
-               action="actionUrl"
                multiple
                :limit="20"
                :auto-upload="true"
@@ -30,10 +29,10 @@
 import {Upload} from "@element-plus/icons-vue";
 import {UploadRequestOptions} from "element-plus";
 import {UploadRawFile} from "element-plus/es/components/upload/src/upload";
-import {useFileFolderStore} from "../../store/fileFolder.ts";
+import {useFileFolderStore} from "@/store/fileFolder.ts";
 import SparkMD5 from 'spark-md5'
 import {checkChunk, checkFile, upload, uploadChunk, uploadConst} from "./uploading.ts";
-import {codeOk, promptError, promptSuccess} from "../../utils/apis/base.ts";
+import {codeOk, promptError, promptSuccess} from "@/utils/apis/base.ts";
 
 const fileFolderStore = useFileFolderStore()
 

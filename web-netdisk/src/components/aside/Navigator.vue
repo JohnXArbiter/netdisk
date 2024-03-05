@@ -2,11 +2,11 @@
     <el-row class="tac">
         <el-menu
                 active-text-color="orange"
-                background-color="wheat"
+                background-color="rgba(245,222,179,0.8)"
                 class="el-menu-vertical-demo"
                 default-active="2"
                 text-color="black"
-                style="width: 100%"
+                style="width: 100%;"
         >
             <el-sub-menu index="1">
                 <template #title>
@@ -16,7 +16,7 @@
                     文件
                 </template>
                 <el-menu-item index="1-1">
-                    <router-link active-class="a" to="/file/folder/0">
+                    <router-link class="a" to="/file/folder/0">
                         <el-icon>
                             <Folder/>
                         </el-icon>
@@ -24,7 +24,7 @@
                     </router-link>
                 </el-menu-item>
                 <el-menu-item index="1-1">
-                    <router-link active-class="a" to="/file/0">
+                    <router-link class="a" to="/file/0">
                         <el-icon>
                             <Document/>
                         </el-icon>
@@ -32,7 +32,7 @@
                     </router-link>
                 </el-menu-item>
                 <el-menu-item index="1-2">
-                    <router-link active-class="a" to="/file/1">
+                    <router-link class="a" to="/file/1">
                         <el-icon>
                             <PictureFilled/>
                         </el-icon>
@@ -40,7 +40,7 @@
                     </router-link>
                 </el-menu-item>
                 <el-menu-item index="1-3">
-                    <router-link active-class="a" to="/file/2">
+                    <router-link class="a" to="/file/2">
                         <el-icon>
                             <VideoCameraFilled/>
                         </el-icon>
@@ -72,6 +72,14 @@
                     回收站
                 </a>
             </el-menu-item>
+            <el-menu-item index="2">
+                <router-link class="a" to="/share">
+                    <el-icon>
+                        <Delete/>
+                    </el-icon>
+                    分享
+                </router-link>
+            </el-menu-item>
             <el-menu-item index="3" disabled>
                 <el-icon>
                     <document/>
@@ -100,7 +108,6 @@ import {
 }
 
 .cat-banner {
-    background-color: wheat;
     position: absolute;
     bottom: 1px;
 }
@@ -123,9 +130,9 @@ import {
     }
 }
 
-
-router-link {
-    text-decoration: underline;
+.a {
+    text-decoration: none;
+    color: #606060;
 }
 
 router-link:hover {
