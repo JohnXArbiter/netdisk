@@ -10,16 +10,16 @@ import (
 	"lc/netdisk/internal/types"
 )
 
-func ShareHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func ShareFolderHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.ShareReq
+		var req types.ShareFolderReq
 		if err := httpx.ParseJsonBody(r, &req); err != nil {
-			xhttp.JsonBaseResponseCtx(r.Context(), w, nil)
+			xhttp.JsonBaseResponseCtx(r.Context(), w, err)
 			return
 		}
 
-		l := file.NewShareLogic(r.Context(), svcCtx)
-		if err := l.Share(&req); err != nil {
+		l := file.NewShareFolderLogic(r.Context(), svcCtx)
+		if err := l.ShareFolder(&req); err != nil {
 			xhttp.JsonBaseResponseCtx(r.Context(), w, err)
 		} else {
 			xhttp.JsonBaseResponseCtx(r.Context(), w, nil)

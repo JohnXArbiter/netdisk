@@ -74,3 +74,10 @@ func GetTypeByBruteForce(ext string) int8 {
 		return constant.TypeOther
 	}
 }
+
+var ShareExpireType = map[int8]int64{
+	0: 0,
+	1: 86400,
+	2: 604800,
+	3: 2592000,
+}

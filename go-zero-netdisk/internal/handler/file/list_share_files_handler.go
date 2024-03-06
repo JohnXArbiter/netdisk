@@ -1,9 +1,9 @@
 package file
 
 import (
+	xhttp "github.com/zeromicro/x/http"
 	"net/http"
 
-	"github.com/zeromicro/go-zero/rest/httpx"
 	"lc/netdisk/internal/logic/file"
 	"lc/netdisk/internal/svc"
 )
@@ -11,11 +11,10 @@ import (
 func ListShareFilesHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		l := file.NewListShareFilesLogic(r.Context(), svcCtx)
-		resp, err := l.ListShareFiles()
-		if err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
+		if resp, err := l.ListShareFiles(); err != nil {
+			xhttp.JsonBaseResponseCtx(r.Context(), w, nil)
 		} else {
-			httpx.OkJsonCtx(r.Context(), w, resp)
+			xhttp.JsonBaseResponseCtx(r.Context(), w, resp)
 		}
 	}
 }

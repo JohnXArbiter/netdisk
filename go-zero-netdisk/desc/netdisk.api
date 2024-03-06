@@ -137,14 +137,16 @@ service netdisk-api {
 	get /delete () returns ([]*DeletedFilesResp)
 	
 	@handler listShareFiles
-	get /share () returns ([]*ShareFileStruct)
+	get /share () returns ([]*ListShareStruct)
 	
 	@handler share
 	post /share (ShareReq) returns ()
 	
+	@handler shareFolder
+	post /share-folder (ShareFolderReq) returns ()
+	
 	@handler cancelShare
 	post /share-cancel (IdsReq) returns ()
-	
 }
 
 type (

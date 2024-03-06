@@ -131,8 +131,13 @@ type RecoverFilesReq struct {
 }
 
 type ShareReq struct {
-	FileId int64  `json:"fileId"`
-	Url    string `json:"url"`
+	FileIds []int64 `json:"fileIds"`
+	ShareStruct
+}
+
+type ShareFolderReq struct {
+	FolderId int64 `json:"folderId"`
+	ShareStruct
 }
 
 type DeletedFilesResp struct {
@@ -178,10 +183,20 @@ type RecoverFilesStruct struct {
 	FolderId int64 `json:"folderId"`
 }
 
-type ShareFileStruct struct {
-	Id     int64  `json:"id"`
-	FileId int64  `json:"fileId"`
-	Name   string `json:"name"`
+type ListShareStruct struct {
+	Id          string `json:"id"`
+	Name        string `json:"name"`
+	Created     int64  `json:"created"`
+	Expired     int64  `json:"expired"`
+	Status      int8   `json:"status"`
+	DownloadNum int64  `json:"downloadNum"`
+	ClickNum    int64  `json:"clickNum"`
+}
+
+type ShareStruct struct {
+	Id         string `json:"id"`
+	Url        string `json:"url"`
+	ExpireType int8   `json:"expireType"`
 }
 
 type CheckSizeReq struct {

@@ -43,10 +43,9 @@ const (
 	StatusFolderDeleted
 )
 
-// context keys
 const (
-	CtxFolderIdsKey = "folderIds"
-	CtxFileIdsKey   = "fileIds"
+	ShareNotExpired = iota
+	ShareExpired
 )
 
 const (

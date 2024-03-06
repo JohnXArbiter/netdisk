@@ -63,8 +63,13 @@ type (
     }
 
     ShareReq {
-        FileId int64 `json:"fileId"`
-        Url string `json:"url"`
+        FileIds []int64 `json:"fileIds"`
+        ShareStruct
+    }
+
+    ShareFolderReq {
+        FolderId int64 `json:"folderId"`
+        ShareStruct
     }
 )
 
@@ -114,9 +119,19 @@ type (
         FolderId int64 `json:"folderId"`
     }
 
-    ShareFileStruct {
-        Id int64 `json:"id"`
-        FileId int64 `json:"fileId"`
+    ListShareStruct {
+        Id string `json:"id"`
         Name string `json:"name"`
+        Created int64 `json:"created"`
+        Expired int64 `json:"expired"`
+        Status int8 `json:"status"`
+        DownloadNum int64 `json:"downloadNum"`
+        ClickNum int64 `json:"clickNum"`
+    }
+
+    ShareStruct {
+        Id string `json:"id"`
+        Url string `json:"url"`
+        ExpireType int8 `json:"expireType"`
     }
 )

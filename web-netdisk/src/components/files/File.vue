@@ -18,6 +18,8 @@
                             <el-button type="primary" round plain :icon="Rank" @click="fileButton(2)">移动</el-button>
                             <el-button type="primary" round plain :icon="CopyDocument" @click="fileButton(3)">复制
                             </el-button>
+                            <el-button type="primary" round plain :icon="Share" @click="fileButton(4)">分享
+                            </el-button>
                             <el-button type="danger" round plain :icon="DeleteFilled" @click="fileButton(4)">删除
                             </el-button>
                         </el-button-group>
@@ -106,7 +108,7 @@
         </template>
     </el-dialog>
 
-    <el-dialog v-model="fileDialogVisible[4]" title="删除文件">
+    <el-dialog v-model="fileDialogVisible[4]" title="分享文件">
         <h3>
             <el-icon>
                 <Warning/>
@@ -123,13 +125,32 @@
       </span>
         </template>
     </el-dialog>
+
+    <el-dialog v-model="fileDialogVisible[5]" title="删除文件">
+        <h3>
+            <el-icon>
+                <Warning/>
+            </el-icon>
+            确定要<span style="color: red"> 删除 {{ selectedFiles.map(file => file.name).join('，') }} </span>吗？
+            你可以在回收站中找到他们。
+        </h3>
+        <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="fileDialogVisible[5] = false">取消</el-button>
+        <el-button type="primary" @click="deleteFilesConfirm()">
+          确定
+        </el-button>
+      </span>
+        </template>
+    </el-dialog>
 </template>
 
 <script lang="ts" setup>
 import {ElTable} from "element-plus";
 import {
     CopyDocument, DeleteFilled, Download,
-    EditPen, FolderOpened, Rank, Warning
+    EditPen, FolderOpened, Rank, Warning,
+    Share
 } from "@element-plus/icons-vue";
 import {onMounted, reactive, ref} from "vue";
 import {

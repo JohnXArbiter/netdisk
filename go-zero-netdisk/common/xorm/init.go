@@ -34,9 +34,10 @@ func Init(conf *DbConf) *Engine {
 	if err = engine.Ping(); err != nil {
 		panic("[XORM ERROR] NewServiceContext ping mysql 失败" + err.Error())
 	}
-	if err = engine.Sync(&model.User{}, &model.Folder{}, &model.File{},
-		&model.FileFs{}, model.FileSchedule{}, model.FileShare{}); err != nil {
-		panic("[XORM ERROR] sync mysql 失败" + err.Error())
+	if err = engine.Sync(&model.User{}, &model.Folder{},
+		&model.File{}, &model.FileFs{}, model.FileSchedule{},
+		model.Share{}, model.ShareFile{}); err != nil {
+		panic("[XORM ERROR] sync mysql 失败，ERR: " + err.Error())
 	}
 	engine.Logger().ShowSQL(true)
 	return &Engine{engine}

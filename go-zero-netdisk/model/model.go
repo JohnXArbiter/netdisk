@@ -64,16 +64,6 @@ type (
 		FsId     int64 `xorm:"bigint notnull default 0 'fs_id'"`
 		ChunkNum int64 `xorm:"bigint notnull default 0 'chunk_num'"`
 	}
-
-	FileShare struct {
-		Model       `xorm:"extends"`
-		UserId      int64 `xorm:"bigint notnull default 0 'user_id'"`
-		FileId      int64 `xorm:"bigint notnull default 0 'file_id'"`
-		Expired     int64 `xorm:"bigint notnull default 0 'expired'"`
-		DownloadNum int64 `xorm:"bigint notnull default 0 'download_num'"`
-		ClickNum    int64 `xorm:"bigint notnull default 0 'click_num'"`
-		Status      int8  `xorm:"tinyint notnull default 0 'status'"`
-	}
 )
 
 // Folder 网盘文件夹
@@ -85,6 +75,25 @@ type (
 		UserId   int64  `xorm:"bigint notnull default 0 'user_id'"`
 		DelFlag  int8   `xorm:"tinyint notnull default 0 'del_flag' comment('文件删除状态：0：未删除，1：删除')"`
 		DelTime  int64  `xorm:"bigint notnull default 0 'del_time'"`
+	}
+)
+
+type (
+	Share struct {
+		Id          string `xorm:"varchar(255) notnull default '' 'id' comment('分享id')"`
+		Name        string `xorm:"varchar(64) notnull default '' 'name'"`
+		UserId      int64  `xorm:"bigint notnull default 0 'user_id'"`
+		Created     int64  `xorm:"bigint notnull default 0 'created' comment('创建时间')"`
+		Expired     int64  `xorm:"bigint notnull default 0 'expired' comment('到期时间')"`
+		DownloadNum int64  `xorm:"bigint notnull default 0 'download_num'"`
+		ClickNum    int64  `xorm:"bigint notnull default 0 'click_num'"`
+		Status      int8   `xorm:"tinyint notnull default 0 'status'"`
+	}
+
+	ShareFile struct {
+		Model   `xorm:"extends"`
+		ShareId string `xorm:"varchar(255) notnull default '' 'share_id' comment('分享id')"`
+		FileId  int64  `xorm:"bigint notnull default 0 'file_id'"`
 	}
 )
 
@@ -102,4 +111,12 @@ func (*FileFs) TableName() string {
 
 func (*Folder) TableName() string {
 	return "folder"
+}
+
+func (*Share) TableName() string {
+	return "share"
+}
+
+func (*ShareFile) TableName() string {
+	return "share_file"
 }
