@@ -59,4 +59,5 @@ const (
 	TypeVideo
 	TypeAudio
 	TypeOther
+	TypeShareMulti
 )

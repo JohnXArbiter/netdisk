@@ -30,12 +30,29 @@ func NewShareLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ShareLogic 
 
 func (l *ShareLogic) Share(req *types.ShareReq) error {
 	var (
-		userId = l.ctx.Value(constant.UserIdKey).(int64)
-		engine = l.svcCtx.Xorm
+		userId         = l.ctx.Value(constant.UserIdKey).(int64)
+		engine         = l.svcCtx.Xorm
+		shareType int8 = constant.TypeShareMulti
 	)
 
-	if req.Id == "" {
+	if req.Id == "" || req.Pwd == "" {
 		return errors.New("出错啦，请重试")
+	}
+
+	var file model.File
+	if has, err := engine.Select("name, ext").
+		ID(req.FileIds[0]).Get(&file); err != nil {
+		logx.Errorf("分享多文件，查询file失败，ERR: [%v]", err)
+		return errors.New("出错了")
+	} else if !has {
+		return errors.New("信息有误")
+	}
+
+	shareName := file.Name
+	if len(req.FileIds) == 1 {
+		shareType = variable.GetTypeByBruteForce(file.Ext)
+	} else {
+		shareName += "等..."
 	}
 
 	_, err := engine.DoTransaction(func(session *xorm.Session) (interface{}, error) {
@@ -51,13 +68,16 @@ func (l *ShareLogic) Share(req *types.ShareReq) error {
 			return nil, err
 		}
 
-		created := time.Now().Unix()
-		expired := created + variable.ShareExpireType[req.ExpireType]
+		created := time.Now().Local()
+		expired := created.Unix() + variable.ShareExpireType[req.ExpireType]
 		share := &model.Share{}
 		share.Id = req.Id
+		share.Pwd = req.Pwd
+		share.Name = shareName
 		share.UserId = userId
 		share.Created = created
 		share.Expired = expired
+		share.Type = shareType
 		if _, err := session.Insert(share); err != nil {
 			logx.Errorf("分享多文件，插入share失败，ERR: [%v]", err)
 			return nil, err

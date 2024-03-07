@@ -40,20 +40,24 @@ const routes = [
             },
             {
                 path: 'share-info',
-                component: () => import('@/components/files/share/ShareInfo.vue'),
+                component: () => import('@/components/files/share/Info.vue'),
                 props: true,
             }
         ]
     },
     {
-        path: '/user',
-        name: 'user',
-        component: () => import('@/views/User.vue'),
+        path: '/info',
+        name: 'info',
+        component: () => import('@/views/Info.vue'),
         children: [
             {
-                path: 'info',
+                path: 'user',
                 component: () => import('@/components/user/Info.vue'),
                 props: true,
+            },
+            {
+                path: 'share',
+                component: () => import('@/components/files/share/Info.vue')
             }
         ]
     }

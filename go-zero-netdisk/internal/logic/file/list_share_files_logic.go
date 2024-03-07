@@ -41,19 +41,28 @@ func (l *ListShareFilesLogic) ListShareFiles() (resp []*types.ListShareStruct, e
 	var expiredShares []string
 	for _, share := range shares {
 		status := share.Status
-		if share.Expired < time.Now().Unix() {
+		if share.Status == constant.ShareNotExpired &&
+			time.Now().Unix() > share.Expired {
 			expiredShares = append(expiredShares, share.Id)
 			status = constant.ShareExpired
 		}
 		resp = append(resp, &types.ListShareStruct{
 			Id:          share.Id,
 			Name:        share.Name,
-			Created:     share.Created,
+			Created:     share.Created.Format(constant.TimeFormat1),
 			Expired:     share.Expired,
 			Status:      status,
 			DownloadNum: share.DownloadNum,
 			ClickNum:    share.ClickNum,
 		})
+	}
+
+	if len(expiredShares) > 0 {
+		if _, err = engine.In("id", expiredShares).Update(&model.Share{
+			Status: constant.ShareExpired}); err != nil {
+			logx.Errorf("获取分享列表，更新 [%v] 过期状态失败，ERR: [%v]",
+				expiredShares, err)
+		}
 	}
 
 	return

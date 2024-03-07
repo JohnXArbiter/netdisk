@@ -2,6 +2,7 @@ package file
 
 import (
 	"context"
+	"errors"
 	"lc/netdisk/common/constant"
 	"lc/netdisk/common/variable"
 	"lc/netdisk/common/xorm"
@@ -34,6 +35,19 @@ func (l *ShareFolderLogic) ShareFolder(req *types.ShareFolderReq) error {
 		folderIds  = []int64{req.FolderId}
 		shareFiles []*model.ShareFile
 	)
+
+	if req.Id == "" || req.Pwd == "" {
+		return errors.New("出错啦，请重试")
+	}
+
+	var folderName string
+	if has, err := engine.ID(req.FolderId).
+		Get(&folderName); err != nil {
+		logx.Errorf("分享文件夹，查询folder失败，ERR: [%v]", err)
+		return errors.New("出错了")
+	} else if !has {
+		return errors.New("信息有误")
+	}
 
 	for len(folderIds) > 0 {
 		// 1.获取当前文件夹下的文件
@@ -71,13 +85,16 @@ func (l *ShareFolderLogic) ShareFolder(req *types.ShareFolderReq) error {
 			return nil, err
 		}
 
-		created := time.Now().Unix()
-		expired := created + variable.ShareExpireType[req.ExpireType]
+		created := time.Now().Local()
+		expired := created.Unix() + variable.ShareExpireType[req.ExpireType]
 		share := &model.Share{}
 		share.Id = req.Id
+		share.Pwd = req.Pwd
+		share.Name = folderName
 		share.UserId = userId
 		share.Created = created
 		share.Expired = expired
+		share.Type = constant.TypeShareMulti
 		if _, err := session.Insert(share); err != nil {
 			logx.Errorf("分享文件夹，插入share失败，ERR: [%v]", err)
 			return nil, err

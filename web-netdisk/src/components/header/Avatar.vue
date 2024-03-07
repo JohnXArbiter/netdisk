@@ -79,7 +79,7 @@ async function showUserInfo() {
 }
 
 function toFileFolder() {
-    window.location.href = '/user/info'
+    window.location.href = '/info/user'
 }
 
 onMounted(() => {

@@ -186,7 +186,7 @@ type RecoverFilesStruct struct {
 type ListShareStruct struct {
 	Id          string `json:"id"`
 	Name        string `json:"name"`
-	Created     int64  `json:"created"`
+	Created     string `json:"created"`
 	Expired     int64  `json:"expired"`
 	Status      int8   `json:"status"`
 	DownloadNum int64  `json:"downloadNum"`
@@ -195,6 +195,7 @@ type ListShareStruct struct {
 
 type ShareStruct struct {
 	Id         string `json:"id"`
+	Pwd        string `json:"pwd"`
 	Url        string `json:"url"`
 	ExpireType int8   `json:"expireType"`
 }

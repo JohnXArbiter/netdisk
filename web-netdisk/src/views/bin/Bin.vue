@@ -171,7 +171,7 @@ async function listDeletedFiles() {
         fileList.data.forEach(file => {
             file.sizeStr = formatSize(file.size)
             file.delTimeStr = formatTime(file.delTime)
-            file.left = formatLeft(file.delTime)
+            file.left = formatLeft(file.delTime + 30 * 24 * 60 * 60)
             console.log(file)
         })
     } else {

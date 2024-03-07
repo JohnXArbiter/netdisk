@@ -80,14 +80,16 @@ type (
 
 type (
 	Share struct {
-		Id          string `xorm:"varchar(255) notnull default '' 'id' comment('分享id')"`
-		Name        string `xorm:"varchar(64) notnull default '' 'name'"`
-		UserId      int64  `xorm:"bigint notnull default 0 'user_id'"`
-		Created     int64  `xorm:"bigint notnull default 0 'created' comment('创建时间')"`
-		Expired     int64  `xorm:"bigint notnull default 0 'expired' comment('到期时间')"`
-		DownloadNum int64  `xorm:"bigint notnull default 0 'download_num'"`
-		ClickNum    int64  `xorm:"bigint notnull default 0 'click_num'"`
-		Status      int8   `xorm:"tinyint notnull default 0 'status'"`
+		Id          string    `xorm:"varchar(255) notnull default '' 'id' comment('分享id')"`
+		Pwd         string    `xorm:"varchar(8) notnull default '' 'pwd' comment('分享密码')"`
+		Name        string    `xorm:"varchar(64) notnull default '' 'name'"`
+		UserId      int64     `xorm:"bigint notnull default 0 'user_id'"`
+		Created     time.Time `xorm:"created"`
+		Expired     int64     `xorm:"bigint notnull default 0 'expired' comment('到期时间')"`
+		DownloadNum int64     `xorm:"bigint notnull default 0 'download_num'"`
+		ClickNum    int64     `xorm:"bigint notnull default 0 'click_num'"`
+		Status      int8      `xorm:"tinyint notnull default 0 'status'"`
+		Type        int8      `xorm:"tinyint notnull default 0 'type'"`
 	}
 
 	ShareFile struct {
