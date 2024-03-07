@@ -2,6 +2,21 @@
     <el-row>
         <el-col :span="24">
             <div class="file-table">
+                <div style="margin-bottom: 15px;">
+                    <div v-if="fileButtonsState === 0" style="height: 32px; line-height: 30px;
+                    font-size: 1.4rem; font-width: 700;">我的全部分享
+                    </div>
+                    <el-button-group v-else-if="fileButtonsState==1">
+                        <el-button type="primary" round plain :icon="Link" @click="copyLink">复制链接
+                        </el-button>
+                        <el-button type="danger" round plain :icon="DeleteFilled" @click="dialogVisible.option[0]=true">
+                            删除分享
+                        </el-button>
+                    </el-button-group>
+                    <el-button v-else-if="fileButtonsState==2"
+                               type="primary" :icon="DeleteFilled" round @click="dialogVisible.option[0]=true">删除分享
+                    </el-button>
+                </div>
 
                 <el-empty v-if="!shareList.data || shareList.data.length==0"
                           description="文件列表为空，上传你的第一个文件吧！😺"/>
@@ -15,17 +30,15 @@
                     <el-table-column label="分享文件" min-width="500">
                         <template #default="scope">
                             <div style="display: flex; align-items: center">
-                                <el-image v-if="scope.row.type === typeImage"
+                                <el-image v-if="scope.row.type === typeMulti"
                                           class="small-pic"
-                                          :src="scope.row.url"
-                                          alt="../../assets/alt_type1.jpg"
+                                          src="/src/assets/alt_folder.jpg"
                                           :fit="'cover'"/>
                                 <el-image v-else
-                                          :src="`/src/assets/alt_type${scope.row.type}.jpg`"
-                                          alt=""
                                           class="small-pic"
+                                          :src="`/src/assets/alt_type${scope.row.type}.jpg`"
                                           :fit="'cover'"/>
-                                <span style="margin-left: 5px">{{ scope.row.name }}</span>
+                                &nbsp;<span style="margin-left: 5px">{{ scope.row.name }}</span>
                             </div>
                         </template>
                     </el-table-column>
@@ -37,6 +50,11 @@
                     <el-table-column label="状态" min-width="100">
                         <template #default="scope">
                             <div>{{ scope.row.state }}</div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="类型" min-width="100">
+                        <template #default="scope">
+                            <div>{{ typeMap[scope.row.type] }}</div>
                         </template>
                     </el-table-column>
                     <el-table-column label="点击次数" min-width="100">
@@ -51,12 +69,12 @@
                     </el-table-column>
                     <el-table-column min-width="100">
                         <template #default="scope">
-                            <span @click="">
-                                <el-icon><Link/></el-icon> 复制链接
+                            <span @click="copyLink(scope.row.link)">
+                                <el-icon color="#48a3ff"><Link/></el-icon>
                             </span>
                             &nbsp;&nbsp;&nbsp;
-                            <span @click="">
-                                <el-icon><CircleClose/></el-icon> 取消分享
+                            <span @click="dialogVisible.option[0]=true">
+                                <el-icon color="red"><CircleClose/></el-icon>
                             </span>
                         </template>
                     </el-table-column>
@@ -65,26 +83,64 @@
         </el-col>
     </el-row>
 
+    <el-dialog v-model="dialogVisible.option[0]" title="删除分享">
+        <h3>
+            <el-icon>
+                <Warning/>
+            </el-icon>
+            确定删除这个分享吗😶
+        </h3>
+        <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogVisible.option[0] = false;">取消</el-button>
+        <el-button type="primary" @click="cancelShare()">
+          确定
+        </el-button>
+      </span>
+        </template>
+    </el-dialog>
 </template>
 
 <script lang="ts" setup>
-import {CircleClose, Link} from "@element-plus/icons-vue";
-import {shareExpired, shareIllegal, shareNotExpired, typeImage} from "@/utils/constant.ts";
+import {
+    CircleClose, DeleteFilled, Link, Warning
+} from "@element-plus/icons-vue";
+import {shareExpired, shareIllegal, shareNotExpired, typeMap, typeMulti} from "@/utils/constant.ts";
 import {ElTable} from "element-plus";
-import {reactive, onMounted} from "vue";
+import {reactive, onMounted, ref} from "vue";
 import {listShareFiles, Share} from "@/components/files/share/share.ts";
-import {codeOk} from "@/utils/apis/base.ts";
-import {formatLeft, formatTime} from "@/utils/util.ts";
+import {codeOk, promptError, promptSuccess} from "@/utils/apis/base.ts";
+import {formatLeft} from "@/utils/util.ts";
 
 let shareList = reactive<{ data: Share[] }>({
-    data: []
-})
+        data: []
+    }),
+    // selectedShares: Share[],
+    fileButtonsState = ref(0)
+
+const dialogVisible = reactive({option: [false]}),
+    fileTableRef = ref<InstanceType<typeof ElTable>>()
+
+
+function fileSelectionChange(shares: Share[]) {
+    if (!shares || shares.length == 0) {
+        fileButtonsState.value = 0
+    } else if (shares) {
+        if (shares.length === 1) {
+            fileButtonsState.value = 1
+        } else {
+            fileButtonsState.value = 2
+        }
+    }
+}
 
 const listFiles = async () => {
     const resp = await listShareFiles()
     if (resp.code === codeOk) {
         shareList.data = resp.data
         shareList.data.forEach(share => {
+            console.log(typeMap[share.type])
+            share.link = `http://localhost:5173/info/share?file=${share.id}&pwd=${share.pwd}`
             switch (share.status) {
                 case shareNotExpired:
                     share.state = formatState(share)
@@ -100,14 +156,27 @@ const listFiles = async () => {
     }
 }
 
+async function cancelShare() {
+
+}
+
 function formatState(share: Share) {
     const now = new Date().getTime() / 1000
-    console.log(now, share.expired)
-    if (now >= share.expired) {
+    if (now >= share.expired - 10) {
         share.status = shareExpired
         return '已过期'
     }
     return formatLeft(share.expired) + '后过期'
+}
+
+async function copyLink(link: string) {
+    try {
+        console.log(link)
+        await navigator.clipboard.writeText(link)
+        promptSuccess('已将链接复制到剪贴板')
+    } catch (e) {
+        promptError(`复制链接失败，${e}`)
+    }
 }
 
 onMounted(() => {
@@ -117,5 +186,9 @@ onMounted(() => {
 </script>
 
 <style scoped>
-
+.small-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+}
 </style>

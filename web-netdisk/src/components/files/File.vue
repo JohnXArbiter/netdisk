@@ -319,8 +319,8 @@ onMounted(() => {
 }
 
 .small-pic {
-    width: 35px;
-    height: 35px;
+    width: 40px;
+    height: 40px;
     border-radius: 5px;
 }
 </style>

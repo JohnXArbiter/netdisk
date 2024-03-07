@@ -4,8 +4,9 @@
                 active-text-color="orange"
                 background-color="rgba(245,222,179,0.8)"
                 class="el-menu-vertical-demo"
-                default-active="2"
+                :default-openeds="['1']"
                 text-color="black"
+                :collapse="collapse"
                 style="width: 100%;"
         >
             <el-sub-menu index="1">
@@ -23,7 +24,7 @@
                         全部文件
                     </router-link>
                 </el-menu-item>
-                <el-menu-item index="1-1">
+                <el-menu-item index="1-2">
                     <router-link class="a" to="/file/0">
                         <el-icon>
                             <Document/>
@@ -31,7 +32,7 @@
                         文档
                     </router-link>
                 </el-menu-item>
-                <el-menu-item index="1-2">
+                <el-menu-item index="1-3">
                     <router-link class="a" to="/file/1">
                         <el-icon>
                             <PictureFilled/>
@@ -39,7 +40,7 @@
                         图片
                     </router-link>
                 </el-menu-item>
-                <el-menu-item index="1-3">
+                <el-menu-item index="1-4">
                     <router-link class="a" to="/file/2">
                         <el-icon>
                             <VideoCameraFilled/>
@@ -47,7 +48,7 @@
                         视频
                     </router-link>
                 </el-menu-item>
-                <el-menu-item index="1-4">
+                <el-menu-item index="1-5">
                     <router-link class="a" to="/file/3">
                         <el-icon>
                             <Headset/>
@@ -55,7 +56,7 @@
                         音频
                     </router-link>
                 </el-menu-item>
-                <el-menu-item index="1-5">
+                <el-menu-item index="1-6">
                     <router-link class="a" to="/file/4">
                         <el-icon>
                             <More/>
@@ -72,19 +73,13 @@
                     回收站
                 </a>
             </el-menu-item>
-            <el-menu-item index="2">
-                <router-link class="a" to="/share">
+            <el-menu-item index="3">
+                <a class="a" href="/share">
                     <el-icon>
-                        <Delete/>
+                        <Share/>
                     </el-icon>
                     分享
-                </router-link>
-            </el-menu-item>
-            <el-menu-item index="3" disabled>
-                <el-icon>
-                    <document/>
-                </el-icon>
-                <span>TODO</span>
+                </a>
             </el-menu-item>
         </el-menu>
         <div class="cat-banner">
@@ -95,10 +90,13 @@
 
 <script lang="ts" setup>
 import {
-    Files,
+    Files, Share,
     Folder, Document, PictureFilled, Headset, More,
     Delete, VideoCameraFilled
 } from '@element-plus/icons-vue'
+import {ref} from "vue";
+
+let collapse = ref(false)
 
 </script>
 <style>

@@ -2,9 +2,9 @@
     <el-row>
         <el-col :span="24">
             <div class="file-table">
-                <el-upload v-if="fileList && fileList.data.length!=0">
+                <div style="margin-bottom: 15px;">
                     <el-button v-if="fileButtonsState === 0"
-                               type="primary" :icon="Download" round
+                               type="primary" :icon="DeleteFilled" round
                                @click="dialogButtons(0)">清空回收站
                     </el-button>
 
@@ -16,8 +16,7 @@
                                    :icon="Delete" @click="dialogButtons(2)">删除文件
                         </el-button>
                     </el-button-group>
-                    <template #trigger v-show="false"></template>
-                </el-upload>
+                </div>
 
                 <el-empty v-if="!fileList.data || fileList.data.length==0"
                           description="回收站暂时为空😚"/>
@@ -59,13 +58,13 @@
                     <el-table-column min-width="100">
                         <template #default="scope">
                             <span @click="dialogButtons(1); singleSelectedFile=scope.row.id">
-                                <el-icon>
+                                <el-icon color="#48a3ff">
                                     <RefreshRight/>
                                 </el-icon>
                             </span>
                             &nbsp;&nbsp;
                             <span @click="dialogButtons(2); singleSelectedFile=scope.row.id">
-                                <el-icon>
+                                <el-icon color="red">
                                     <Delete/>
                                 </el-icon>
                             </span>
@@ -134,7 +133,7 @@ import {onMounted, reactive, ref} from "vue";
 import {deleteAllFilesTruly, DeleteFile, deleteFilesTruly, getDeletedFiles, recoverFiles} from "./bin.ts";
 import {
     Download, Warning,
-    RefreshRight, Delete
+    RefreshRight, Delete, DeleteFilled
 } from "@element-plus/icons-vue";
 import {codeOk, promptError} from "@/utils/apis/base.ts";
 import {formatLeft, formatSize, formatTime} from "@/utils/util.ts";

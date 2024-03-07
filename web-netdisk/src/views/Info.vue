@@ -22,13 +22,18 @@
     </div>
 
     <div class="body-content">
-        <router-view></router-view>
+        <div class="main-outer">
+            <div class="container-body">
+                <router-view></router-view>
+            </div>
+        </div>
     </div>
 </template>
 
 <script lang="ts" setup>
 import Avatar from "@/components/header/Avatar.vue";
 import {ref} from "vue";
+import {sendCode2Email} from "@/utils/util.ts";
 
 const color7 = ref([
     {
@@ -103,4 +108,21 @@ span {
     height: 50px;
     border-radius: 5px;
 }
+
+.main-outer {
+    background: url("@/assets/background_grid.png");
+    width: 100%;
+    height: 94vh;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 6vh;
+    overflow: hidden;
+}
+
+.container-body {
+    margin: 5vh auto;
+    width: 45%;
+}
+
 </style>

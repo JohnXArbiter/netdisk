@@ -14,7 +14,7 @@
                       placeholder="用于接收验证码"
             >
                 <template #append>
-                    <el-button @click="sendCode2Email(form.data.code)">发送验证码</el-button>
+                    <el-button @click="sendCode2Email(form.data.email)">发送验证码</el-button>
                 </template>
             </el-input>
         </el-form-item>

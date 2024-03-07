@@ -1,78 +1,76 @@
 <template>
-    <div class="main-outer">
-        <div class="container-body article-list-body">
-            <div class="form-div">
-                <el-form
-                        label-position="top"
-                        label-width="auto"
-                        class="form"
-                        :show-file-list="false"
+
+    <div class="form-div">
+        <el-form
+                label-position="top"
+                label-width="auto"
+                class="form"
+                :show-file-list="false"
+        >
+            <el-form-item label="当前头像">
+                <el-avatar :size="120"
+                           :src="user.data.avatar"
+                           style="margin-right:50px"
+                />
+                <el-upload
+                        class="upload-demo"
+                        :limit="1"
+                        :http-request="changeAvatar"
+                        :auto-upload="true"
                 >
-                    <el-form-item label="当前头像">
-                        <el-avatar :size="120"
-                                   :src="user.data.avatar"
-                                   style="margin-right:50px"
-                        />
-                        <el-upload
-                                class="upload-demo"
-                                :limit="1"
-                                :http-request="changeAvatar"
-                                :auto-upload="true"
-                        >
-                            <el-button type="primary" style="margin-top: 40px">上传头像</el-button>
-                            <template #tip>
-                                <div class="el-upload__tip">
-                                    接受 jpg/png 格式，并且大小≤1MB
-                                </div>
-                            </template>
-                        </el-upload>
-
-                        <div class="progress">
-                            <el-progress type="dashboard" :percentage="percentage"
-                                         :status="status" :stroke-width="20"
-                                         style="position:relative; top: 20px">
-                                <template #default="{ percentage }">
-                                    <div>
-                                        <div>{{ percentage }}%</div>
-                                    </div>
-                                </template>
-                            </el-progress>
-                            <div style="font-weight: 700;color: #707070"> {{ used }} / {{ capacity }}</div>
+                    <el-button type="primary" style="margin-top: 40px">上传头像</el-button>
+                    <template #tip>
+                        <div class="el-upload__tip">
+                            接受 jpg/png 格式，并且大小≤1MB
                         </div>
-                    </el-form-item>
+                    </template>
+                </el-upload>
 
-                    <el-form-item label="名称" size="large">
-                        <el-input v-model="user.data.name"/>
-                    </el-form-item>
-                    <el-form-item label="账号" size="large">
-                        <el-input disabled v-model="user.data.username"/>
-                    </el-form-item>
-                    <el-form-item label="邮箱" size="large">
-                        <el-input v-model="user.data.email">
-                            <template #append>
-                                <el-button @click="sendCode2Email(user.data.email)">获取验证码</el-button>
-                            </template>
-                        </el-input>
-                    </el-form-item>
-                    <el-form-item label="验证码" size="large">
-                        <el-input v-model="code"/>
-                    </el-form-item>
-                    <el-form-item label="个性简介" size="large">
-                        <el-input
-                                v-model="user.data.signature"
-                                :autosize="{ minRows: 4, maxRows: 10 }"
-                                type="textarea"
-                        />
-                    </el-form-item>
-                    <el-form-item>
-                        <el-button type="warning" size="large" style="margin-top: 20px"
-                                   @click="updateInfo">确定
-                        </el-button>
-                    </el-form-item>
-                </el-form>
-            </div>
-        </div>
+                <div class="progress">
+                    <el-progress type="dashboard" :percentage="percentage"
+                                 :status="status" :stroke-width="20"
+                                 style="position:relative; top: 20px">
+                        <template #default="{ percentage }">
+                            <div>
+                                <div>{{ percentage }}%</div>
+                            </div>
+                        </template>
+                    </el-progress>
+                    <div style="font-weight: 700;color: #707070"> {{ used }} / {{ capacity }}</div>
+                </div>
+            </el-form-item>
+
+            <el-form-item label="名称" size="large">
+                <el-input v-model="user.data.name"/>
+            </el-form-item>
+            <el-form-item label="账号" size="large">
+                <el-input disabled v-model="user.data.username"/>
+            </el-form-item>
+            <el-form-item label="邮箱" size="large">
+                <el-input v-model="user.data.email">
+                    <template #append>
+                        <el-button @click="sendCode2Email(user.data.email)">获取验证码</el-button>
+                    </template>
+                </el-input>
+            </el-form-item>
+            <el-form-item label="验证码" size="large">
+                <el-input v-model="code"/>
+            </el-form-item>
+            <el-form-item label="个性简介" size="large">
+                <el-input
+                        v-model="user.data.signature"
+                        :autosize="{ minRows: 4, maxRows: 10 }"
+                        type="textarea"
+                />
+            </el-form-item>
+            <el-form-item>
+                <el-button type="warning" size="large" style="margin-top: 20px"
+                           @click="updateInfo">确定
+                </el-button>
+            </el-form-item>
+        </el-form>
     </div>
+
 </template>
 
 <script lang="ts" setup>
@@ -144,21 +142,6 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-.main-outer {
-    background: url("@/assets/background_grid.png");
-    width: 100%;
-    height: 94vh;
-    margin: 0;
-    padding: 0;
-    position: absolute;
-    top: 6vh;
-    overflow: hidden;
-}
-
-.container-body {
-    margin: 5vh auto;
-    width: 45%;
-}
 
 .progress {
     position: absolute;

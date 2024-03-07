@@ -48,12 +48,14 @@ func (l *ListShareFilesLogic) ListShareFiles() (resp []*types.ListShareStruct, e
 		}
 		resp = append(resp, &types.ListShareStruct{
 			Id:          share.Id,
+			Pwd:         share.Pwd,
 			Name:        share.Name,
 			Created:     share.Created.Format(constant.TimeFormat1),
 			Expired:     share.Expired,
 			Status:      status,
 			DownloadNum: share.DownloadNum,
 			ClickNum:    share.ClickNum,
+			Type:        share.Type,
 		})
 	}
 

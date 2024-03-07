@@ -43,7 +43,7 @@
                             <div class="file-folder-row" @click="router.push(`/file/folder/${scope.row.id}`)">
                                 <el-image class="small-pic"
                                           src="/src/assets/alt_folder.jpg"
-                                          alt="" :fit="'cover'"/>
+                                          :fit="'cover'"/>
                                 <span style="margin-left: 10px">{{ scope.row.name }}</span>
                             </div>
                         </template>
@@ -308,8 +308,8 @@ onMounted(() => {
 }
 
 .small-pic {
-    width: 35px;
-    height: 35px;
+    width: 40px;
+    height: 40px;
     border-radius: 5px;
 }
 </style>
