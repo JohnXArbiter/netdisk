@@ -1,5 +1,5 @@
 <template>
-    <img src="@/assets/ji_tui_cai.png" alt="" style="overflow: hidden"/>
+    <img src="@/assets/ji_tui_cai.png" alt="" style="overflow: hidden;position: absolute;top: 0;left: 0"/>
     <span style="font: 800 24px Arial, sans-serif;color: snow;position: absolute;top: 15px;left: 6%">咪咪网盘</span>
     <el-row class="el-row">
         <el-col :span="23">
