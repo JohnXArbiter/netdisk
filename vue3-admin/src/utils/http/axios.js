@@ -1,5 +1,9 @@
 import axios from "axios";
 import {ElMessage} from 'element-plus'
+import {useBaseStore} from "../../../store/index.js";
+
+const baseStore = useBaseStore()
+
 // 1. 创建axios实例
 const instance = axios.create({
     // 接口
@@ -7,12 +11,14 @@ const instance = axios.create({
     // 超时时间
     timeout: 50000,
 });
+
+
 // 2.请求拦截
 instance.interceptors.request.use(
     config => {
-        let token = sessionStorage.getItem('token')
+        let token = baseStore.getToken()
         if (token) {
-            config.headers['token'] = token
+            config.headers['Authorization'] = token
         }
         return config;
     },
@@ -25,7 +31,6 @@ instance.interceptors.request.use(
 // 3.响应拦截
 instance.interceptors.response.use(
     res => {
-        console.log(res.data)
         return res;
     },
     error => {

@@ -4,6 +4,7 @@ package handler
 import (
 	"net/http"
 
+	admin "lc/netdisk/internal/handler/admin"
 	download "lc/netdisk/internal/handler/download"
 	file "lc/netdisk/internal/handler/file"
 	upload "lc/netdisk/internal/handler/upload"
@@ -45,6 +46,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodPost,
 				Path:    "/file/share-info",
 				Handler: getShareInfoHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/admin/login",
+				Handler: adminLoginHandler(serverCtx),
 			},
 		},
 	)
@@ -238,5 +244,24 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			}...,
 		),
 		rest.WithPrefix("/file"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.Auth},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/user-list",
+					Handler: admin.ListUsersHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/share-list",
+					Handler: admin.ListSharesAdminHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/admin"),
 	)
 }

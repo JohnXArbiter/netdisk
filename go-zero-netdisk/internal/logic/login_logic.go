@@ -50,7 +50,7 @@ func (l *LoginLogic) Login(req *types.LoginReq) (*types.LoginResp, error) {
 		return nil, errors.New("帐号或密码错误！")
 	}
 
-	token, err := utils.GenToken(user)
+	token, err := utils.GenToken(user.Id, user.Name)
 	if err != nil {
 		return nil, errors.New("出错啦，请重试！")
 	}

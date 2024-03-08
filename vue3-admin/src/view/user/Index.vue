@@ -1,49 +1,60 @@
 <template>
     <div class="card-list">
-        <el-card >
-            <el-input style="width:440px" @clear="searchUser" clearable v-model="searchForm.name" placeholder="请输入用户姓名" class="input-with-select">
+        <el-card>
+            <el-input style="width:440px" @clear="searchUser" clearable v-model="searchForm.name"
+                      placeholder="请输入用户姓名" class="input-with-select">
                 <template #append>
-                    <el-button icon="Search" @click="searchUser" />
+                    <el-button icon="Search" @click="searchUser"/>
                 </template>
             </el-input>
-            <el-table :data="tableData" border style="width: 100%;margin-top:20px">
-                <el-table-column prop="username" label="账号" width="180" />
-                <el-table-column prop="password" label="密码" width="180" />
-              <el-table-column prop="name" label="姓名" width="180" />
-              <el-table-column prop="avatar" label="头像" width="180" />
-              <el-table-column prop="email" label="邮件" width="180" />
-              <el-table-column prop="signature" label="签名" width="180" />
-              <el-table-column prop="status" label="状态" width="180" />
-              <el-table-column prop="used" label="已使用" width="180" />
-              <el-table-column prop="capacity" label="总容量" width="180" />
+            <el-table :data="users" border style="width: 100%;margin-top:20px">
+                <el-table-column prop="username" label="账号" width="180"/>
+                <el-table-column prop="password" label="密码" width="180"/>
+                <el-table-column prop="name" label="姓名" width="180"/>
+                <el-table-column label="头像" width="80">
+                    <template #default="scope">
+                        <el-image :src="scope.row.avatar"
+                                  class="small-pic"
+                                  fit="cover"/>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="email" label="邮件" width="180"/>
+                <el-table-column prop="signature" label="签名" width="180"/>
+                <el-table-column prop="status" label="状态" width="180"/>
+                <el-table-column prop="used" label="已使用" width="180"/>
+                <el-table-column prop="capacity" label="总容量" width="180"/>
                 <el-table-column label="操作" width="330">
                     <template #default="scope">
                         <el-button type="danger" size="small" @click="deleteUser(scope.row.id)">删除</el-button>
                         <el-button size="small"
-                            @click="() => router.push({ path: '/user/detail', query: { id: scope.row.id } })">详情</el-button>
+                                   @click="() => router.push({ path: '/user/detail', query: { id: scope.row.id } })">详情
+                        </el-button>
                     </template>
                 </el-table-column>
             </el-table>
             <!-- 分页 -->
             <el-pagination style="margin-top:20px" :current-page="searchForm.current" :page-size="searchForm.size"
-                :page-sizes="[10, 20, 30, 40]" layout="->,total, sizes, prev, pager, next, jumper" :total="total"
-                @size-change="handleSizeChange" @current-change="handleCurrentChange" />
+                           :page-sizes="[10, 20, 30, 40]" layout="->,total, sizes, prev, pager, next, jumper"
+                           :total="total"
+                           @size-change="handleSizeChange" @current-change="handleCurrentChange"/>
         </el-card>
     </div>
 </template>
 
 <script setup>
 import userApi from "../../api/user";
-import { onMounted, reactive, ref } from "vue";
-import { ElMessage, ElMessageBox } from 'element-plus';
-import { useRouter } from 'vue-router'
+import {onMounted, reactive, ref} from "vue";
+import {ElMessage, ElMessageBox} from 'element-plus';
+import {useRouter} from 'vue-router'
+import api from "@/utils/http/request.js";
+
 const router = useRouter();
 // Dom 挂载之后
 onMounted(() => {
     getUserList();
 })
 // 用户数据
-let tableData = ref([]);
+let users = ref([]);
 let total = ref(0);
 // 搜索条件
 const searchForm = reactive({
@@ -51,13 +62,15 @@ const searchForm = reactive({
     size: 10,
     name: ''
 })
+
 // 获取用户列表
 const getUserList = async () => {
-    const res = await userApi.getUserList(searchForm);
+    const res = await userApi.getUserList({'page': 0, 'size': 100})
     console.log(res);
-    tableData.value = res.data.data.records;
-    total.value = res.data.data.total;
+    users.value = res.data.data;
+    // total.value = res.data.data.total;
 }
+
 const handleSizeChange = (size) => {
     searchForm.size = size;
     getUserList();
@@ -80,7 +93,7 @@ const deleteUser = (id) => {
             type: 'warning',
         }
     ).then(async () => {
-        const res = await userApi.delUser({ id: id });
+        const res = await userApi.delUser({id: id});
         if (res.data.success) {
             ElMessage.success("删除成功")
             getUserList();
@@ -96,5 +109,10 @@ const deleteUser = (id) => {
 }
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
+.small-pic {
+    width: 50px;
+    height: 50px;
+    border-radius: 5px;
+}
 </style>

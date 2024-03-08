@@ -27,6 +27,11 @@ type SendCodeReq struct {
 	Email string `json:"email"`
 }
 
+type PageReq struct {
+	Page int64 `json:"page"`
+	Size int64 `json:"size"`
+}
+
 type LoginResp struct {
 	Token    string   `json:"token"`
 	UserInfo UserInfo `json:"userInfo"`

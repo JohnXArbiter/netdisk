@@ -9,18 +9,28 @@ type Model struct {
 }
 
 // User 用户
-type User struct {
-	Model     `xorm:"extends"`
-	Username  string `xorm:"varchar(20) notnull unique 'username' comment('账号')" redis:"capacity"`
-	Password  string `xorm:"varchar(255) notnull default '' 'password'"`
-	Name      string `xorm:"varchar(20) notnull default '' 'name'" redis:"capacity"`
-	Avatar    string `xorm:"varchar(255) notnull default '' 'avatar'" redis:"capacity"`
-	Email     string `xorm:"varchar(127) notnull default '' 'email'" redis:"capacity"`
-	Signature string `xorm:"varchar(255) notnull default '' 'signature'" redis:"capacity"`
-	Status    int8   `xorm:"tinyint notnull default 0 'status'" redis:"capacity"`
-	Used      int64  `xorm:"bigint notnull default 0 'used' comment('已用容量')" redis:"capacity"`
-	Capacity  int64  `xorm:"bigint notnull default 0 'capacity' comment('空间容量')" redis:"capacity"`
-}
+type (
+	User struct {
+		Model     `xorm:"extends"`
+		Username  string `xorm:"varchar(20) notnull unique 'username' comment('账号')" redis:"capacity" json:"username"`
+		Password  string `xorm:"varchar(255) notnull default '' 'password'" json:"password"`
+		Name      string `xorm:"varchar(20) notnull default '' 'name'" json:"name"`
+		Avatar    string `xorm:"varchar(255) notnull default '' 'avatar'" json:"avatar"`
+		Email     string `xorm:"varchar(127) notnull default '' 'email'" json:"email"`
+		Signature string `xorm:"varchar(255) notnull default '' 'signature'" json:"signature"`
+		Status    int8   `xorm:"tinyint notnull default 0 'status'" json:"status"`
+		Used      int64  `xorm:"bigint notnull default 0 'used' comment('已用容量')" json:"used"`
+		Capacity  int64  `xorm:"bigint notnull default 0 'capacity' comment('空间容量')" json:"capacity"`
+	}
+
+	Admin struct {
+		Model    `xorm:"extends"`
+		Name     string `xorm:"varchar(20) notnull default '' 'name'"`
+		Username string `xorm:"varchar(20) notnull unique 'username' comment('账号')"`
+		Password string `xorm:"varchar(255) notnull default '' 'password'"`
+		Status   int8   `xorm:"tinyint notnull default 0 'status'"`
+	}
+)
 
 type (
 	// File 用户视角存储
@@ -80,16 +90,16 @@ type (
 
 type (
 	Share struct {
-		Id          string    `xorm:"pk varchar(255) notnull default '' 'id' comment('分享id')"`
-		Pwd         string    `xorm:"varchar(8) notnull default '' 'pwd' comment('分享密码')"`
-		Name        string    `xorm:"varchar(64) notnull default '' 'name'"`
-		UserId      int64     `xorm:"bigint notnull default 0 'user_id'"`
-		Created     time.Time `xorm:"created"`
-		Expired     int64     `xorm:"bigint notnull default 0 'expired' comment('到期时间')"`
-		DownloadNum int64     `xorm:"bigint notnull default 0 'download_num'"`
-		ClickNum    int64     `xorm:"bigint notnull default 0 'click_num'"`
-		Status      int8      `xorm:"tinyint notnull default 0 'status'"`
-		Type        int8      `xorm:"tinyint notnull default 0 'type'"`
+		Id          string    `xorm:"pk varchar(255) notnull default '' 'id' comment('分享id')" json:"id"`
+		Pwd         string    `xorm:"varchar(8) notnull default '' 'pwd' comment('分享密码')" json:"pwd"`
+		Name        string    `xorm:"varchar(64) notnull default '' 'name'" json:"name"`
+		UserId      int64     `xorm:"bigint notnull default 0 'user_id'" json:"userId"`
+		Created     time.Time `xorm:"created" json:"created"`
+		Expired     int64     `xorm:"bigint notnull default 0 'expired' comment('到期时间')" json:"expired"`
+		DownloadNum int64     `xorm:"bigint notnull default 0 'download_num'" json:"downloadNum"`
+		ClickNum    int64     `xorm:"bigint notnull default 0 'click_num'" json:"clickNum"`
+		Status      int8      `xorm:"tinyint notnull default 0 'status'" json:"status"`
+		Type        int8      `xorm:"tinyint notnull default 0 'type'" json:"type"`
 	}
 
 	ShareFile struct {
