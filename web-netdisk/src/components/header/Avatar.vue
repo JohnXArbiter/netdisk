@@ -1,4 +1,6 @@
 <template>
+    <img src="@/assets/ji_tui_cai.png" alt="" style="overflow: hidden"/>
+    <span style="font: 800 24px Arial, sans-serif;color: snow;position: absolute;top: 15px;left: 6%">咪咪网盘</span>
     <el-row class="el-row">
         <el-col :span="23">
             <div class="grid-content ep-bg-purple"></div>

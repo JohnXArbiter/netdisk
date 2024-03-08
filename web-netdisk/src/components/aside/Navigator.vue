@@ -2,7 +2,7 @@
     <el-row class="tac">
         <el-menu
                 active-text-color="orange"
-                background-color="rgba(245,222,179,0.8)"
+                background-color="rgba(245,222,179,1)"
                 class="el-menu-vertical-demo"
                 :default-openeds="['1']"
                 text-color="black"

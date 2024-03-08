@@ -1,7 +1,7 @@
 <template>
     <div class="common-layout">
         <el-container style="box-shadow: 0 2px 6px 0 #ddd;">
-            <el-header style="background-color: wheat;">
+            <el-header style="background-color: lightsalmon;">
                 <avatar/>
             </el-header>
 

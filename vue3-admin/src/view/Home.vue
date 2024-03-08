@@ -5,11 +5,12 @@
             <el-header>
                 <el-row>
                     <el-col :span="4">
+                      <img src="@/assets/img/ji_tui_cai.png" alt=""/>
                         <p class="system-name">咪咪网盘管理后台</p>
                     </el-col>
                     <el-col :offset="12" :span="8" style="min-width: 150px">
                         <el-dropdown style="float: right; margin: 20px 10px">
-                            <span class="el-dropdown-link" style="color: #fff; cursor: pointer">
+                            <span class="el-dropdown-link" style="color: #fff; cursor: pointer; font-weight: 600">
                                 小胖子 &nbsp;&nbsp; <el-icon class="el-icon--right">
                                     <arrow-down/>
                                 </el-icon>
@@ -126,7 +127,11 @@ const logout = () => {
 
 .system-name {
     color: #fff;
-    font-size: 18px;
+    font: 800 23px Arial, sans-serif;
+    line-height: 100%;
+    position: absolute;
+    left: 5%;
+    top: 1px
 }
 
 .el-aside {
@@ -162,6 +167,7 @@ const logout = () => {
     letter-spacing: 0.2em;
     cursor: pointer;
     color: black;
+    border-bottom: 1px solid darkred;
 }
 
 .el-menu-vertical-demo:not(.el-menu--collapse) {
