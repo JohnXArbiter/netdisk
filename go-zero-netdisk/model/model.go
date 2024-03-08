@@ -80,7 +80,7 @@ type (
 
 type (
 	Share struct {
-		Id          string    `xorm:"varchar(255) notnull default '' 'id' comment('分享id')"`
+		Id          string    `xorm:"pk varchar(255) notnull default '' 'id' comment('分享id')"`
 		Pwd         string    `xorm:"varchar(8) notnull default '' 'pwd' comment('分享密码')"`
 		Name        string    `xorm:"varchar(64) notnull default '' 'name'"`
 		UserId      int64     `xorm:"bigint notnull default 0 'user_id'"`

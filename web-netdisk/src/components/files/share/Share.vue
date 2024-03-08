@@ -4,7 +4,7 @@
             <div class="file-table">
                 <div style="margin-bottom: 15px;">
                     <div v-if="fileButtonsState === 0" style="height: 32px; line-height: 30px;
-                    font-size: 1.4rem; font-width: 700;">我的全部分享
+                    font-size: 1.4rem; font-weight: 700;">我的全部分享
                     </div>
                     <el-button-group v-else-if="fileButtonsState==1">
                         <el-button type="primary" round plain :icon="Link" @click="copyLink">复制链接
@@ -29,15 +29,21 @@
                     <el-table-column type="selection" width="55"/>
                     <el-table-column label="分享文件" min-width="500">
                         <template #default="scope">
-                            <div style="display: flex; align-items: center">
-                                <el-image v-if="scope.row.type === typeMulti"
-                                          class="small-pic"
-                                          src="/src/assets/alt_folder.jpg"
-                                          :fit="'cover'"/>
-                                <el-image v-else
-                                          class="small-pic"
-                                          :src="`/src/assets/alt_type${scope.row.type}.jpg`"
-                                          :fit="'cover'"/>
+                            <div class="share-row share-row2"
+                                 v-if="scope.row.type === typeMulti"
+                                 @click="toShareInfo(`/info/share/${scope.row.id}?pwd=${scope.row.pwd}`)">
+                                <el-image
+                                        class="small-pic"
+                                        src="/src/assets/alt_folder.jpg"
+                                        :fit="'cover'"/>
+                                &nbsp;<span style="margin-left: 5px">{{ scope.row.name }}</span>
+                            </div>
+
+                            <div v-else class="share-row">
+                                <el-image
+                                        class="small-pic"
+                                        :src="`/src/assets/alt_type${scope.row.type}.jpg`"
+                                        :fit="'cover'"/>
                                 &nbsp;<span style="margin-left: 5px">{{ scope.row.name }}</span>
                             </div>
                         </template>
@@ -110,7 +116,8 @@ import {ElTable} from "element-plus";
 import {reactive, onMounted, ref} from "vue";
 import {listShareFiles, Share} from "@/components/files/share/share.ts";
 import {codeOk, promptError, promptSuccess} from "@/utils/apis/base.ts";
-import {formatLeft} from "@/utils/util.ts";
+import {formatLeft, formatState} from "@/utils/util.ts";
+import router from "@/router";
 
 let shareList = reactive<{ data: Share[] }>({
         data: []
@@ -139,11 +146,10 @@ const listFiles = async () => {
     if (resp.code === codeOk) {
         shareList.data = resp.data
         shareList.data.forEach(share => {
-            console.log(typeMap[share.type])
-            share.link = `http://localhost:5173/info/share?file=${share.id}&pwd=${share.pwd}`
+            share.link = `http://localhost:5173/info/share/111${share.id}&pwd=${share.pwd}`
             switch (share.status) {
                 case shareNotExpired:
-                    share.state = formatState(share)
+                    share.state = formatState(share.expired)
                     break
                 case shareIllegal:
                     share.state = '内涵非法内容，已封禁'
@@ -160,15 +166,6 @@ async function cancelShare() {
 
 }
 
-function formatState(share: Share) {
-    const now = new Date().getTime() / 1000
-    if (now >= share.expired - 10) {
-        share.status = shareExpired
-        return '已过期'
-    }
-    return formatLeft(share.expired) + '后过期'
-}
-
 async function copyLink(link: string) {
     try {
         console.log(link)
@@ -177,6 +174,10 @@ async function copyLink(link: string) {
     } catch (e) {
         promptError(`复制链接失败，${e}`)
     }
+}
+
+async function toShareInfo(url: string) {
+    window.open(url)
 }
 
 onMounted(() => {
@@ -189,6 +190,17 @@ onMounted(() => {
 .small-pic {
     width: 40px;
     height: 40px;
+    border-radius: 5px;
+}
+
+.share-row {
+    display: flex;
+    align-items: center;
+}
+
+.share-row2:hover {
+    cursor: pointer;
+    background-color: rgb(230, 230, 245);
     border-radius: 5px;
 }
 </style>

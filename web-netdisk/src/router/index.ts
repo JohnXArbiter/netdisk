@@ -56,8 +56,9 @@ const routes = [
                 props: true,
             },
             {
-                path: 'share',
-                component: () => import('@/components/files/share/Info.vue')
+                path: 'share/:shareId',
+                component: () => import('@/components/files/share/Info.vue'),
+                props: true,
             }
         ]
     }

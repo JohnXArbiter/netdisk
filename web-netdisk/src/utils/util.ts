@@ -69,6 +69,13 @@ export function formatTime(unix: number) {
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
+export function formatState(expired: number) {
+    const now = new Date().getTime() / 1000
+    if (now >= expired - 10) {
+        return '已过期'
+    }
+    return formatLeft(expired) + '后过期'
+}
 
 export async function sendCode2Email(email: string) {
     const resp = await sendCode(email)

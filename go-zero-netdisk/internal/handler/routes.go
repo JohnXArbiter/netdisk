@@ -36,6 +36,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/ping",
 				Handler: pingHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/user/detail/:id",
+				Handler: getDetailHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/file/share-info",
+				Handler: getShareInfoHandler(serverCtx),
+			},
 		},
 	)
 
@@ -100,11 +110,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/detail",
 					Handler: user.UpdateDetailHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodGet,
-					Path:    "/detail/:id",
-					Handler: user.GetDetailHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodPost,
@@ -213,7 +218,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				{
 					Method:  http.MethodGet,
 					Path:    "/share",
-					Handler: file.ListShareFilesHandler(serverCtx),
+					Handler: file.ListSharesHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodPost,

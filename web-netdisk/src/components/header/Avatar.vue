@@ -6,7 +6,11 @@
         <el-col :span="1">
             <div class="grid-content ep-bg-purple-light">
                 <div class="demo-basic--circle">
-                    <el-popover
+                    <el-button v-if="!loginState" @click="toLogin">
+                        登录
+                    </el-button>
+
+                    <el-popover v-if="loginState"
                             placement="top-start"
                             width="10vw"
                             trigger="hover"
@@ -63,7 +67,8 @@ let user = reactive({
     percentage = ref(0),
     status = ref('success'),
     used = ref(''),
-    capacity = ref('')
+    capacity = ref(''),
+    loginState = ref(false)
 
 async function showUserInfo() {
     if (user.data.id === 0) {
@@ -82,8 +87,17 @@ function toFileFolder() {
     window.location.href = '/info/user'
 }
 
-onMounted(() => {
-    showUserInfo()
+function toLogin() {
+    window.location.href = '/login'
+}
+
+onMounted(async () => {
+    if (baseStore.getToken() === '') {
+        loginState.value = false
+    } else {
+        await showUserInfo()
+        loginState.value = true
+    }
 })
 
 </script>

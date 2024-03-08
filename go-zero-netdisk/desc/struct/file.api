@@ -97,6 +97,14 @@ type (
         Created string `json:"created"`
         Updated string `json:"updated"`
     }
+
+    GetShareInfoResp {
+        Name string `json:"name"`
+        Created string `json:"created"`
+        Expired int64 `json:"expired"`
+        Owner int64 `json:"owner"`
+        Items []*ListShareItemStruct `json:"items"`
+    }
 )
 
 type (
@@ -136,5 +144,14 @@ type (
         Pwd string `json:"pwd"`
         Url string `json:"url"`
         ExpireType int8 `json:"expireType"`
+    }
+
+    ListShareItemStruct {
+        Id int64 `json:"id"`
+        Type int8 `json:"type"`
+        Name string `json:"name"`
+        Updated string `json:"updated"`
+        Size int64 `json:"size"`
+        Url string `json:"url"`
     }
 )

@@ -5,6 +5,11 @@ type IdPathReq struct {
 	Id int64 `path:"id"`
 }
 
+type GetShareInfoReq struct {
+	Id  string `json:"id"`
+	Pwd string `json:"pwd"`
+}
+
 type LoginReq struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
@@ -164,6 +169,14 @@ type FileResp struct {
 	Updated  string `json:"updated"`
 }
 
+type GetShareInfoResp struct {
+	Name    string                 `json:"name"`
+	Created string                 `json:"created"`
+	Expired int64                  `json:"expired"`
+	Owner   int64                  `json:"owner"`
+	Items   []*ListShareItemStruct `json:"items"`
+}
+
 type ListFolderStruct struct {
 	Id      int64  `json:"id"`
 	Name    string `json:"name"`
@@ -200,6 +213,15 @@ type ShareStruct struct {
 	Pwd        string `json:"pwd"`
 	Url        string `json:"url"`
 	ExpireType int8   `json:"expireType"`
+}
+
+type ListShareItemStruct struct {
+	Id      int64  `json:"id"`
+	Type    int8   `json:"type"`
+	Name    string `json:"name"`
+	Updated string `json:"updated"`
+	Size    int64  `json:"size"`
+	Url     string `json:"url"`
 }
 
 type CheckSizeReq struct {
