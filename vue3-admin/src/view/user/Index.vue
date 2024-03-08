@@ -1,14 +1,21 @@
 <template>
-    <div>
-        <el-card>
+    <div class="card-list">
+        <el-card >
             <el-input style="width:440px" @clear="searchUser" clearable v-model="searchForm.name" placeholder="请输入用户姓名" class="input-with-select">
                 <template #append>
                     <el-button icon="Search" @click="searchUser" />
                 </template>
             </el-input>
             <el-table :data="tableData" border style="width: 100%;margin-top:20px">
-                <el-table-column prop="name" label="姓名" width="180" />
-                <el-table-column prop="age" label="年龄" width="180" />
+                <el-table-column prop="username" label="账号" width="180" />
+                <el-table-column prop="password" label="密码" width="180" />
+              <el-table-column prop="name" label="姓名" width="180" />
+              <el-table-column prop="avatar" label="头像" width="180" />
+              <el-table-column prop="email" label="邮件" width="180" />
+              <el-table-column prop="signature" label="签名" width="180" />
+              <el-table-column prop="status" label="状态" width="180" />
+              <el-table-column prop="used" label="已使用" width="180" />
+              <el-table-column prop="capacity" label="总容量" width="180" />
                 <el-table-column label="操作" width="330">
                     <template #default="scope">
                         <el-button type="danger" size="small" @click="deleteUser(scope.row.id)">删除</el-button>
@@ -90,5 +97,4 @@ const deleteUser = (id) => {
 </script>
 
 <style lang="scss" scoped>
-
 </style>

@@ -115,11 +115,11 @@ const logout = () => {
     top: 0px;
     left: 0px;
     width: 100%;
-    background: #f2f3f5;
+    background: url("@/assets/img/background_grid.png");
 }
 
 .el-header {
-    background: #2661ef;
+    background: linear-gradient(120deg,lightsalmon,wheat,lightsalmon);
     padding: 0 10px;
     overflow: hidden;
 }
@@ -130,8 +130,12 @@ const logout = () => {
 }
 
 .el-aside {
-    background: white;
+    background: lightsalmon;
     width: auto !important;
+}
+
+.el-menu-vertical-demo{
+  background-color: lightsalmon;
 }
 
 .el-menu-vertical-demo:not(.el-menu--collapse) {
@@ -146,11 +150,11 @@ const logout = () => {
 }
 
 .el-footer:hover {
-    color: #2661ef;
+    color: lightyellow;
 }
 
 .toggle-button {
-    background-color: #d9e0e7;
+    background-color: lightyellow;
     font-size: 18px;
     line-height: 24px;
     color: #fff;
@@ -166,14 +170,14 @@ const logout = () => {
 }
 
 .el-menu-item.is-active {
-    color: #fff !important;
+    color: black !important;
     font-size: 15px;
     font-weight: bold;
-    background-color: #2661ef !important;
+    background-color: lightyellow !important;
     border-radius: 2px;
     height: 50px;
     line-height: 50px;
     box-sizing: border-box;
-    margin: 2px 5px 0px 2px;
+    //margin: 2px 5px 0px 2px;
 }
 </style>
