@@ -23,6 +23,10 @@ service netdisk-api {
 	
 	@handler getShareInfo
 	post /file/share-info (GetShareInfoReq) returns (GetShareInfoResp)
+	
+	// admin
+	@handler adminLogin
+	post /admin/login (loginReq) returns (LoginResp)
 }
 
 @server(
@@ -152,6 +156,19 @@ service netdisk-api {
 	post /share-cancel (IdsReq) returns ()
 }
 
+@server(
+	group: admin
+	prefix: /admin
+	middleware: Auth
+)
+service netdisk-api {
+	@handler listUsers
+	post /user-list (PageReq) returns ([]*UserInfo)
+	
+	@handler listSharesAdmin
+	post /share-list (PageReq) returns ()
+}
+
 type (
 	IdPathReq {
 		Id int64 `path:"id"`
@@ -177,6 +194,11 @@ type (
 
 	SendCodeReq {
 		Email string `json:"email"`
+	}
+
+	PageReq {
+		Page int64 `json:"page"`
+		Size int64 `json:"size"`
 	}
 )
 

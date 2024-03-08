@@ -1,10 +1,10 @@
 import http from '../utils/http/http.js'
 
 const login = (data) => {
-    return http.post("/login", data);
+    return http.post("/admin/login", data);
 };
 const getUserList = (data) => {
-    return http.get("/user/list", data);
+    return http.post("/admin/user-list", data);
 };
 const saveUser = (data) => {
     return http.post("/user/save", data);

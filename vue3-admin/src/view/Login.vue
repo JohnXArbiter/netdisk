@@ -293,6 +293,7 @@ import userApi from "../api/user";
 import {reactive, ref, getCurrentInstance, onMounted} from "vue";
 import {ElMessage} from "element-plus";
 import router from "../router/index";
+import {codeOk} from "@/utils/http/base.js";
 
 const {proxy} = getCurrentInstance();
 const form = reactive({
@@ -309,19 +310,17 @@ const onSubmit = () => {
     ruleFormRef.value.validate(async (valid) => {
         if (valid) {
             const res = await userApi.login(form);
-            router.push("/home");
-
-            //   if (res.data) {
-            //   if (res.data.success) {
-            //     // proxy.$commonJs.changeView('/home');
-            //     router.push("/home");
-            //   } else {
-            //     ElMessage.error(res.data.message);
-            //   }
-            // } else {
-            //   ElMessage.error("服务器内部错误");
-            // }
-            // } else {
+            if (res.data) {
+                if (res.data.code === codeOk) {
+                    proxy.$commonJs.changeView('/home');
+                    router.push("/home");
+                } else {
+                    ElMessage.error(res.data.message);
+                }
+            } else {
+                ElMessage.error("服务器内部错误");
+            }
+        } else {
             return false;
         }
     });

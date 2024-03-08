@@ -2,7 +2,6 @@ package utils
 
 import (
 	"github.com/golang-jwt/jwt/v4"
-	"lc/netdisk/model"
 	"time"
 )
 
@@ -16,11 +15,11 @@ type (
 
 var secretKey = []byte("netdisk")
 
-func GenToken(user *model.User) (string, error) {
+func GenToken(id int64, name string) (string, error) {
 	var now = time.Now().Local()
 	claims := &NetdiskClaims{
-		Id:   user.Id,
-		Name: user.Name,
+		Id:   id,
+		Name: name,
 		RegisteredClaims: jwt.RegisteredClaims{
 			IssuedAt:  jwt.NewNumericDate(now),
 			ExpiresAt: jwt.NewNumericDate(now.Add(7 * 24 * time.Hour)),
