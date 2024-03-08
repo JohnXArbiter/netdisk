@@ -1,13 +1,10 @@
 <template>
-    <div>
+    <div style="background-color: lightyellow;height: 100vh">
         <el-container>
             <el-header>
                 <div style="width:400px">
-                    <p style="float: left;">
-                        <el-icon color="#409EFF" :size="50">
-                            <ElementPlus/>
-                        </el-icon>
-                    </p>
+                    <img src="@/assets/img/ji_tui_cai.png" style="float: left;"/>
+
                     <p style="float: left;font-size: 25px; font-weight: bold">
                         咪咪网盘
                     </p>
@@ -15,6 +12,258 @@
 
             </el-header>
             <el-main>
+                <div style="width: 100%;height: 50%;background-color: lightsalmon;position: absolute;padding: 0;left: 0;overflow: hidden;display: block">
+                  <span class="cat-block">😸</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">😸</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span><span class="cat-block">😸</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span> <span class="cat-block">😸</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span><span class="cat-block">😸</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span><span class="cat-block">😸</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span><span class="cat-block">😸</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span><span class="cat-block">😸</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span><span class="cat-block">😸</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span><span class="cat-block">😸</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span><span class="cat-block">😸</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span><span class="cat-block">😸</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span><span class="cat-block">😸</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span><span class="cat-block">😸</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span><span class="cat-block">😸</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span><span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+                  <span class="cat-block">a</span>
+
+                </div>
                 <el-card class="login_card">
                     <el-form :model="form" :rules="rules" ref="ruleFormRef" label-width="80px">
                         <el-form-item label="账号：" prop="username">
@@ -41,7 +290,7 @@
 
 <script setup>
 import userApi from "../api/user";
-import {reactive, ref, getCurrentInstance} from "vue";
+import {reactive, ref, getCurrentInstance, onMounted} from "vue";
 import {ElMessage} from "element-plus";
 import router from "../router/index";
 
@@ -81,9 +330,39 @@ const resetForm = () => {
     if (!ruleFormRef) return;
     ruleFormRef.value.resetFields();
 };
+onMounted(()=>{
+  // 12
+  let cats = ['🐈️','😸','🐱','😻','😽','😾','😼','🙀','😿','😹','🐈‍⬛','🐾']
+  let colors = ['lightseagreen','snow','lightsalmon','lightgoldenrodyellow','lightcoral','lightyellow','lightpink','lightgrey','lightskyblue','orange','mediumspringgreen','purple']
+  let catsBlock = document.getElementsByClassName('cat-block')
+  let i=0
+  let k=0
+  setInterval(()=>{
+    for (i=0;i<catsBlock.length;i++){
+      catsBlock[i].style.backgroundColor = colors[(k+i)%12]
+      catsBlock[i].innerText = cats[(i+k)%12]
+    }
+    k++
+    if (k>catsBlock.length){
+      k = 0
+    }
+  },700)
+})
+
 </script>
 
 <style scoped>
+.cat-block{
+  background-color: snow;
+  width: 60px;
+  height: 60px;
+  display: inline-block;
+  position: relative;
+  margin-left: 3px;
+  margin-top: 1px;
+  font: 700 40px Arial, sans-serif;
+  overflow: hidden;
+}
 .el-container {
     height: 800px;
 }
@@ -93,11 +372,11 @@ const resetForm = () => {
 }
 
 .el-main {
-    height: 80%;
-    background-image: url("../assets/img/bg.jpg");
-    background-repeat: no-repeat;
-    background-size: 100% 120%;
-    background-position-y: bottom;
+    //height: 80%;
+    //background-image: url("../assets/img/bg.jpg");
+    //background-repeat: no-repeat;
+    //background-size: 100% 120%;
+    //background-position-y: bottom;
 }
 
 .login_card {
@@ -106,6 +385,8 @@ const resetForm = () => {
     min-width: 300px;
     height: 200px;
     border-radius: 10px;
+    background-color: rgba(245,222,179,0.9);
+    position: relative;
 }
 
 .el-footer {
