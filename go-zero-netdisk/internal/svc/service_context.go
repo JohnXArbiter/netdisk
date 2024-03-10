@@ -12,12 +12,13 @@ import (
 )
 
 type ServiceContext struct {
-	Config config.Config
-	Minio  *minio.Client
-	Xorm   *xorm.Engine
-	Redis  *redis.Client
-	Email  *common.Email
-	Auth   rest.Middleware
+	Config   config.Config
+	Minio    *minio.Client
+	MinioSvc *minio.Service
+	Xorm     *xorm.Engine
+	Redis    *redis.Client
+	Email    *common.Email
+	Auth     rest.Middleware
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -29,11 +30,12 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	xormEngine := xorm.Init(&c.Xorm)
 	redisClient := redis.Init(&c.Redis)
 	return &ServiceContext{
-		Config: c,
-		Minio:  minioClient,
-		Xorm:   xormEngine,
-		Redis:  redisClient,
-		Email:  &c.Email,
-		Auth:   middleware.NewAuthMiddleware().Handle,
+		Config:   c,
+		Minio:    minioClient,
+		MinioSvc: minioClient.NewService(),
+		Xorm:     xormEngine,
+		Redis:    redisClient,
+		Email:    &c.Email,
+		Auth:     middleware.NewAuthMiddleware().Handle,
 	}
 }

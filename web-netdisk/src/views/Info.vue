@@ -8,9 +8,9 @@
                           alt="/sec/assets/alt_type1.jpg"
                           :fit="'cover'"/>
             </router-link>
-<!--            <router-link to="/user/info" class="logo">-->
-<!--                <span v-for="c in color7" :style="{ color: c.color }">{{ c.letter }}</span>-->
-<!--            </router-link>-->
+            <!--            <router-link to="/user/info" class="logo">-->
+            <!--                <span v-for="c in color7" :style="{ color: c.color }">{{ c.letter }}</span>-->
+            <!--            </router-link>-->
             <div class="nav">
                 <router-link class="menu-item home" to="/file/folder/0">去首页</router-link>
             </div>

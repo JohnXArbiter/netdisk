@@ -7,19 +7,22 @@
                     font-size: 1.4rem; font-weight: 700;">我的全部分享
                     </div>
                     <el-button-group v-else-if="fileButtonsState==1">
-                        <el-button type="primary" round plain :icon="Link" @click="copyLink">复制链接
+                        <el-button type="primary" round plain :icon="Link"
+                                   @click="copyLink('', true)">复制链接
                         </el-button>
-                        <el-button type="danger" round plain :icon="DeleteFilled" @click="dialogVisible.option[0]=true">
+                        <el-button type="danger" round plain :icon="DeleteFilled"
+                                   @click="dialogVisible.option[0]=true">
                             删除分享
                         </el-button>
                     </el-button-group>
                     <el-button v-else-if="fileButtonsState==2"
-                               type="primary" :icon="DeleteFilled" round @click="dialogVisible.option[0]=true">删除分享
+                               type="danger" :icon="DeleteFilled" round
+                               @click="dialogVisible.option[0]=true">删除分享
                     </el-button>
                 </div>
 
                 <el-empty v-if="!shareList.data || shareList.data.length==0"
-                          description="文件列表为空，上传你的第一个文件吧！😺"/>
+                          description="分享列表为空，创建你的第一个分享吧！😺"/>
 
                 <el-table v-if="shareList && shareList.data.length!=0"
                           ref="fileTableRef"
@@ -75,11 +78,11 @@
                     </el-table-column>
                     <el-table-column min-width="100">
                         <template #default="scope">
-                            <span @click="copyLink(scope.row.link)">
+                            <span @click="copyLink(scope.row.link, false)">
                                 <el-icon color="#48a3ff"><Link/></el-icon>
                             </span>
                             &nbsp;&nbsp;&nbsp;
-                            <span @click="dialogVisible.option[0]=true">
+                            <span @click="dialogVisible.option[0]=true; cancelId=scope.row.id">
                                 <el-icon color="red"><CircleClose/></el-icon>
                             </span>
                         </template>
@@ -98,8 +101,8 @@
         </h3>
         <template #footer>
       <span class="dialog-footer">
-        <el-button @click="dialogVisible.option[0] = false;">取消</el-button>
-        <el-button type="primary" @click="cancelShare()">
+        <el-button @click="dialogVisible.option[0]=false; cancelId=''">取消</el-button>
+        <el-button type="primary" @click="cancel()">
           确定
         </el-button>
       </span>
@@ -114,15 +117,14 @@ import {
 import {shareExpired, shareIllegal, shareNotExpired, typeMap, typeMulti} from "@/utils/constant.ts";
 import {ElTable} from "element-plus";
 import {reactive, onMounted, ref} from "vue";
-import {listShareFiles, Share} from "@/components/files/share/share.ts";
+import {listShareFiles, Share, shareCancel} from "@/components/files/share/share.ts";
 import {codeOk, promptError, promptSuccess} from "@/utils/apis/base.ts";
-import {formatLeft, formatState} from "@/utils/util.ts";
-import router from "@/router";
+import {formatState} from "@/utils/util.ts";
 
 let shareList = reactive<{ data: Share[] }>({
         data: []
     }),
-    // selectedShares: Share[],
+    cancelId = '',
     fileButtonsState = ref(0)
 
 const dialogVisible = reactive({option: [false]}),
@@ -162,11 +164,23 @@ const listFiles = async () => {
     }
 }
 
-async function cancelShare() {
-
+async function cancel() {
+    let ids = [cancelId]
+    if (cancelId == '') {
+        const selected = fileTableRef.value!.getSelectionRows()
+        ids = selected.map(share => share.id)
+    }
+    console.log(ids)
+    const resp = await shareCancel(ids)
+    if (resp.code !== codeOk) {
+        promptError(`取消分享失败，${resp.msg}`)
+    }
 }
 
-async function copyLink(link: string) {
+async function copyLink(link: string, button: boolean) {
+    if (button) {
+        link = (fileTableRef.value!.getSelectionRows())[0].link
+    }
     try {
         console.log(link)
         await navigator.clipboard.writeText(link)

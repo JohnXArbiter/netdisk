@@ -18,4 +18,8 @@ export const typeMap = {
 export const
     shareNotExpired = 0,
     shareExpired = 1,
-    shareIllegal = 2
+    shareIllegal = 2,
+    shareNotExistOrDeleted = 3,
+
+    userOk = 0,
+    userBanned = 1

@@ -41,10 +41,10 @@ func (l *ListSharesLogic) ListShares() (resp []*types.ListShareStruct, err error
 	var expiredShares []string
 	for _, share := range shares {
 		status := share.Status
-		if share.Status == constant.ShareNotExpired &&
+		if share.Status == constant.StatusShareNotExpired &&
 			time.Now().Unix() > share.Expired {
 			expiredShares = append(expiredShares, share.Id)
-			status = constant.ShareExpired
+			status = constant.StatusShareExpired
 		}
 		resp = append(resp, &types.ListShareStruct{
 			Id:          share.Id,
@@ -61,7 +61,7 @@ func (l *ListSharesLogic) ListShares() (resp []*types.ListShareStruct, err error
 
 	if len(expiredShares) > 0 {
 		if _, err = engine.In("id", expiredShares).Update(&model.Share{
-			Status: constant.ShareExpired}); err != nil {
+			Status: constant.StatusShareExpired}); err != nil {
 			logx.Errorf("获取分享列表，更新 [%v] 过期状态失败，ERR: [%v]",
 				expiredShares, err)
 		}

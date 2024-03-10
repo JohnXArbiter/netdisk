@@ -44,8 +44,15 @@ const (
 )
 
 const (
-	ShareNotExpired = iota
-	ShareExpired
+	StatusShareNotExpired = iota
+	StatusShareExpired
+	StatusShareIllegal
+	StatusShareNotExistOrDeleted
+)
+
+const (
+	StatusUserOk = iota
+	StatusUserBanned
 )
 
 const (

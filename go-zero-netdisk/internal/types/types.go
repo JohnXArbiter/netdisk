@@ -10,6 +10,10 @@ type GetShareInfoReq struct {
 	Pwd string `json:"pwd"`
 }
 
+type IdStrsReq struct {
+	Ids []string `json:"ids"`
+}
+
 type LoginReq struct {
 	Username string `json:"username"`
 	Password string `json:"password"`

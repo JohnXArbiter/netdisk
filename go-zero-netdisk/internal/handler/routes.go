@@ -48,6 +48,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: getShareInfoHandler(serverCtx),
 			},
 			{
+				Method:  http.MethodGet,
+				Path:    "/file/share-user/:id",
+				Handler: getUserInfoByShareIdHandler(serverCtx),
+			},
+			{
 				Method:  http.MethodPost,
 				Path:    "/admin/login",
 				Handler: adminLoginHandler(serverCtx),
@@ -239,7 +244,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				{
 					Method:  http.MethodPost,
 					Path:    "/share-cancel",
-					Handler: file.CancelShareHandler(serverCtx),
+					Handler: file.ShareCancelHandler(serverCtx),
 				},
 			}...,
 		),

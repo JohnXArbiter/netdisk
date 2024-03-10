@@ -1,17 +1,65 @@
 <template>
     <div class="form-div">
         <el-row>
-            <el-col :span="24">
-                <el-empty v-if="!list.items || list.items.length==0"
-                          description="当前分享文件夹没有文件 😺"/>
 
-                <div v-if="list.items && list.items.length!=0"
-                     style="margin: 20px 0">
-                    <div style="font-size: 2rem; font-weight: 700;
-                        margin-bottom: 10px">
+            <el-col :span="24" v-if="pwd === '0'">
+                <div style="position: absolute; left: -60%;color: #adabab;
+    font: 800 23px Arial, sans-serif; line-height: 100%;">提取文件
+                </div>
+                <div v-if="ownerInfo.data.shareStatus === shareNotExistOrDeleted"
+                     class="small-zi">
+                    当前分享已被删除或者不存在！😣
+                </div>
+                <div v-else-if="ownerInfo.data.shareStatus === shareIllegal"
+                     class="small-zi">
+                    当前分享已被违法封禁！😡
+                </div>
+                <div v-else-if="ownerInfo.data.userStatus === userBanned"
+                     class="small-zi">
+                    当前用户已被违法封禁！😡
+                </div>
+
+                <div v-else>
+                    <div class="pwd-box">
+                        <el-image class="big-pic"
+                                  :src="ownerInfo.data.avatar"
+                                  fit="cover"
+                        />
+                        <div style="position: relative; top: -100px; right: -115px">
+                            <div style="font-size: 2rem; font-weight: 700">
+                                {{ ownerInfo.data.name }}
+                            </div>
+                            <div style="position: absolute; margin-top: 20px">
+                                <span v-if="ownerInfo.data.signature == ''">暂无签名</span>
+                                <span v-else>{{ ownerInfo.data.signature }}</span>
+                            </div>
+                        </div>
+
+                        <el-form label-position="top">
+                            <el-form-item label="请先输入提取码：" size="large">
+                                <el-input v-model="pwdInput"/>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-button size="large" style="width: 100%;"
+                                           type="primary"
+                                           @click="listItems(pwdInput)">提取文件
+                                </el-button>
+                            </el-form-item>
+                        </el-form>
+                    </div>
+                </div>
+            </el-col>
+
+            <el-col v-else-if="list.items && list.items.length!=0"
+                    :span="24" style="margin-bottom: 100px">
+                <!--                <el-empty v-if="!list.items || list.items.length==0"-->
+                <!--                          description="当前分享文件夹没有文件 😺"/>-->
+
+                <div style="margin: 20px 0">
+                    <div style="font-size: 2rem; font-weight: 700; margin-bottom: 10px">
                         {{ list.name }} 等文件...
                         <span style="float: right;">
-                            <el-button v-if="userId != list.owner"
+                            <el-button v-if="ownerInfo.data.userId != list.owner"
                                        size="large" type="primary"
                                        @click="downloadFiles">
                                 <el-icon>
@@ -19,7 +67,7 @@
                                 </el-icon>&nbsp;
                                 下载
                             </el-button>
-                            <el-button-group v-if="userId == list.owner">
+                            <el-button-group v-if="ownerInfo.data.userId == list.owner">
                                 <el-button plain size="large" type="primary"
                                            @click="downloadFiles">
                                 <el-icon>
@@ -28,7 +76,7 @@
                                 下载
                             </el-button>
                                 <el-button plain size="large" type="danger"
-                                @click="dialogVisible = true">
+                                           @click="dialogVisible = true">
                                 <el-icon><CircleClose/></el-icon>&nbsp;
                                 取消分享
                             </el-button>
@@ -44,10 +92,9 @@
                     </div>
                 </div>
 
-                <el-table v-if="list.items && list.items.length!=0"
-                          ref="fileTableRef"
-                          :data="list.items" style="width: 100%"
-                          @selection-change="fileSelectionChange"
+                <el-table
+                        ref="fileTableRef"
+                        :data="list.items" style="width: 100%"
                 >
                     <el-table-column type="selection" width="55"/>
                     <el-table-column label="文件名" min-width="500">
@@ -72,6 +119,7 @@
                     </el-table-column>
                 </el-table>
             </el-col>
+            <el-footer>Copyright © 2024 咪咪网盘</el-footer>
         </el-row>
 
         <el-dialog v-model="dialogVisible" title="删除分享">
@@ -96,21 +144,23 @@
 <script lang="ts" setup>
 import {ElTable} from "element-plus";
 import {onMounted, reactive, ref} from "vue";
-import {listFilesByShareId, ShareItem} from "@/components/files/share/Info.ts";
+import {getOwnerInfoByShareId, listFilesByShareId, ShareItem} from "@/components/files/share/Info.ts";
 import {formatSize, formatState} from "@/utils/util.ts";
 import {
     Clock, Download, CircleClose, Warning
 } from "@element-plus/icons-vue";
 import {useBaseStore} from "@/store";
 import {useRoute} from "vue-router";
+import {codeOk, promptError} from "@/utils/apis/base.ts";
+import {shareIllegal, shareNotExistOrDeleted, userBanned} from "@/utils/constant.ts";
 
 const route = useRoute()
 
-let pwd = route.query.pwd | ''
+let pwd = ref<string>(String(route.query.pwd | '')),
+    pwdInput = ref('')
 
 const props = defineProps(['shareId']),
     fileTableRef = ref<InstanceType<typeof ElTable>>(),
-    baseStore = useBaseStore(),
     list = reactive<{
         name: string
         created: string
@@ -123,16 +173,26 @@ const props = defineProps(['shareId']),
         expired: 0,
         owner: 0,
         items: []
+    }),
+    ownerInfo = reactive({
+        data:
+            {
+                shareStatus: 0,
+                userId: -1,
+                name: '',
+                avatar: '',
+                signature: '',
+                userStatus: 0,
+            }
     })
 
 let state = '',
-    userId: number = -1,
     selected = [],
     dialogVisible = ref(false)
 
-const listItems = async () => {
-    console.log(props.shareId)
-    let resp = await listFilesByShareId(props.shareId, pwd.toString())
+const listItems = async (pwdStr: string) => {
+    pwd.value = pwdStr
+    let resp = await listFilesByShareId(props.shareId, pwdStr)
     if (resp.code === 0 && resp.data) {
         list.name = resp.data.name
         list.created = resp.data.created
@@ -146,18 +206,30 @@ const listItems = async () => {
 }
 
 async function downloadFiles() {
+    if (state == '已过期') {
+        promptError('当前分享已经过期了🥲')
+        return
+    }
     selected = fileTableRef.value!.getSelectionRows()
     selected.forEach(item => {
         window.open(item.url)
     })
 }
 
-onMounted(async () => {
-    if (baseStore.getToken() !== '') {
-        let userInfo = await baseStore.getUserInfo()
-        userId = userInfo.id
+async function getOwnerInfo() {
+    const resp = await getOwnerInfoByShareId(props.shareId)
+    if (resp.code === codeOk) {
+        ownerInfo.data = resp.data
+        console.log(ownerInfo.data.userStatus, ownerInfo.data.shareStatus)
     }
-    await listItems()
+}
+
+onMounted(async () => {
+    await getOwnerInfo()
+
+    if (pwd.value != '0') {
+        await listItems(pwd.value)
+    }
 })
 </script>
 
@@ -168,6 +240,12 @@ onMounted(async () => {
     border-radius: 5px;
 }
 
+.big-pic {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+}
+
 .form-div {
     background: rgba(255, 194, 133, 0.5);
     padding: 10px;
@@ -175,5 +253,15 @@ onMounted(async () => {
     border-radius: 10px;
     display: flex;
     justify-content: center;
+}
+
+.pwd-box {
+    margin: 200px 0;
+}
+
+.small-zi {
+    font-weight: 700;
+    font-size: 3rem;
+    margin: 250px 0;
 }
 </style>

@@ -18,3 +18,9 @@ export interface Share {
 export function listShareFiles() {
     return api.get<any, Resp<any>>('/file/share')
 }
+
+export function shareCancel(ids: string[]) {
+    return api.post<any, Resp<any>>('/file/share-cancel', {
+        "ids": ids,
+    })
+}
