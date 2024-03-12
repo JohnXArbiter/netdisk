@@ -2,7 +2,7 @@
     <div class="form-div">
         <el-row>
 
-            <el-col :span="24" v-if="pwd === '0'">
+            <el-col :span="24" v-if="validated" >
                 <div style="position: absolute; left: -20%;color: #adabab;
     font: 800 23px Arial, sans-serif; line-height: 100%;">提取文件
                 </div>
@@ -19,7 +19,7 @@
                     当前用户已被违法封禁！😡
                 </div>
 
-                <div v-else>
+                <div >
                     <div class="pwd-box">
                         <el-image class="big-pic"
                                   :src="ownerInfo.data.avatar"
@@ -50,7 +50,7 @@
                 </div>
             </el-col>
 
-            <el-col v-else-if="list.items && list.items.length!=0"
+            <el-col v-if="list.items && list.items.length!=0 && (!validated)"
                     :span="24" style="margin-bottom: 100px">
                 <!--                <el-empty v-if="!list.items || list.items.length==0"-->
                 <!--                          description="当前分享文件夹没有文件 😺"/>-->
@@ -155,13 +155,11 @@ import {shareIllegal, shareNotExistOrDeleted, userStatus} from "@/utils/constant
 
 const route = useRoute()
 
-let pwd = ref<string>(String(route.query.pwd)),
+let pwd = ref(route.query.pwd),
     pwdInput = ref('')
+let validated = ref(true)
 
-if (pwd.value == undefined) {
-    pwd.value = ''
-}
-console.log(pwd.value, 123123123, typeof pwd.value, route.query.pwd)
+// console.log(pwd.value, 123123123, typeof pwd.value, route.query.pwd)
 
 const props = defineProps(['shareId']),
     fileTableRef = ref<InstanceType<typeof ElTable>>(),
@@ -197,7 +195,7 @@ let state = '',
 const listItems = async (pwdStr: string) => {
     pwd.value = pwdStr
     let resp = await listFilesByShareId(props.shareId, pwdStr)
-    if (resp.code === 0 && resp.data) {
+    if (resp.code === codeOk && resp.data) {
         list.name = resp.data.name
         list.created = resp.data.created
         list.items = resp.data.items
@@ -206,6 +204,7 @@ const listItems = async (pwdStr: string) => {
         list.items.forEach(item => {
             item.sizeStr = formatSize(item.size)
         })
+      validated.value = false
     }
 }
 
@@ -240,7 +239,7 @@ async function cancelShare() {
 onMounted(async () => {
     await getOwnerInfo()
 
-    if (pwd.value != '0') {
+    if (pwd.value != '0'|| pwd.value != undefined) {
         await listItems(pwd.value)
     }
 })
