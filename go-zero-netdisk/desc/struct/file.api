@@ -68,7 +68,7 @@ type (
     }
 
     ShareFolderReq {
-        FolderId int64 `json:"folderId"`
+        FolderIds []int64 `json:"folderIds"`
         ShareStruct
     }
 )
@@ -137,12 +137,12 @@ type (
         DownloadNum int64 `json:"downloadNum"`
         ClickNum int64 `json:"clickNum"`
         Type int8 `json:"type"`
+        Url string `json:"url"`
     }
 
     ShareStruct {
-        Id string `json:"id"`
         Pwd string `json:"pwd"`
-        Url string `json:"url"`
+        Prefix string `json:"prefix"`
         ExpireType int8 `json:"expireType"`
     }
 

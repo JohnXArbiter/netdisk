@@ -38,3 +38,9 @@ export function listFilesByShareId(shareId: string, pwd: string) {
 export function getOwnerInfoByShareId(shareId: string) {
     return api.get<any, Resp<OwnerInfoResp>>(`/file/share-user/${shareId}`)
 }
+
+export function shareCancel(shareIds: string[]) {
+    return api.post<any, Resp<OwnerInfoResp>>(`/file/share-cancel`, {
+        "shareIds": shareIds
+    })
+}

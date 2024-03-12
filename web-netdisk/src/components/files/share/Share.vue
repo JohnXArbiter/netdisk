@@ -148,7 +148,6 @@ const listFiles = async () => {
     if (resp.code === codeOk) {
         shareList.data = resp.data
         shareList.data.forEach(share => {
-            share.link = `http://localhost:5173/info/share/111${share.id}&pwd=${share.pwd}`
             switch (share.status) {
                 case shareNotExpired:
                     share.state = formatState(share.expired)

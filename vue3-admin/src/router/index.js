@@ -48,7 +48,7 @@ const routes = [
                 meta: {
                     title: '分享列表'
                 },
-                component: () => import('../view/Share.vue'),
+                component: () => import('../view/share/Index.vue'),
             },
         ]
     },
@@ -57,11 +57,12 @@ const router = createRouter({
     history: createWebHistory(),
     routes
 })
+
 // 挂载路由导航守卫：to表示将要访问的路径，from表示从哪里来，next是下一个要做的操作
 router.beforeEach((to, from, next) => {
     // 修改页面 title
     if (to.meta.title) {
-        document.title = '知否课堂后台管理系统 - ' + to.meta.title
+        document.title = '咪咪网盘后台管理系统 - ' + to.meta.title
     }
     // 放行登录页面
     if (to.path === '/login') {

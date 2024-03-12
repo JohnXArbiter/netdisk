@@ -3,12 +3,14 @@ package file
 import (
 	"context"
 	"errors"
+	"github.com/yitter/idgenerator-go/idgen"
 	"lc/netdisk/common/constant"
 	"lc/netdisk/common/variable"
 	"lc/netdisk/common/xorm"
 	"lc/netdisk/internal/svc"
 	"lc/netdisk/internal/types"
 	"lc/netdisk/model"
+	"strconv"
 	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -35,7 +37,7 @@ func (l *ShareLogic) Share(req *types.ShareReq) error {
 		shareType int8 = constant.TypeShareMulti
 	)
 
-	if req.Id == "" || req.Pwd == "" {
+	if req.Pwd == "" {
 		return errors.New("出错啦，请重试")
 	}
 
@@ -55,11 +57,13 @@ func (l *ShareLogic) Share(req *types.ShareReq) error {
 		shareName += "等..."
 	}
 
+	id := strconv.FormatInt(idgen.NextId(), 10)
+	url := req.Prefix + id + "?pwd=" + req.Pwd
 	_, err := engine.DoTransaction(func(session *xorm.Session) (interface{}, error) {
 		var shareFile []*model.ShareFile
 		for _, fileId := range req.FileIds {
 			shareFile = append(shareFile, &model.ShareFile{
-				ShareId: req.Id,
+				ShareId: id,
 				FileId:  fileId,
 			})
 		}
@@ -71,13 +75,14 @@ func (l *ShareLogic) Share(req *types.ShareReq) error {
 		created := time.Now().Local()
 		expired := created.Unix() + variable.ShareExpireType[req.ExpireType]
 		share := &model.Share{}
-		share.Id = req.Id
+		share.Id = id
 		share.Pwd = req.Pwd
 		share.Name = shareName
 		share.UserId = userId
 		share.Created = created
 		share.Expired = expired
 		share.Type = shareType
+		share.Url = url
 		if _, err := session.Insert(share); err != nil {
 			logx.Errorf("分享多文件，插入share失败，ERR: [%v]", err)
 			return nil, err

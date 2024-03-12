@@ -3,7 +3,7 @@
         <el-row>
 
             <el-col :span="24" v-if="pwd === '0'">
-                <div style="position: absolute; left: -60%;color: #adabab;
+                <div style="position: absolute; left: -20%;color: #adabab;
     font: 800 23px Arial, sans-serif; line-height: 100%;">提取文件
                 </div>
                 <div v-if="ownerInfo.data.shareStatus === shareNotExistOrDeleted"
@@ -14,7 +14,7 @@
                      class="small-zi">
                     当前分享已被违法封禁！😡
                 </div>
-                <div v-else-if="ownerInfo.data.userStatus === userBanned"
+                <div v-else-if="ownerInfo.data.userStatus != userStatus.ok"
                      class="small-zi">
                     当前用户已被违法封禁！😡
                 </div>
@@ -144,20 +144,24 @@
 <script lang="ts" setup>
 import {ElTable} from "element-plus";
 import {onMounted, reactive, ref} from "vue";
-import {getOwnerInfoByShareId, listFilesByShareId, ShareItem} from "@/components/files/share/Info.ts";
+import {getOwnerInfoByShareId, listFilesByShareId, shareCancel, ShareItem} from "@/components/files/share/Info.ts";
 import {formatSize, formatState} from "@/utils/util.ts";
 import {
     Clock, Download, CircleClose, Warning
 } from "@element-plus/icons-vue";
-import {useBaseStore} from "@/store";
 import {useRoute} from "vue-router";
 import {codeOk, promptError} from "@/utils/apis/base.ts";
-import {shareIllegal, shareNotExistOrDeleted, userBanned} from "@/utils/constant.ts";
+import {shareIllegal, shareNotExistOrDeleted, userStatus} from "@/utils/constant.ts";
 
 const route = useRoute()
 
-let pwd = ref<string>(String(route.query.pwd | '')),
+let pwd = ref<string>(String(route.query.pwd)),
     pwdInput = ref('')
+
+if (pwd.value == undefined) {
+    pwd.value = ''
+}
+console.log(pwd.value, 123123123, typeof pwd.value, route.query.pwd)
 
 const props = defineProps(['shareId']),
     fileTableRef = ref<InstanceType<typeof ElTable>>(),
@@ -222,6 +226,15 @@ async function getOwnerInfo() {
         ownerInfo.data = resp.data
         console.log(ownerInfo.data.userStatus, ownerInfo.data.shareStatus)
     }
+}
+
+async function cancelShare() {
+    const resp = await shareCancel([props.shareId])
+    if (resp.code === codeOk) {
+        dialogVisible.value = false
+        return
+    }
+    promptError(`取消失败，${resp.msg}`)
 }
 
 onMounted(async () => {

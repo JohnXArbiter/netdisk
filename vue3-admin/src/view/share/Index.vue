@@ -7,22 +7,33 @@
                     <el-button icon="Search" @click="searchUser"/>
                 </template>
             </el-input>
-            <el-table :data="shares" border style="width: 100%;margin-top:20px">
-                <el-table-column prop="id" label="ID" width="180"/>
-                <el-table-column prop="pwd" label="密码" width="180"/>
-                <el-table-column prop="name" label="名字" width="180"/>
-                <el-table-column prop="userId" label="用户ID" width="180"/>
-                <el-table-column prop="created" label="创建时间" width="180"/>
-                <el-table-column prop="expired" label="过期时间" width="180"/>
-                <el-table-column prop="downloadNum" label="下载次数" width="180"/>
-                <el-table-column prop="clickNum" label="点击次数" width="180"/>
-                <el-table-column prop="status" label="状态" width="180"/>
+            <el-table :data="shares" border style="width: 100%; margin-top:20px">
+                <el-table-column prop="id" label="ID" min-width="100"/>
+                <el-table-column label="用户ID-昵称" min-width="200">
+                    <template #default="scope">
+                        {{ scope.row.id }} | {{ scope.row.name }}
+                    </template>
+                </el-table-column>
+                <el-table-column prop="created" label="创建时间" min-width="150"/>
+                <el-table-column label="类型" min-width="60">
+                    <template #default="scope">
+                        {{ typeMap[scope.row.type] }}
+                    </template>
+                </el-table-column>
+                <el-table-column prop="downloadNum" label="下载次数" min-width="60"/>
+                <el-table-column prop="clickNum" label="点击次数" min-width="60"/>
+                <el-table-column prop="state" label="状态" min-width="180"/>
                 <el-table-column label="操作" width="330">
                     <template #default="scope">
-                        <el-button type="danger" size="small" @click="deleteUser(scope.row.id)">删除</el-button>
-                        <el-button size="small"
-                                   @click="() => router.push({ path: '/user/detail', query: { id: scope.row.id } })">详情
+                        <el-button v-if="scope.row.type === typeMulti"
+                                   type="primary" plain size="small"
+                                   @click="openInfo(`/share/${scope.row.id}`)">进入查看
                         </el-button>
+                        <el-button v-if="scope.row.type !== typeMulti"
+                                   type="primary" plain size="small"
+                                   @click="getUrl(scope.row.id)">下载查看
+                        </el-button>
+                        <el-button type="danger" size="small" @click="deleteUser(scope.row.id)">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -40,6 +51,9 @@ import shareApi from "@/api/share.js";
 import {onMounted, reactive, ref} from "vue";
 import {ElMessage, ElMessageBox} from 'element-plus';
 import {useRouter} from 'vue-router'
+import {formatState} from "@/utils/util.js";
+import {typeMap, typeMulti} from "../../utils/constant.js";
+import {codeOk, promptError} from "@/utils/http/base.js";
 
 const router = useRouter();
 // Dom 挂载之后
@@ -47,21 +61,47 @@ onMounted(() => {
     getUserList();
 })
 // 用户数据
-let shares = ref([]);
-let total = ref(0);
+let shares = ref([])
+let total = ref(0)
+let urlMap = new Map()
+
 // 搜索条件
 const searchForm = reactive({
     current: 1,
     size: 10,
     name: ''
 })
+
 // 获取用户列表
 const getUserList = async () => {
     const res = await shareApi.getShareList({'page': 0, 'size': 100});
     console.log(res.data);
     shares.value = res.data.data
+    shares.value.forEach(share => {
+        share.state = formatState(share.expired)
+    })
     total.value = res.data.data.total;
 }
+
+function openInfo(link) {
+    window.open(link)
+}
+
+async function getUrl(id) {
+    if (urlMap.has(id)) {
+        window.open(urlMap.get(id))
+        return
+    }
+    const resp = await shareApi.getUrl(id)
+    if (resp.data.code === codeOk) {
+        urlMap.set(id, resp.data.data.url)
+        console.log(resp.data.data)
+        window.open(resp.data.data)
+        return
+    }
+    promptError(`获取链接失败，${resp.data.msg}`)
+}
+
 const handleSizeChange = (size) => {
     searchForm.size = size;
     getUserList();

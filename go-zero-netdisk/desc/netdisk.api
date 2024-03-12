@@ -3,6 +3,7 @@ import (
 	"struct/file.api"
 	"struct/download.api"
 	"struct/user.api"
+	"struct/admin.api"
 )
 
 service netdisk-api {
@@ -170,6 +171,12 @@ service netdisk-api {
 	
 	@handler listSharesAdmin
 	post /share-list (PageReq) returns ()
+	
+	@handler setStatus
+	post /user-status/:id (SetStatusReq) returns ()
+	
+	@handler getUrl
+	get /file-url/:id (IdPathReq) returns ()
 }
 
 type (

@@ -20,7 +20,7 @@
                             </el-button>
                             <el-button type="primary" round plain :icon="Share" @click="fileButton(4)">分享
                             </el-button>
-                            <el-button type="danger" round plain :icon="DeleteFilled" @click="fileButton(4)">删除
+                            <el-button type="danger" round plain :icon="DeleteFilled" @click="fileButton(5)">删除
                             </el-button>
                         </el-button-group>
                     </template>
@@ -45,7 +45,6 @@
                                           :fit="'cover'"/>
                                 <el-image v-else
                                           :src="`/src/assets/alt_type${scope.row.type}.jpg`"
-                                          alt=""
                                           class="small-pic"
                                           :fit="'cover'"/>
                                 <span style="margin-left: 5px">{{ scope.row.name }}</span>
@@ -109,17 +108,39 @@
     </el-dialog>
 
     <el-dialog v-model="fileDialogVisible[4]" title="分享文件">
-        <h3>
-            <el-icon>
-                <Warning/>
-            </el-icon>
-            确定要<span style="color: red"> 删除 {{ selectedFiles.map(file => file.name).join('，') }} </span>吗？
-            你可以在回收站中找到他们。
-        </h3>
+
+        <el-form label-position="left">
+            <el-form-item>
+                <div>
+                    分享 <span style="color: #3c9bff"> {{ selectedFiles[0].name }}</span>
+                    <template v-if="selectedFiles.length > 1"> 等文件吗？</template>
+                    <template v-else> 吗？</template>
+                </div>
+            </el-form-item>
+            <el-form-item label="有效期：">
+                <el-radio-group v-model="shareInput.radio1">
+                    <el-radio :value="expireType.day">1天</el-radio>
+                    <el-radio :value="expireType.day7">7天</el-radio>
+                    <el-radio :value="expireType.month">30天</el-radio>
+                    <el-radio :value="expireType.forever">长期有效</el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item label="提取码：">
+                <el-radio-group v-model="shareInput.radio2">
+                    <el-radio :value="0">系统生成</el-radio>
+                    <el-radio :value="1">自己填写
+                        <el-input v-model="shareInput.pwd"></el-input>
+                    </el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item>
+                <el-checkbox v-model="shareInput.check" label="分享链接自动填充提取码" size="large"/>
+            </el-form-item>
+        </el-form>
         <template #footer>
       <span class="dialog-footer">
         <el-button @click="fileDialogVisible[4] = false">取消</el-button>
-        <el-button type="primary" @click="deleteFilesConfirm()">
+        <el-button type="primary" @click="shareConfirm()">
           确定
         </el-button>
       </span>
@@ -157,54 +178,60 @@ import {
     copyFiles, deleteFiles,
     listFilesByFolderId,
     listFileMovableFolders, moveFiles,
-    updateFileName, listFilesByFileType
+    updateFileName, listFilesByFileType, share
 } from "./file.ts";
 import type {File} from '/file.ts'
 import type {Folder} from "./folder.ts";
-import {codeOk, promptSuccess, Resp} from "@/utils/apis/base.ts";
+import {codeError, codeOk, promptError, promptSuccess, Resp} from "@/utils/apis/base.ts";
 import Uploading from "./Uploading.vue";
 import {useFileFolderStore} from "@/store/fileFolder.ts";
 import {formatSize} from "@/utils/util.ts";
-import {typeImage} from "@/utils/constant.ts";
+import {expireType, typeImage} from "@/utils/constant.ts";
 
 let fileFolderStore = useFileFolderStore(),
     forFolder = false,
     folderId: number,
     fileType: number
-const props = defineProps(['fileType', 'folderId'])
 
-let fileButtonsState = ref(0)
-const fileTableRef = ref<InstanceType<typeof ElTable>>()
+const props = defineProps(['fileType', 'folderId']),
+    fileTableRef = ref<InstanceType<typeof ElTable>>(),
+    fileDialogVisible = reactive([false, false, false, false, false, false]),
+    shareInput = reactive({
+        radio1: 0,
+        radio2: 0,
+        pwd: '',
+        check: false
+    })
 
-let folderList = reactive<{ data: Folder[] }>({
+let fileButtonsState = ref(0),
+    folderList = reactive<{ data: Folder[] }>({
         data: []
     }),
     fileList = reactive<{ data: File[] }>({
         data: []
-    })
-
-const listFiles = async () => {
-    let resp
-    if (forFolder) {
-        resp = await listFilesByFolderId(folderId)
-    } else {
-        resp = await listFilesByFileType(fileType)
-    }
-    if (resp.code === 0 && resp.data) {
-        fileList.data = resp.data
-    }
-    fileList.data.forEach(file => {
-        file.sizeStr = formatSize(file.size)
-    })
-}
-
-const fileDialogVisible = reactive([false, false, false, false, false])
-let renamingFile = reactive<any>({}),
+    }),
+    renamingFile = reactive<any>({}),
     listFoldersCurrentFolderId = 0,
     fileCopyAndMoveDialog = ref(false),
     fileCopyAndMoveFlag: number,
     selectedFiles: File[],
     fileMovableFolderList = reactive<{ data: Folder[] }>({data: folderList.data})
+
+const
+    listFiles = async () => {
+        let resp
+        if (forFolder) {
+            resp = await listFilesByFolderId(folderId)
+        } else {
+            resp = await listFilesByFileType(fileType)
+        }
+        if (resp.code === 0 && resp.data) {
+            fileList.data = resp.data
+        }
+        fileList.data.forEach(file => {
+            file.sizeStr = formatSize(file.size)
+        })
+    }
 
 // 对话框
 async function fileButton(option: number) {
@@ -269,6 +296,7 @@ async function deleteFilesConfirm() {
 }
 
 function fileSelectionChange(files: File[]) {
+    selectedFiles = fileTableRef.value!.getSelectionRows()
     if (!files || files.length == 0) {
         fileButtonsState.value = 0
     } else if (files) {
@@ -285,19 +313,27 @@ function fileSelectionChange(files: File[]) {
 async function download(files: File[]) {
     for (const file of files) {
         await window.open(file.url)
-        // console.log(file)
-        // const f = async () => {
-        //     const link = document.createElement('a')
-        //     link.href = file.url
-        //     link.download = file.name
-        //
-        //     document.body.appendChild(link)
-        //     link.click()
-        //     document.body.removeChild(link)
-        //     console.log('下载成功', file.name, file.url)
-        // }
-        // await f()
     }
+}
+
+async function shareConfirm() {
+    let pwd = (Math.floor(Math.random() * 10000)).toString().padStart(4, '0')
+    const regex = /^[a-z0-9]{4}$/i
+    if (shareInput.radio2 === 0) {
+        if (!regex.test(shareInput.pwd)) {
+            promptError('密码只能是数字字母混合四位')
+            return
+        }
+        pwd = shareInput.pwd
+    }
+    console.log(pwd, shareInput.radio1, shareInput.radio2, typeof shareInput.radio2)
+    const prefix = 'localhost:5173/info/share/'
+    const resp = await share(selectedFiles.map(file => file.id), prefix, pwd, shareInput.radio1)
+    if (resp.code == codeOk) {
+        fileDialogVisible[4] = false
+        return
+    }
+    promptError(`分享失败，${resp.msg}`)
 }
 
 onMounted(() => {

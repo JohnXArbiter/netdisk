@@ -3,9 +3,9 @@ package model
 import "time"
 
 type Model struct {
-	Id      int64     `xorm:"pk autoincr"`
-	Created time.Time `xorm:"created"`
-	Updated time.Time `xorm:"updated"`
+	Id      int64     `xorm:"pk autoincr" json:"id"`
+	Created time.Time `xorm:"created" json:"created"`
+	Updated time.Time `xorm:"updated" json:"updated"`
 }
 
 // User 用户
@@ -94,6 +94,7 @@ type (
 		Pwd         string    `xorm:"varchar(8) notnull default '' 'pwd' comment('分享密码')" json:"pwd"`
 		Name        string    `xorm:"varchar(64) notnull default '' 'name'" json:"name"`
 		UserId      int64     `xorm:"bigint notnull default 0 'user_id'" json:"userId"`
+		Url         string    `xorm:"varchar(255) notnull default '' 'url'" json:"url"`
 		Created     time.Time `xorm:"created" json:"created"`
 		Expired     int64     `xorm:"bigint notnull default 0 'expired' comment('到期时间')" json:"expired"`
 		DownloadNum int64     `xorm:"bigint notnull default 0 'download_num'" json:"downloadNum"`

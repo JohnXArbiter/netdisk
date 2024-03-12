@@ -3,12 +3,14 @@ package file
 import (
 	"context"
 	"errors"
+	"github.com/yitter/idgenerator-go/idgen"
 	"lc/netdisk/common/constant"
 	"lc/netdisk/common/variable"
 	"lc/netdisk/common/xorm"
 	"lc/netdisk/internal/svc"
 	"lc/netdisk/internal/types"
 	"lc/netdisk/model"
+	"strconv"
 	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -32,23 +34,26 @@ func (l *ShareFolderLogic) ShareFolder(req *types.ShareFolderReq) error {
 	var (
 		userId     = l.ctx.Value(constant.UserIdKey).(int64)
 		engine     = l.svcCtx.Xorm
-		folderIds  = []int64{req.FolderId}
+		folderIds  = req.FolderIds
+		folders    []*model.Folder
 		shareFiles []*model.ShareFile
 	)
 
-	if req.Id == "" || req.Pwd == "" {
+	if req.Pwd == "" {
 		return errors.New("出错啦，请重试")
 	}
 
-	var folderName string
-	if has, err := engine.ID(req.FolderId).
-		Get(&folderName); err != nil {
+	id := strconv.FormatInt(idgen.NextId(), 10)
+	url := req.Prefix + id + "?pwd=" + req.Pwd
+	if has, err := engine.In("id", folderIds).
+		Get(&folders); err != nil {
 		logx.Errorf("分享文件夹，查询folder失败，ERR: [%v]", err)
 		return errors.New("出错了")
 	} else if !has {
 		return errors.New("信息有误")
 	}
 
+	folderName := folders[0].Name
 	for len(folderIds) > 0 {
 		// 1.获取当前文件夹下的文件
 		var fileIds []int64
@@ -73,7 +78,7 @@ func (l *ShareFolderLogic) ShareFolder(req *types.ShareFolderReq) error {
 		folderIds = folderIds2
 		for _, fileId := range fileIds {
 			shareFiles = append(shareFiles, &model.ShareFile{
-				ShareId: req.Id,
+				ShareId: id,
 				FileId:  fileId,
 			})
 		}
@@ -88,13 +93,14 @@ func (l *ShareFolderLogic) ShareFolder(req *types.ShareFolderReq) error {
 		created := time.Now().Local()
 		expired := created.Unix() + variable.ShareExpireType[req.ExpireType]
 		share := &model.Share{}
-		share.Id = req.Id
+		share.Id = id
 		share.Pwd = req.Pwd
 		share.Name = folderName
 		share.UserId = userId
 		share.Created = created
 		share.Expired = expired
 		share.Type = constant.TypeShareMulti
+		share.Url = url
 		if _, err := session.Insert(share); err != nil {
 			logx.Errorf("分享文件夹，插入share失败，ERR: [%v]", err)
 			return nil, err

@@ -42,7 +42,7 @@ func (l *ListSharesLogic) ListShares() (resp []*types.ListShareStruct, err error
 	for _, share := range shares {
 		status := share.Status
 		if share.Status == constant.StatusShareNotExpired &&
-			time.Now().Unix() > share.Expired {
+			time.Now().Unix()+10 > share.Expired {
 			expiredShares = append(expiredShares, share.Id)
 			status = constant.StatusShareExpired
 		}
@@ -56,6 +56,7 @@ func (l *ListSharesLogic) ListShares() (resp []*types.ListShareStruct, err error
 			DownloadNum: share.DownloadNum,
 			ClickNum:    share.ClickNum,
 			Type:        share.Type,
+			Url:         share.Url,
 		})
 	}
 

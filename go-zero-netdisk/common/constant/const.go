@@ -52,7 +52,11 @@ const (
 
 const (
 	StatusUserOk = iota
-	StatusUserBanned
+	StatusUserBannedByAvatar
+	StatusUserBannedByUsername
+	StatusUserBannedByName
+	StatusUserBannedBySignature
+	StatusUserBannedByShare
 )
 
 const (

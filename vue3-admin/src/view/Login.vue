@@ -294,7 +294,9 @@ import {reactive, ref, getCurrentInstance, onMounted} from "vue";
 import {ElMessage} from "element-plus";
 import router from "../router/index";
 import {codeOk} from "@/utils/http/base.js";
+import {useBaseStore} from "../../store/index.js";
 
+const baseStore = useBaseStore()
 const {proxy} = getCurrentInstance();
 const form = reactive({
     username: "",
@@ -312,6 +314,7 @@ const onSubmit = () => {
             const res = await userApi.login(form);
             if (res.data) {
                 if (res.data.code === codeOk) {
+                    baseStore.updateToken(res.data.data.token)
                     proxy.$commonJs.changeView('/home');
                     router.push("/home");
                 } else {

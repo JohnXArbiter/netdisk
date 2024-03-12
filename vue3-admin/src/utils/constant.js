@@ -21,22 +21,12 @@ export const
     shareIllegal = 2,
     shareNotExistOrDeleted = 3,
 
-    userStatus = {
-        ok: 0,
-        bannedByAvatar: 1,
-        bannedByUsername: 2,
-        bannedByName: 3,
-        bannedBySignature: 4,
-        bannedByShare: 5
-    },
-
-    expireType = {
-        day: 0,
-        day7: 1,
-        month: 2,
-        forever: 3
-    }
-
+    userOk = 0,
+    userBannedByAvatar = 1,
+    userBannedByUsername = 2,
+    userBannedByName = 3,
+    userBannedBySignature = 4,
+    userBannedByShare = 5
 
 export const userMap = {
     0: '正常',

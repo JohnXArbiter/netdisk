@@ -52,3 +52,12 @@ export function deleteFiles(fileIds: number[], folderId: number) {
         'folderId': folderId
     })
 }
+
+export function share(fileIds: number[], prefix: string, pwd: string, expireType: number) {
+    return api.put<any, Resp<any>>('/file/delete', {
+        'fileIds': fileIds,
+        'prefix': prefix,
+        'pwd': pwd,
+        'expireType': expireType
+    })
+}

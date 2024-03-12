@@ -150,7 +150,7 @@ type ShareReq struct {
 }
 
 type ShareFolderReq struct {
-	FolderId int64 `json:"folderId"`
+	FolderIds []int64 `json:"folderIds"`
 	ShareStruct
 }
 
@@ -215,12 +215,12 @@ type ListShareStruct struct {
 	DownloadNum int64  `json:"downloadNum"`
 	ClickNum    int64  `json:"clickNum"`
 	Type        int8   `json:"type"`
+	Url         string `json:"url"`
 }
 
 type ShareStruct struct {
-	Id         string `json:"id"`
 	Pwd        string `json:"pwd"`
-	Url        string `json:"url"`
+	Prefix     string `json:"prefix"`
 	ExpireType int8   `json:"expireType"`
 }
 
@@ -256,4 +256,9 @@ type UpdateUserDetailReq struct {
 	Signature string `json:"signature"`
 	Email     string `json:"email"`
 	Code      string `json:"code"`
+}
+
+type SetStatusReq struct {
+	UserId int64 `json:"userId"`
+	Status int8  `json:"status"`
 }
