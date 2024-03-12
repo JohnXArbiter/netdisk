@@ -5,6 +5,10 @@ type IdPathReq struct {
 	Id int64 `path:"id"`
 }
 
+type IdStrReq struct {
+	Id string `path:"id"`
+}
+
 type GetShareInfoReq struct {
 	Id  string `json:"id"`
 	Pwd string `json:"pwd"`
@@ -231,6 +235,7 @@ type ListShareItemStruct struct {
 	Updated string `json:"updated"`
 	Size    int64  `json:"size"`
 	Url     string `json:"url"`
+	Status  int8   `json:"status"`
 }
 
 type CheckSizeReq struct {

@@ -36,3 +36,16 @@ export const userMap = {
     4: '签名包含违规信息，暂时封禁',
     5: '分享内容违规，暂时封禁',
 }
+
+export const fileStatus = {
+
+    ok: 1,
+    banned: 3
+}
+
+export const fileStatusMap = {
+    0: '?',
+    1: '正常',
+    2: '已分享',
+    3: '已封禁',
+}

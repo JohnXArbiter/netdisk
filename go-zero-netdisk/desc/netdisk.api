@@ -173,15 +173,25 @@ service netdisk-api {
 	post /share-list (PageReq) returns ()
 	
 	@handler setStatus
-	post /user-status/:id (SetStatusReq) returns ()
+	post /user-status (SetStatusReq) returns ()
 	
 	@handler getUrl
 	get /file-url/:id (IdPathReq) returns ()
+	
+	@handler getAdminInfo
+	get /info () returns ()
+	
+	@handler getShareInfoAdmin
+	get /share-file/:id (IdStrReq) returns (GetShareInfoResp)
 }
 
 type (
 	IdPathReq {
 		Id int64 `path:"id"`
+	}
+
+	IdStrReq {
+		Id string `path:"id"`
 	}
 
 	GetShareInfoReq {

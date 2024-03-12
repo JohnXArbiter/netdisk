@@ -50,6 +50,14 @@ const routes = [
                 },
                 component: () => import('../view/share/Index.vue'),
             },
+            {
+                path: '/share/:shareId',
+                meta: {
+                    title: '分享详情'
+                },
+                component: () => import('../view/share/Info.vue'),
+                props: true
+            }
         ]
     },
 ]

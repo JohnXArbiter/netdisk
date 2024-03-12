@@ -30,7 +30,7 @@ export const useBaseStore = defineStore('base', () => {
     async function getUserInfo() {
         if (user.data.id === 0) {
             const resp = await api.get(`/user/detail/0`)
-            if (resp.code === 0) {
+            if (resp.data.code === 0) {
                 user.data = resp.data
             }
         }
@@ -40,7 +40,7 @@ export const useBaseStore = defineStore('base', () => {
     async function updateUserInfo(userInfo, post) {
         if (post) {
             const resp = await api.post(`/user/detail`, userInfo)
-            if (resp.code === 0) {
+            if (resp.data.code === 0) {
                 user.data = userInfo
                 return resp
             }

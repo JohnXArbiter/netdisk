@@ -267,13 +267,23 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodPost,
-					Path:    "/user-status/:id",
+					Path:    "/user-status",
 					Handler: admin.SetStatusHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodGet,
 					Path:    "/file-url/:id",
 					Handler: admin.GetUrlHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/info",
+					Handler: admin.GetAdminInfoHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/share-file/:id",
+					Handler: admin.GetShareInfoAdminHandler(serverCtx),
 				},
 			}...,
 		),

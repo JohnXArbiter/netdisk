@@ -5,13 +5,13 @@
             <el-header>
                 <el-row>
                     <el-col :span="4">
-                      <img src="@/assets/img/ji_tui_cai.png" alt=""/>
+                        <img src="@/assets/img/ji_tui_cai.png" alt=""/>
                         <p class="system-name">咪咪网盘管理后台</p>
                     </el-col>
                     <el-col :offset="12" :span="8" style="min-width: 150px">
                         <el-dropdown style="float: right; margin: 20px 10px">
                             <span class="el-dropdown-link" style="color: #fff; cursor: pointer; font-weight: 600">
-                                小胖子 &nbsp;&nbsp; <el-icon class="el-icon--right">
+                                {{ admin.data.name }} &nbsp;&nbsp; <el-icon class="el-icon--right">
                                     <arrow-down/>
                                 </el-icon>
                             </span>
@@ -82,19 +82,40 @@
 </template>
 <script setup>
 import {
-    Memo, User, Share, House
+    Memo, User, Share, House, ArrowDown
 } from '@element-plus/icons-vue'
-import {onBeforeMount, ref} from 'vue';
+import {onBeforeMount, reactive, ref} from 'vue';
 import avatar from "../assets/img/img.png"
 import {useRouter} from 'vue-router'
+import {useBaseStore} from "../../store/index.js";
+import adminApi from "@/api/admin.js";
+import {codeOk, promptError} from "@/utils/http/base.js";
 
-const router = useRouter();
+const router = useRouter(),
+    baseStore = useBaseStore(),
+    admin = reactive({
+        data: {}
+    })
+
+async function getAdminInfo() {
+    const resp = await adminApi.getAdminInfo()
+    if (resp.data.code === codeOk) {
+        admin.data = resp.data.data
+        console.log(admin.data.name)
+    } else {
+        promptError(resp.data.msg)
+    }
+}
+
 // 挂载 DOM 之前
-onBeforeMount(() => {
+onBeforeMount(async () => {
+    await getAdminInfo()
+
     activePath.value = sessionStorage.getItem("activePath")
         ? sessionStorage.getItem("activePath")
         : "/index"
 })
+
 let isCollapse = ref(false);
 let activePath = ref("");
 // 保存链接的激活状态
@@ -104,7 +125,7 @@ const saveActiveNav = (path) => {
 }
 const logout = () => {
     // 清除缓存
-    sessionStorage.clear();
+    baseStore.clearToken()
     router.push("/login");
 }
 </script>
@@ -120,7 +141,7 @@ const logout = () => {
 }
 
 .el-header {
-    background: linear-gradient(120deg,lightsalmon,wheat,lightsalmon);
+    background: linear-gradient(120deg, lightsalmon, wheat, lightsalmon);
     padding: 0 10px;
     overflow: hidden;
 }
@@ -139,8 +160,8 @@ const logout = () => {
     width: auto !important;
 }
 
-.el-menu-vertical-demo{
-  background-color: lightsalmon;
+.el-menu-vertical-demo {
+    background-color: lightsalmon;
 }
 
 .el-menu-vertical-demo:not(.el-menu--collapse) {
@@ -184,6 +205,6 @@ const logout = () => {
     height: 50px;
     line-height: 50px;
     box-sizing: border-box;
-    //margin: 2px 5px 0px 2px;
+    margin: 2px 5px 0 2px;
 }
 </style>

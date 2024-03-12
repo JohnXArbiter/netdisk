@@ -31,6 +31,7 @@ func (l *SetStatusLogic) SetStatus(req *types.SetStatusReq) error {
 
 	bean := &model.User{Status: req.Status}
 	if _, err := engine.ID(req.UserId).
+		Cols("status").
 		Update(bean); err != nil {
 		logx.Errorf("SetStatus，更新失败，ERR: [%v]", err)
 		return err

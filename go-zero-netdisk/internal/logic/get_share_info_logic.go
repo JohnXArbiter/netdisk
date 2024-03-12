@@ -70,6 +70,7 @@ func (l *GetShareInfoLogic) GetShareInfo(req *types.GetShareInfoReq) (*types.Get
 			Updated: file.Updated.Format(constant.TimeFormat1),
 			Size:    file.Size,
 			Url:     url,
+			Status:  file.Status,
 		})
 	}
 

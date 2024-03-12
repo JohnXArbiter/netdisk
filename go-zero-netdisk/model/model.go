@@ -25,10 +25,10 @@ type (
 
 	Admin struct {
 		Model    `xorm:"extends"`
-		Name     string `xorm:"varchar(20) notnull default '' 'name'"`
-		Username string `xorm:"varchar(20) notnull unique 'username' comment('账号')"`
-		Password string `xorm:"varchar(255) notnull default '' 'password'"`
-		Status   int8   `xorm:"tinyint notnull default 0 'status'"`
+		Name     string `xorm:"varchar(20) notnull default '' 'name'" json:"name"`
+		Username string `xorm:"varchar(20) notnull unique 'username' comment('账号')" json:"username"`
+		Password string `xorm:"varchar(255) notnull default '' 'password'" json:"password"`
+		Status   int8   `xorm:"tinyint notnull default 0 'status'" json:"status"`
 	}
 )
 
