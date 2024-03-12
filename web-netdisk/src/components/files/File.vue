@@ -117,26 +117,28 @@
                     <template v-else> 吗？</template>
                 </div>
             </el-form-item>
-            <el-form-item label="有效期：">
-                <el-radio-group v-model="shareInput.radio1">
-                    <el-radio :value="expireType.day">1天</el-radio>
-                    <el-radio :value="expireType.day7">7天</el-radio>
-                    <el-radio :value="expireType.month">30天</el-radio>
-                    <el-radio :value="expireType.forever">长期有效</el-radio>
-                </el-radio-group>
+
+            <el-form-item  label="有效期：">
+              <div>
+                <input type="radio" checked :value="0" v-model="shareInput.radio1" />1天
+                <input type="radio" :value="1" v-model="shareInput.radio1" />7天
+                <input type="radio" :value="2" v-model="shareInput.radio1" />30天
+                <input type="radio" :value="3" v-model="shareInput.radio1" />长期有效
+              </div>
             </el-form-item>
             <el-form-item label="提取码：">
-                <el-radio-group v-model="shareInput.radio2">
-                    <el-radio :value="0">系统生成</el-radio>
-                    <el-radio :value="1">自己填写
-                        <el-input v-model="shareInput.pwd"></el-input>
-                    </el-radio>
-                </el-radio-group>
+              <div>
+                <input type="radio" :value="0" checked v-model="shareInput.radio2" />系统生成
+                <input type="radio" :value="1" v-model="shareInput.radio2" />自己填写
+                <input type="text" placeholder="四位数字或字母" v-model="shareInput.pwd" />
+              </div>
+
             </el-form-item>
             <el-form-item>
                 <el-checkbox v-model="shareInput.check" label="分享链接自动填充提取码" size="large"/>
             </el-form-item>
         </el-form>
+
         <template #footer>
       <span class="dialog-footer">
         <el-button @click="fileDialogVisible[4] = false">取消</el-button>
@@ -164,6 +166,7 @@
       </span>
         </template>
     </el-dialog>
+
 </template>
 
 <script lang="ts" setup>
@@ -202,6 +205,8 @@ const props = defineProps(['fileType', 'folderId']),
         pwd: '',
         check: false
     })
+
+const radio2 = ref(0)
 
 let fileButtonsState = ref(0),
     folderList = reactive<{ data: Folder[] }>({
