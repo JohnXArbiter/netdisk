@@ -226,6 +226,7 @@ type ShareStruct struct {
 	Pwd        string `json:"pwd"`
 	Prefix     string `json:"prefix"`
 	ExpireType int8   `json:"expireType"`
+	Auto       int8   `json:"auto"`
 }
 
 type ListShareItemStruct struct {
@@ -264,6 +265,12 @@ type UpdateUserDetailReq struct {
 }
 
 type SetStatusReq struct {
-	UserId int64 `json:"userId"`
+	Id     int64 `json:"id"`
 	Status int8  `json:"status"`
+}
+
+type SetShareStatusReq struct {
+	Id     string `json:"id"`
+	Status int8   `json:"status"`
+	Type   int8   `json:"type"`
 }

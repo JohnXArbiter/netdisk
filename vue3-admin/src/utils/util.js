@@ -68,6 +68,9 @@ export function formatTime(unix) {
 }
 
 export function formatState(expired) {
+    if (expired === 0) {
+        return '永久有效'
+    }
     const now = new Date().getTime() / 1000
     if (now >= expired - 10) {
         return '已过期'

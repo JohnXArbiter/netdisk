@@ -2,7 +2,7 @@
     <div class="form-div">
         <el-row>
 
-            <el-col :span="24" v-if="validated" >
+            <el-col :span="24" v-if="!validated">
                 <div style="position: absolute; left: -20%;color: #adabab;
     font: 800 23px Arial, sans-serif; line-height: 100%;">提取文件
                 </div>
@@ -19,7 +19,7 @@
                     当前用户已被违法封禁！😡
                 </div>
 
-                <div >
+                <div>
                     <div class="pwd-box">
                         <el-image class="big-pic"
                                   :src="ownerInfo.data.avatar"
@@ -50,14 +50,14 @@
                 </div>
             </el-col>
 
-            <el-col v-if="list.items && list.items.length!=0 && (!validated)"
+            <el-col v-if="list.items && list.items.length!=0 && validated"
                     :span="24" style="margin-bottom: 100px">
                 <!--                <el-empty v-if="!list.items || list.items.length==0"-->
                 <!--                          description="当前分享文件夹没有文件 😺"/>-->
 
                 <div style="margin: 20px 0">
                     <div style="font-size: 2rem; font-weight: 700; margin-bottom: 10px">
-                        {{ list.name }} 等文件...
+                        {{ list.name }}
                         <span style="float: right;">
                             <el-button v-if="ownerInfo.data.userId != list.owner"
                                        size="large" type="primary"
@@ -122,12 +122,12 @@
             <el-footer>Copyright © 2024 咪咪网盘</el-footer>
         </el-row>
 
-        <el-dialog v-model="dialogVisible" title="删除分享">
+        <el-dialog v-model="dialogVisible" title="取消分享">
             <h3>
                 <el-icon>
                     <Warning/>
                 </el-icon>
-                确定删除这个分享吗😶
+                确定取消这个分享吗😶
             </h3>
             <template #footer>
       <span class="dialog-footer">
@@ -150,16 +150,14 @@ import {
     Clock, Download, CircleClose, Warning
 } from "@element-plus/icons-vue";
 import {useRoute} from "vue-router";
-import {codeOk, promptError} from "@/utils/apis/base.ts";
+import {codeOk, promptError, promptSuccess} from "@/utils/apis/base.ts";
 import {shareIllegal, shareNotExistOrDeleted, userStatus} from "@/utils/constant.ts";
 
-const route = useRoute()
+const query = useRoute().query
 
-let pwd = ref(route.query.pwd),
-    pwdInput = ref('')
-let validated = ref(true)
-
-// console.log(pwd.value, 123123123, typeof pwd.value, route.query.pwd)
+let pwd = ref(''),
+    pwdInput = ref(''),
+    validated = ref(false)
 
 const props = defineProps(['shareId']),
     fileTableRef = ref<InstanceType<typeof ElTable>>(),
@@ -204,7 +202,7 @@ const listItems = async (pwdStr: string) => {
         list.items.forEach(item => {
             item.sizeStr = formatSize(item.size)
         })
-      validated.value = false
+        validated.value = true
     }
 }
 
@@ -231,6 +229,10 @@ async function cancelShare() {
     const resp = await shareCancel([props.shareId])
     if (resp.code === codeOk) {
         dialogVisible.value = false
+        promptSuccess('操作成功，窗口即将关闭')
+        setTimeout(() => {
+            window.close()
+        }, 1000)
         return
     }
     promptError(`取消失败，${resp.msg}`)
@@ -239,7 +241,9 @@ async function cancelShare() {
 onMounted(async () => {
     await getOwnerInfo()
 
-    if (pwd.value != '0'|| pwd.value != undefined) {
+    console.log(query.pwd, 123)
+    if (query.pwd != undefined) {
+        pwd.value = query.pwd
         await listItems(pwd.value)
     }
 })

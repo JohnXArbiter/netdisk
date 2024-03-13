@@ -9,11 +9,7 @@
             </el-input>
             <el-table :data="shares" border style="width: 100%; margin-top:20px">
                 <el-table-column prop="id" label="ID" min-width="100"/>
-                <el-table-column label="用户ID-昵称" min-width="200">
-                    <template #default="scope">
-                        {{ scope.row.id }} | {{ scope.row.name }}
-                    </template>
-                </el-table-column>
+                <el-table-column prop="name" label="名称" min-width="200"/>
                 <el-table-column prop="created" label="创建时间" min-width="150"/>
                 <el-table-column label="类型" min-width="60">
                     <template #default="scope">
@@ -33,7 +29,14 @@
                                    type="primary" plain size="small"
                                    @click="getUrl(scope.row.id)">下载查看
                         </el-button>
-                        <el-button type="danger" size="small" @click="deleteUser(scope.row.id)">删除</el-button>
+                        <el-button v-if="scope.row.status !== shareIllegal"
+                                   type="danger" size="small"
+                                   @click="buttonClick(1, scope.row.id, shareIllegal, scope.row.type)">封禁
+                        </el-button>
+                        <el-button v-if="scope.row.status === shareIllegal"
+                                   type="primary" size="small"
+                                   @click="buttonClick(0, scope.row.id, shareNotExpired, scope.row.type)">恢复
+                        </el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -44,6 +47,40 @@
                            @size-change="handleSizeChange" @current-change="handleCurrentChange"/>
         </el-card>
     </div>
+
+    <el-dialog v-model="dialogVisible.option[0]" title="恢复分享">
+        <h3>
+            <el-icon>
+                <Warning/>
+            </el-icon>
+            需要恢复这个分享吗？😶
+        </h3>
+        <template #footer>
+              <span class="dialog-footer">
+                <el-button @click="dialogVisible.option[0]=false">取消</el-button>
+                <el-button type="primary" @click="setStatus(0)">
+                  确定
+                </el-button>
+              </span>
+        </template>
+    </el-dialog>
+
+    <el-dialog v-model="dialogVisible.option[1]" title="封禁分享">
+        <h3>
+            <el-icon>
+                <Warning/>
+            </el-icon>
+            确定封禁这个分享吗😶，如果包含多个文件需要进入详情操作，单个文件可被直接封禁
+        </h3>
+        <template #footer>
+              <span class="dialog-footer">
+                <el-button @click="dialogVisible.option[1]=false">取消</el-button>
+                <el-button type="primary" @click="setStatus(1)">
+                  确定
+                </el-button>
+              </span>
+        </template>
+    </el-dialog>
 </template>
 
 <script setup>
@@ -52,33 +89,45 @@ import {onMounted, reactive, ref} from "vue";
 import {ElMessage, ElMessageBox} from 'element-plus';
 import {useRouter} from 'vue-router'
 import {formatState} from "@/utils/util.js";
-import {typeMap, typeMulti} from "../../utils/constant.js";
-import {codeOk, promptError} from "@/utils/http/base.js";
+import {shareExpired, shareIllegal, shareNotExpired, typeMap, typeMulti} from "@/utils/constant.js";
+import {codeOk, promptError, promptSuccess} from "@/utils/http/base.js";
 
 const router = useRouter();
-// Dom 挂载之后
+
 onMounted(() => {
-    getUserList();
+    listShares()
 })
-// 用户数据
+
 let shares = ref([])
 let total = ref(0)
 let urlMap = new Map()
 
-// 搜索条件
 const searchForm = reactive({
-    current: 1,
-    size: 10,
-    name: ''
-})
+        current: 1,
+        size: 10,
+        name: ''
+    }),
+    dialogVisible = reactive({option: [false, false]}),
+    setStatusObj = {
+        id: 0, status: 0, type: 0
+    }
 
-// 获取用户列表
-const getUserList = async () => {
+const listShares = async () => {
     const res = await shareApi.getShareList({'page': 0, 'size': 100});
     console.log(res.data);
     shares.value = res.data.data
     shares.value.forEach(share => {
-        share.state = formatState(share.expired)
+        switch (share.status) {
+            case shareNotExpired:
+                share.state = formatState(share.expired)
+                break
+            case shareIllegal:
+                share.state = '内涵非法内容，已封禁'
+                break
+            case shareExpired:
+                share.state = '已过期'
+                break
+        }
     })
     total.value = res.data.data.total;
 }
@@ -95,24 +144,42 @@ async function getUrl(id) {
     const resp = await shareApi.getUrl(id)
     if (resp.data.code === codeOk) {
         urlMap.set(id, resp.data.data.url)
-        console.log(resp.data.data)
         window.open(resp.data.data)
         return
     }
     promptError(`获取链接失败，${resp.data.msg}`)
 }
 
+function buttonClick(option, id, status, type) {
+    setStatusObj.id = id
+    setStatusObj.status = status
+    setStatusObj.type = type
+    dialogVisible.option[option] = true
+}
+
+async function setStatus(option) {
+    console.log(setStatusObj)
+    const resp = await shareApi.setStatus(setStatusObj)
+    if (resp.data.code === codeOk) {
+        await listShares()
+        promptSuccess('操作成功')
+        dialogVisible.option[option] = false
+        return
+    }
+    promptError(`操作失败，${resp.data.msg}`)
+}
+
 const handleSizeChange = (size) => {
     searchForm.size = size;
-    getUserList();
+    listShares();
 }
 const handleCurrentChange = (current) => {
     searchForm.current = current;
-    getUserList();
+    listShares();
 }
 const searchUser = () => {
     searchForm.current = 1;
-    getUserList();
+    listShares();
 }
 // 删除用户
 const deleteUser = (id) => {

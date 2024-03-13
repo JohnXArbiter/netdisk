@@ -144,6 +144,7 @@ type (
         Pwd string `json:"pwd"`
         Prefix string `json:"prefix"`
         ExpireType int8 `json:"expireType"`
+        Auto int8 `json:"auto"`
     }
 
     ListShareItemStruct {

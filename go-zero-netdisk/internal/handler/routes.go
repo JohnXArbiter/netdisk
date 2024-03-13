@@ -285,6 +285,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/share-file/:id",
 					Handler: admin.GetShareInfoAdminHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/share-status",
+					Handler: admin.SetShareStatusHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithPrefix("/admin"),

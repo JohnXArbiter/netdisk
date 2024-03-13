@@ -118,21 +118,21 @@
                 </div>
             </el-form-item>
 
-            <el-form-item  label="有效期：">
-              <div>
-                <input type="radio" checked :value="0" v-model="shareInput.radio1" />1天
-                <input type="radio" :value="1" v-model="shareInput.radio1" />7天
-                <input type="radio" :value="2" v-model="shareInput.radio1" />30天
-                <input type="radio" :value="3" v-model="shareInput.radio1" />长期有效
-              </div>
+            <el-form-item label="有效期：">
+                <div>
+                    <input type="radio" checked :value="0" v-model="shareInput.radio1"/>1天 &nbsp;&nbsp;
+                    <input type="radio" :value="1" v-model="shareInput.radio1"/>7天 &nbsp;&nbsp;
+                    <input type="radio" :value="2" v-model="shareInput.radio1"/>30天 &nbsp;&nbsp;
+                    <input type="radio" :value="3" v-model="shareInput.radio1"/>长期有效 &nbsp;&nbsp;
+                </div>
             </el-form-item>
             <el-form-item label="提取码：">
-              <div>
-                <input type="radio" :value="0" checked v-model="shareInput.radio2" />系统生成
-                <input type="radio" :value="1" v-model="shareInput.radio2" />自己填写
-                <input type="text" placeholder="四位数字或字母" v-model="shareInput.pwd" />
-              </div>
-
+                <div>
+                    <input type="radio" :value="0" checked v-model="shareInput.radio2"/>系统生成 &nbsp;&nbsp;
+                    <input type="radio" :value="1" v-model="shareInput.radio2"/>自己填写 &nbsp;
+                    <input type="text" placeholder="四位数字或字母" v-model="shareInput.pwd"
+                           style="height: 15px; width: 60px; position: relative; top: -2px"/>
+                </div>
             </el-form-item>
             <el-form-item>
                 <el-checkbox v-model="shareInput.check" label="分享链接自动填充提取码" size="large"/>
@@ -324,18 +324,22 @@ async function download(files: File[]) {
 async function shareConfirm() {
     let pwd = (Math.floor(Math.random() * 10000)).toString().padStart(4, '0')
     const regex = /^[a-z0-9]{4}$/i
-    if (shareInput.radio2 === 0) {
+    if (shareInput.radio2 === 1) {
         if (!regex.test(shareInput.pwd)) {
             promptError('密码只能是数字字母混合四位')
             return
         }
         pwd = shareInput.pwd
     }
-    console.log(pwd, shareInput.radio1, shareInput.radio2, typeof shareInput.radio2)
-    const prefix = 'localhost:5173/info/share/'
-    const resp = await share(selectedFiles.map(file => file.id), prefix, pwd, shareInput.radio1)
+    let auto = 0
+    if (shareInput.check) {
+        auto = 1
+    }
+    const prefix = `localhost:5173/info/share/`
+    const resp = await share(selectedFiles.map(file => file.id), prefix, pwd, shareInput.radio1, auto)
     if (resp.code == codeOk) {
         fileDialogVisible[4] = false
+        promptSuccess('分享成功')
         return
     }
     promptError(`分享失败，${resp.msg}`)

@@ -183,6 +183,9 @@ service netdisk-api {
 	
 	@handler getShareInfoAdmin
 	get /share-file/:id (IdStrReq) returns (GetShareInfoResp)
+	
+	@handler setShareStatus
+	post /share-status (SetShareStatusReq) returns ()
 }
 
 type (

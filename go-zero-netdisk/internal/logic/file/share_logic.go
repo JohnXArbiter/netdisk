@@ -58,7 +58,11 @@ func (l *ShareLogic) Share(req *types.ShareReq) error {
 	}
 
 	id := strconv.FormatInt(idgen.NextId(), 10)
-	url := req.Prefix + id + "?pwd=" + req.Pwd
+	url := req.Prefix + id
+	if req.Auto == 1 {
+		url += "?pwd=" + req.Pwd
+	}
+
 	_, err := engine.DoTransaction(func(session *xorm.Session) (interface{}, error) {
 		var shareFile []*model.ShareFile
 		for _, fileId := range req.FileIds {
@@ -83,6 +87,9 @@ func (l *ShareLogic) Share(req *types.ShareReq) error {
 		share.Expired = expired
 		share.Type = shareType
 		share.Url = url
+		if req.ExpireType == constant.ShareExpireForever {
+			share.Status = constant.StatusShareForever
+		}
 		if _, err := session.Insert(share); err != nil {
 			logx.Errorf("分享多文件，插入share失败，ERR: [%v]", err)
 			return nil, err

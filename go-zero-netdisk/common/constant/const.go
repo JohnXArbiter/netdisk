@@ -23,6 +23,7 @@ const (
 	StatusFileUploaded
 	StatusFileUndeleted
 	StatusFileDeleted
+	StatusFileIllegal
 )
 
 const (
@@ -48,6 +49,14 @@ const (
 	StatusShareExpired
 	StatusShareIllegal
 	StatusShareNotExistOrDeleted
+	StatusShareForever
+)
+
+const (
+	ShareExpireDay = iota
+	ShareExpireWeek
+	ShareExpireMonth
+	ShareExpireForever
 )
 
 const (

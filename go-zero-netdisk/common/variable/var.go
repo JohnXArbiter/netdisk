@@ -76,8 +76,8 @@ func GetTypeByBruteForce(ext string) int8 {
 }
 
 var ShareExpireType = map[int8]int64{
-	0: 0,
-	1: 86400,
-	2: 604800,
-	3: 2592000,
+	constant.ShareExpireDay:     86400,
+	constant.ShareExpireWeek:    604800,
+	constant.ShareExpireMonth:   2592000,
+	constant.ShareExpireForever: 0,
 }

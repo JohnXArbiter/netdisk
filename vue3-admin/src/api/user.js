@@ -18,7 +18,7 @@ const getUserDetail = (data) => {
 
 function setStatus(id, status) {
     return http.post('/admin/user-status', {
-        'userId': id,
+        'id': id,
         'status': status
     })
 }
