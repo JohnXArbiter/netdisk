@@ -57,13 +57,13 @@
                     </el-table-column>
                     <el-table-column min-width="100">
                         <template #default="scope">
-                            <span @click="dialogButtons(1); singleSelectedFile=scope.row.id">
+                            <span @click="dialogButtons(1); singleSelectedFile=scope.row">
                                 <el-icon color="#48a3ff">
                                     <RefreshRight/>
                                 </el-icon>
                             </span>
                             &nbsp;&nbsp;
-                            <span @click="dialogButtons(2); singleSelectedFile=scope.row.id">
+                            <span @click="dialogButtons(2); singleSelectedFile=scope.row">
                                 <el-icon color="red">
                                     <Delete/>
                                 </el-icon>
@@ -101,7 +101,7 @@
         </h3>
         <template #footer>
       <span class="dialog-footer">
-        <el-button @click="dialogVisible.option[1] = false; singleSelectedFile=0">取消</el-button>
+        <el-button @click="dialogVisible.option[1]=false; singleSelectedFile.id=0">取消</el-button>
         <el-button type="primary" @click="recoverOrDelete(1)">
           确定
         </el-button>
@@ -118,7 +118,7 @@
         </h3>
         <template #footer>
       <span class="dialog-footer">
-        <el-button @click="dialogVisible.option[2] = false; singleSelectedFile=0">取消</el-button>
+        <el-button @click="dialogVisible.option[2]=false; singleSelectedFile.id=0">取消</el-button>
         <el-button type="primary" @click="recoverOrDelete(2)">
           确定
         </el-button>
@@ -138,6 +138,8 @@ import {
 import {codeOk, promptError} from "@/utils/apis/base.ts";
 import {formatLeft, formatSize, formatTime} from "@/utils/util.ts";
 import {File} from "@/components/files/file.ts";
+import {types} from "sass";
+import Map = types.Map;
 
 const fileList = reactive<{ data: DeleteFile[] }>({
         data: []
@@ -145,18 +147,17 @@ const fileList = reactive<{ data: DeleteFile[] }>({
     dialogVisible = reactive({option: [false, false, false]}),
     fileTableRef = ref<InstanceType<typeof ElTable>>()
 
-let singleSelectedFile = ref(0),
-    selectedFiles: File[],
+let singleSelectedFile = ref({}),
+    selectedFiles: DeleteFile[],
     fileButtonsState = ref(0)
 
 function dialogButtons(option: number) {
     selectedFiles = fileTableRef.value!.getSelectionRows()
-    console.log(selectedFiles, typeof selectedFiles)
     dialogVisible.option = [false]
     dialogVisible.option[option] = true
 }
 
-function fileSelectionChange(files: File[]) {
+function fileSelectionChange(files: DeleteFile[]) {
     fileButtonsState.value = 1
     if (!files || files.length == 0) {
         fileButtonsState.value = 0
@@ -196,7 +197,23 @@ async function recoverOrDelete(option: number) {
         ids = selectedFiles.map(file => file.id)
     }
     if (option === 1) {
-        resp = await recoverFiles(ids)
+        let recoverObj = {fileIds: [], folderIds: []}
+        if (singleSelectedFile.value.id === 0) {
+            const m = new Map()
+            selectedFiles.forEach(file => {
+                if (file.folderId !== 0) {
+                    if (!m.has(file.folderId)) {
+                        recoverObj.folderIds.push(file.folderId)
+                    }
+                    m.set(file.folderId)
+                }
+                recoverObj.fileIds.push(file.id)
+            })
+        } else {
+            recoverObj.fileIds = [singleSelectedFile.value.id]
+            recoverObj.folderIds = [singleSelectedFile.value.folderId]
+        }
+        resp = await recoverFiles(recoverObj)
     } else {
         resp = await deleteFilesTruly(ids)
     }

@@ -176,7 +176,10 @@ service netdisk-api {
 	post /user-status (SetStatusReq) returns ()
 	
 	@handler getUrl
-	get /file-url/:id (IdPathReq) returns ()
+	get /file-url/:id/:type (GetUrlReq) returns ()
+	
+	@handler setFileStatus
+	post /file-status (SetFileStatusReq) returns ()
 	
 	@handler getAdminInfo
 	get /info () returns ()

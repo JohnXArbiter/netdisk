@@ -272,8 +272,13 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodGet,
-					Path:    "/file-url/:id",
+					Path:    "/file-url/:id/:type",
 					Handler: admin.GetUrlHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/file-status",
+					Handler: admin.SetFileStatusHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodGet,

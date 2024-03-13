@@ -12,8 +12,8 @@ import (
 
 func GetUrlHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.IdPathReq
-		if err := httpx.Parse(r, &req); err != nil {
+		var req types.GetUrlReq
+		if err := httpx.ParsePath(r, &req); err != nil {
 			xhttp.JsonBaseResponseCtx(r.Context(), w, err)
 			return
 		}

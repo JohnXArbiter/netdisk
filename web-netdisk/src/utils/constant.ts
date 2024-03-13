@@ -46,3 +46,19 @@ export const userMap = {
     4: '签名包含违规信息，暂时封禁',
     5: '分享内容违规，暂时封禁',
 }
+
+export const fileStatus = {
+    unuploaded: 0,
+    ok: 1,
+    undeleted: 2,
+    deleted: 3,
+    banned: 4
+}
+
+export const fileStatusMap = {
+    0: '未完成上传',
+    1: '可下载',
+    2: '未删除',
+    3: '已被删除',
+    4: '已封禁',
+}

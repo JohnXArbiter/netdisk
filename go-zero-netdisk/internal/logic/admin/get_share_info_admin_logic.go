@@ -54,6 +54,7 @@ func (l *GetShareInfoAdminLogic) GetShareInfoAdmin(req *types.IdStrReq) (*types.
 			Url:     url,
 			Status:  file.Status,
 			Type:    file.Type,
+			DelFlag: file.DelFlag,
 		})
 	}
 

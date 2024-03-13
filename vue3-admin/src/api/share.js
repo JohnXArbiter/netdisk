@@ -4,8 +4,8 @@ const getShareList = (data) => {
     return http.post("/admin/share-list", data)
 }
 
-function getUrl(id) {
-    return http.get(`/admin/file-url/${id}`)
+function getUrl(id, type) {
+    return http.get(`/admin/file-url/${id}/${type}`)
 }
 
 function getShareFilesByShareId(id) {

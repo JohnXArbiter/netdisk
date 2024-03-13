@@ -141,7 +141,7 @@ async function getUrl(id) {
         window.open(urlMap.get(id))
         return
     }
-    const resp = await shareApi.getUrl(id)
+    const resp = await shareApi.getUrl(id, 0)
     if (resp.data.code === codeOk) {
         urlMap.set(id, resp.data.data.url)
         window.open(resp.data.data)

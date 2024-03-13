@@ -19,4 +19,14 @@ type (
         Status int8 `json:"status"`
         Type int8 `json:"type"`
     }
+
+    SetFileStatusReq {
+        Ids []int64 `json:"ids"`
+        Status int8 `json:"status"`
+    }
+
+    GetUrlReq {
+        Id string `path:"id"`
+        Type int8 `path:"type"`
+    }
 )

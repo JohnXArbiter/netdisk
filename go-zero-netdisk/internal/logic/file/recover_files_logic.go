@@ -7,7 +7,9 @@ import (
 	"lc/netdisk/common/constant"
 	"lc/netdisk/common/xorm"
 	"lc/netdisk/internal/svc"
+	"lc/netdisk/internal/types"
 	"lc/netdisk/model"
+	"strconv"
 )
 
 type RecoverFilesLogic struct {
@@ -24,13 +26,14 @@ func NewRecoverFilesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Reco
 	}
 }
 
-func (l *RecoverFilesLogic) RecoverFiles(fileIds, folderIds []int64) error {
+func (l *RecoverFilesLogic) RecoverFiles(req *types.RecoverFilesReq) error {
 	var (
 		ctx    = l.ctx
 		userId = ctx.Value(constant.UserIdKey).(int64)
 		engine = l.svcCtx.Xorm
 	)
 
+	fileIds, folderIds := req.FileIds, req.FolderIds
 	_, err := engine.DoTransaction(func(session *xorm.Session) (interface{}, error) {
 		// 1.恢复文件delFlag字段
 		fileBean := &model.File{
@@ -52,20 +55,24 @@ func (l *RecoverFilesLogic) RecoverFiles(fileIds, folderIds []int64) error {
 				DelFlag: constant.StatusFolderUndeleted,
 				DelTime: 0,
 			}
-			if affected, err := session.In("id", folderIds).
+			if _, err := session.In("id", folderIds).
 				And("del_flag = ?", constant.StatusFolderDeleted).
 				Update(folderBean); err != nil {
 				logx.Errorf("恢复文件夹信息出错，err: %v", err)
 				return nil, err
-			} else if affected != int64(len(folderIds)) {
-				return nil, errors.New("恢复文件夹信息出错！")
 			}
 
 			// 3.查询父文件夹
 			var ids []int64
-			if err := session.Select("id").
-				Where("id in ( select distinct(parent_id) "+
-					"where id in (?) )", folderIds).
+			subQuery := "select distinct(parent_id) from folder where id in ("
+			for i, folderId := range folderIds {
+				subQuery += strconv.FormatInt(folderId, 10)
+				if i != len(folderIds)-1 {
+					subQuery += ","
+				}
+			}
+			if err := session.Select("id").Table(&model.Folder{}).
+				Where("id in ( "+subQuery+") )").
 				And("del_flag = ?", constant.StatusFolderDeleted).
 				Find(&ids); err != nil {
 				logx.Errorf("查询父文件夹出错，err: %v", err)

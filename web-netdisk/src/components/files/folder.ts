@@ -1,4 +1,4 @@
-import {Resp} from "../../utils/apis/base.ts";
+import {Resp} from "@/utils/apis/base.ts";
 import api from "../../utils/apis/request.ts";
 
 export interface Folder {

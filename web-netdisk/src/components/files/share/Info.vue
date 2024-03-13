@@ -151,7 +151,7 @@ import {
 } from "@element-plus/icons-vue";
 import {useRoute} from "vue-router";
 import {codeOk, promptError, promptSuccess} from "@/utils/apis/base.ts";
-import {shareIllegal, shareNotExistOrDeleted, userStatus} from "@/utils/constant.ts";
+import {fileStatus, fileStatusMap, shareIllegal, shareNotExistOrDeleted, userStatus} from "@/utils/constant.ts";
 
 const query = useRoute().query
 
@@ -212,9 +212,13 @@ async function downloadFiles() {
         return
     }
     selected = fileTableRef.value!.getSelectionRows()
-    selected.forEach(item => {
-        window.open(item.url)
-    })
+    for (const file of selected) {
+        if (file.status !== fileStatus.ok) {
+            promptError(`文件${fileStatusMap[file.status]}`)
+            continue
+        }
+        await window.open(file.url)
+    }
 }
 
 async function getOwnerInfo() {

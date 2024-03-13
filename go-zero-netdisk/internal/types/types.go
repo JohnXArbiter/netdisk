@@ -145,7 +145,8 @@ type ListFolderMovableFolderReq struct {
 }
 
 type RecoverFilesReq struct {
-	Files []*RecoverFilesStruct `json:"files"`
+	FileIds   []int64 `json:"fileIds"`
+	FolderIds []int64 `json:"folderIds"`
 }
 
 type ShareReq struct {
@@ -204,11 +205,6 @@ type FileIdsStruct struct {
 	FileIds []int64 `json:"fileIds"`
 }
 
-type RecoverFilesStruct struct {
-	FileId   int64 `json:"fileId"`
-	FolderId int64 `json:"folderId"`
-}
-
 type ListShareStruct struct {
 	Id          string `json:"id"`
 	Pwd         string `json:"pwd"`
@@ -237,6 +233,7 @@ type ListShareItemStruct struct {
 	Size    int64  `json:"size"`
 	Url     string `json:"url"`
 	Status  int8   `json:"status"`
+	DelFlag int8   `json:"delFlag"`
 }
 
 type CheckSizeReq struct {
@@ -273,4 +270,14 @@ type SetShareStatusReq struct {
 	Id     string `json:"id"`
 	Status int8   `json:"status"`
 	Type   int8   `json:"type"`
+}
+
+type SetFileStatusReq struct {
+	Ids    []int64 `json:"ids"`
+	Status int8    `json:"status"`
+}
+
+type GetUrlReq struct {
+	Id   string `path:"id"`
+	Type int8   `path:"type"`
 }

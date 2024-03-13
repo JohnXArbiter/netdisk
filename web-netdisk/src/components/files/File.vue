@@ -38,7 +38,7 @@
                     <el-table-column label="文件名" min-width="500">
                         <template #default="scope">
                             <div style="display: flex; align-items: center">
-                                <el-image v-if="scope.row.type === typeImage"
+                                <el-image v-if="scope.row.type === typeImage && scope.row.status != fileStatus.banned"
                                           class="small-pic"
                                           :src="scope.row.url"
                                           alt="../../assets/alt_type1.jpg"
@@ -59,6 +59,11 @@
                     <el-table-column label="大小" min-width="100">
                         <template #default="scope">
                             <div>{{ scope.row.sizeStr }}</div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="状态" min-width="100">
+                        <template #default="scope">
+                            <div>{{ scope.row.state }}</div>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -189,7 +194,7 @@ import {codeError, codeOk, promptError, promptSuccess, Resp} from "@/utils/apis/
 import Uploading from "./Uploading.vue";
 import {useFileFolderStore} from "@/store/fileFolder.ts";
 import {formatSize} from "@/utils/util.ts";
-import {expireType, typeImage} from "@/utils/constant.ts";
+import {expireType, fileStatus, fileStatusMap, typeImage} from "@/utils/constant.ts";
 
 let fileFolderStore = useFileFolderStore(),
     forFolder = false,
@@ -205,8 +210,6 @@ const props = defineProps(['fileType', 'folderId']),
         pwd: '',
         check: false
     })
-
-const radio2 = ref(0)
 
 let fileButtonsState = ref(0),
     folderList = reactive<{ data: Folder[] }>({
@@ -235,6 +238,7 @@ const
         }
         fileList.data.forEach(file => {
             file.sizeStr = formatSize(file.size)
+            file.state = fileStatusMap[file.status]
         })
     }
 
@@ -317,6 +321,10 @@ function fileSelectionChange(files: File[]) {
 
 async function download(files: File[]) {
     for (const file of files) {
+        if (file.status !== fileStatus.ok) {
+            promptError(`文件${fileStatusMap[file.status]}`)
+            continue
+        }
         await window.open(file.url)
     }
 }

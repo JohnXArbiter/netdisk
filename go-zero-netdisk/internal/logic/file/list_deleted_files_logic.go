@@ -45,10 +45,12 @@ func (l *ListDeletedFilesLogic) ListDeletedFiles() (resp []*types.DeletedFilesRe
 	var folderIds []int64
 	m := make(map[int64]string)
 	for _, file := range files {
-		if _, ok := m[file.FolderId]; !ok {
-			folderIds = append(folderIds, file.FolderId)
-		} else {
-			m[file.FolderId] = ""
+		if file.FolderId != 0 {
+			if _, ok := m[file.FolderId]; !ok {
+				folderIds = append(folderIds, file.FolderId)
+			} else {
+				m[file.FolderId] = ""
+			}
 		}
 	}
 

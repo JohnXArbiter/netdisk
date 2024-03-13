@@ -9,8 +9,10 @@ export interface File {
     type: number
     status: number
     updated: string
+    delFlag: number
     ext?: string
     sizeStr?: string
+    state?: string
 }
 
 export function listFilesByFolderId(parentFolderId: number) {

@@ -59,7 +59,8 @@ type (
     }
 
     RecoverFilesReq {
-        Files []*RecoverFilesStruct `json:"files"`
+        FileIds []int64 `json:"fileIds"`
+        FolderIds []int64 `json:"folderIds"`
     }
 
     ShareReq {
@@ -122,11 +123,6 @@ type (
         fileIds []int64 `json:"fileIds"`
     }
 
-    RecoverFilesStruct {
-        FileId int64 `json:"fileId"`
-        FolderId int64 `json:"folderId"`
-    }
-
     ListShareStruct {
         Id string `json:"id"`
         Pwd string `json:"pwd"`
@@ -155,5 +151,6 @@ type (
         Size int64 `json:"size"`
         Url string `json:"url"`
         Status int8 `json:"status"`
+        DelFlag int8 `json:"delFlag"`
     }
 )

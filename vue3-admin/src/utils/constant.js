@@ -38,14 +38,17 @@ export const userMap = {
 }
 
 export const fileStatus = {
-
+    unuploaded: 0,
     ok: 1,
-    banned: 3
+    undeleted: 2,
+    deleted: 3,
+    banned: 4
 }
 
 export const fileStatusMap = {
-    0: '?',
+    0: '未完成上传',
     1: '正常',
-    2: '已分享',
-    3: '已封禁',
+    2: '未删除',
+    3: '已被删除',
+    4: '已封禁',
 }

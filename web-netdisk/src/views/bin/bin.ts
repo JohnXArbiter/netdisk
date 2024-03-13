@@ -25,6 +25,6 @@ export function deleteAllFilesTruly() {
     return api.post<any, Resp<DeleteFile[]>>('/file/clear')
 }
 
-export function recoverFiles(ids: number[]) {
-    return api.put<any, Resp<DeleteFile[]>>('/file/recover', ids)
+export function recoverFiles(obj: {}) {
+    return api.put<any, Resp<DeleteFile[]>>('/file/recover', obj)
 }
