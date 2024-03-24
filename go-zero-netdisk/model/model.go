@@ -73,6 +73,7 @@ type (
 		FileId   int64 `xorm:"bigint notnull default 0 'file_id'"`
 		FsId     int64 `xorm:"bigint notnull default 0 'fs_id'"`
 		ChunkNum int64 `xorm:"bigint notnull default 0 'chunk_num'"`
+		Stage    int8  `xorm:"tinyint notnull default 0 'stage'"`
 	}
 )
 
@@ -132,4 +133,8 @@ func (*Share) TableName() string {
 
 func (*ShareFile) TableName() string {
 	return "share_file"
+}
+
+func (*Admin) TableName() string {
+	return "admin"
 }

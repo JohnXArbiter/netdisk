@@ -57,6 +57,14 @@ const routes = [
                 },
                 component: () => import('../view/share/Info.vue'),
                 props: true
+            },
+            {
+                path: '/admin',
+                meta: {
+                    title: '管理员列表'
+                },
+                component: () => import('../view/admin/Index.vue'),
+                props: true
             }
         ]
     },

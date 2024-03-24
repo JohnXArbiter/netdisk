@@ -64,6 +64,11 @@
                             </el-icon>
                             <span>系统日志</span>
                         </el-menu-item>
+                        <el-menu-item v-if="admin.data.status === 1"
+                            index="/admin" @click="saveActiveNav('/admin')">
+                            <el-icon><Sunny /></el-icon>
+                            <span>管理员列表</span>
+                        </el-menu-item>
                     </el-menu>
                 </el-aside>
 
@@ -82,7 +87,7 @@
 </template>
 <script setup>
 import {
-    Memo, User, Share, House, ArrowDown
+    Memo, User, Share, House, ArrowDown,Sunny
 } from '@element-plus/icons-vue'
 import {onBeforeMount, reactive, ref} from 'vue';
 import avatar from "../assets/img/img.png"

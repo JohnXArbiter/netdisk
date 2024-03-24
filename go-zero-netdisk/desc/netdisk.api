@@ -184,6 +184,9 @@ service netdisk-api {
 	@handler getAdminInfo
 	get /info () returns ()
 	
+	@handler getAdminList
+	post /list (PageReq) returns ()
+	
 	@handler getShareInfoAdmin
 	get /share-file/:id (IdStrReq) returns (GetShareInfoResp)
 	

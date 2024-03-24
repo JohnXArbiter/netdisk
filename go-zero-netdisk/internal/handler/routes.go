@@ -286,6 +286,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: admin.GetAdminInfoHandler(serverCtx),
 				},
 				{
+					Method:  http.MethodPost,
+					Path:    "/list",
+					Handler: admin.GetAdminListHandler(serverCtx),
+				},
+				{
 					Method:  http.MethodGet,
 					Path:    "/share-file/:id",
 					Handler: admin.GetShareInfoAdminHandler(serverCtx),

@@ -20,6 +20,7 @@ var (
 		".pptx": true,
 		".pdf":  true,
 		".txt":  true,
+		".md":   true,
 	}
 
 	ImageSuffix = map[string]bool{

@@ -85,5 +85,11 @@ func (l *ListFileByTypeLogic) ListFileByType(req *types.FileTypeReq) ([]*types.F
 			Updated: file.Updated.Format(constant.TimeFormat1),
 		})
 	}
+
+	if err := rdb.Expire(l.ctx, key, redis.DownloadTypeExpire).Err(); err != nil {
+		logx.Errorf("ListFileByType，设置过期时间失败，ERR: [%v]", err)
+		return nil, err
+	}
+
 	return resp, nil
 }

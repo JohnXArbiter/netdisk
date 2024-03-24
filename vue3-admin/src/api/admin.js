@@ -4,6 +4,10 @@ function getAdminInfo(id) {
     return http.get(`/admin/info`)
 }
 
+function getAdminList(page) {
+    return http.post('/admin/list', page)
+}
+
 export default {
-    getAdminInfo
+    getAdminInfo, getAdminList
 }

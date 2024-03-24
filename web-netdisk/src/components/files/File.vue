@@ -35,7 +35,7 @@
                           @selection-change="fileSelectionChange"
                 >
                     <el-table-column type="selection" width="55"/>
-                    <el-table-column label="文件名" min-width="500">
+                    <el-table-column label="文件名" min-width="300">
                         <template #default="scope">
                             <div style="display: flex; align-items: center">
                                 <el-image v-if="scope.row.type === typeImage && scope.row.status != fileStatus.banned"
@@ -300,8 +300,14 @@ async function fileCopyAndMoveConfirm() {
 }
 
 async function deleteFilesConfirm() {
-    await deleteFiles(selectedFiles.map(file => file.id), folderId)
-    await listFiles()
+   const resp = await deleteFiles(selectedFiles.map(file => file.id), folderId)
+    if (resp.code === codeOk) {
+        await listFiles()
+        promptSuccess('删除成功')
+        fileDialogVisible[5] = false
+        return
+    }
+    promptError(`删除失败 ${resp.msg}`)
 }
 
 function fileSelectionChange(files: File[]) {
