@@ -7,6 +7,7 @@ require (
 	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/minio/minio-go v6.0.14+incompatible
 	github.com/redis/go-redis/v9 v9.3.0
+	github.com/robfig/cron/v3 v3.0.1
 	github.com/yitter/idgenerator-go v1.3.3
 	github.com/zeromicro/go-zero v1.6.0
 	github.com/zeromicro/x v0.0.0-20230424055333-01c7fb9548d4

@@ -8,6 +8,8 @@ import (
 	"xorm.io/xorm"
 )
 
+var Xorm *Engine
+
 type (
 	DbConf struct {
 		Dsn string
@@ -40,7 +42,9 @@ func Init(conf *DbConf) *Engine {
 		panic("[XORM ERROR] sync mysql 失败，ERR: " + err.Error())
 	}
 	engine.Logger().ShowSQL(true)
-	return &Engine{engine}
+	e := &Engine{engine}
+	Xorm = e
+	return e
 }
 
 func (e *Engine) DoTransaction(fn TxFn) (interface{}, error) {

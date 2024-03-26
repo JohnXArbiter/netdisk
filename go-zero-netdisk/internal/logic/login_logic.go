@@ -40,8 +40,8 @@ func (l *LoginLogic) Login(req *types.LoginReq) (*types.LoginResp, error) {
 	)
 
 	user := &model.User{Username: username}
-	if has, err := engine.Cols("id", "username", "password",
-		"name").Get(user); err != nil || !has {
+	cols := []string{"id", "username", "password", "name"}
+	if has, err := engine.Cols(cols...).Get(user); err != nil || !has {
 		return nil, errors.New("帐号或密码错误！")
 	}
 

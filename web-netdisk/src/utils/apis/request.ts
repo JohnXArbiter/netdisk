@@ -1,7 +1,7 @@
 import {ElMessage} from 'element-plus'
 import axios from 'axios'
 import router from "../../router";
-import {useBaseStore} from "../../store";
+import {useBaseStore} from "@/store";
 import {promptError} from "./base.ts";
 
 function jumpLogin() {
@@ -22,7 +22,7 @@ const api = axios.create({
 api.interceptors.request.use(
     config => {
         const token = useBaseStore().getToken()
-        if (token && typeof window !== "undefined") {
+        if (token && typeof window != undefined) {
             config.headers.Authorization = token
         }
         // config配置对象有headers请求头

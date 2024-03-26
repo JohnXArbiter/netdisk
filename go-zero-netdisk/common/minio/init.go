@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+var Minio *Client
+
 type (
 	Conf struct {
 		Endpoint        string

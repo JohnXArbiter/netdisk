@@ -37,7 +37,7 @@ func (l *DownloadLogic) Download(req *types.DownloadReq) (string, error) {
 	//fsMap, err := l.svcCtx.Redis.HGetAll(l.ctx, key).Result()
 	//if err == nil && fsMap != nil {
 	//	if _, ok := fsMap["id"]; ok {
-	//		return minioService.DownloadFile(l.ctx, fsMap["objectName"])
+	//		return minioService.DownloadChunk(l.ctx, fsMap["objectName"])
 	//	}
 	//}
 

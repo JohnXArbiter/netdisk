@@ -7,6 +7,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"io"
 	"net/url"
+	"os"
 	"strings"
 	"time"
 )
@@ -63,24 +64,24 @@ func (s *Service) GenUrl(objectName string, download bool) (string, error) {
 	return fmt.Sprintf("%v", u), nil
 }
 
-//// DownloadFile 下载文件
-//func (s *Service) DownloadFile(ctx context.Context, objectName string) (string, error) {
-//
-//	file, err := os.CreateTemp("/tmp/netdisk/", "*")
-//	if err != nil {
-//		return "", err
-//	}
-//	defer file.Close()
-//
-//	filename := file.Name()
-//	if err = s.client.FGetObjectWithContext(ctx, s.BucketName, objectName,
-//		filename, minio.GetObjectOptions{}); err != nil {
-//		logx.Errorf("minio下载url出错，err: %v", err)
-//		return "", err
-//	}
-//
-//	return filename, nil
-//}
+// DownloadChunk 下载文件切片
+func (s *Service) DownloadChunk(ctx context.Context, objectName, name string) (*os.File, error) {
+	filename := os.TempDir() + "/" + name
+	file, err := os.Create(filename)
+	if err != nil {
+		logx.Errorf("DownloadChunk，minio下载文件出错，ERR: [%v]", err)
+		return nil, err
+	}
+
+	if err = s.client.FGetObjectWithContext(ctx, s.BucketName, objectName,
+		filename, minio.GetObjectOptions{}); err != nil {
+		logx.Errorf("DownloadChunk，minio下载出错，ERR: [%v]", err)
+		return nil, err
+	}
+
+	return file, nil
+}
+
 //
 //// DeleteFile 删除文件
 //func (s *Service) DeleteFile(bucketName, objectName string) (bool, error) {的miniokehuduan1
@@ -93,19 +94,4 @@ func (s *Service) GenUrl(objectName string, download bool) (string, error) {
 //
 //	fmt.Println("Successfully deleted", objectName)
 //	return true, err
-//}
-//
-//// ListObjects 列出文件
-//func (s *Service) ListObjects(bucketName, prefix string) ([]string, error) {
-//	var objectNames []string
-//
-//	for object := range s.Client.ListObjects(bucketName, prefix, true, nil) {
-//		if object.Err != nil {
-//			return nil, object.Err
-//		}
-//
-//		objectNames = append(objectNames, object.Key)
-//	}
-//
-//	return objectNames, nil
 //}

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/yitter/idgenerator-go/idgen"
 	"github.com/zeromicro/go-zero/core/logx"
+	"lc/netdisk/common"
 	"lc/netdisk/common/constant"
 	"lc/netdisk/common/redis"
 	"lc/netdisk/common/variable"
@@ -80,7 +81,7 @@ func (l *UploadChunkLogic) createSchedule(req *types.UploadChunkReq, fileData mu
 		fileFs.Url = ""
 		fileFs.ObjectName = objectName
 		fileFs.ChunkNum = chunkNum
-		fileFs.Status = constant.StatusFsBigFileNeedMerge
+		fileFs.Status = constant.StatusFsFileNeedMerge
 		if _, err := session.Insert(fileFs); err != nil {
 			return nil, err
 		}
@@ -97,17 +98,20 @@ func (l *UploadChunkLogic) createSchedule(req *types.UploadChunkReq, fileData mu
 		file.ObjectName = objectName
 		file.Size = size
 		file.Type = variable.GetTypeByBruteForce(fileInfo["ext"])
-		file.Status = constant.StatusFileUploaded
+		file.Status = constant.StatusFileNeedMerge
 		file.IsBig = constant.BigFileFlag
 		file.DoneAt = time.Now().Local()
 		if _, err := session.Insert(file); err != nil {
 			return nil, err
 		}
 
+		fileScheduleId := idgen.NextId()
 		fileSchedule := &model.FileSchedule{}
+		fileSchedule.Id = fileScheduleId
 		fileSchedule.FileId = req.FileId
 		fileSchedule.FsId = fsId
 		fileSchedule.ChunkNum = chunkNum
+		fileSchedule.Stage = constant.StageMerging
 		if _, err := session.Insert(fileSchedule); err != nil {
 			return nil, err
 		}
@@ -122,10 +126,26 @@ func (l *UploadChunkLogic) createSchedule(req *types.UploadChunkReq, fileData mu
 			return nil, err
 		}
 
+		ms := &common.MergeStruct{}
+		ms.ObjectName = objectName
+		ms.Hash = fileInfo["hash"]
+		ms.FsId = fsId
+		ms.SId = fileScheduleId
+		ms.ChunkNum = chunkNum
+		go common.Merge(ms, l.errCallBack)
+
 		return nil, nil
 	}
 }
 
 func (l *UploadChunkLogic) incr(key string, value int64) (int64, error) {
 	return l.svcCtx.Redis.HIncrBy(l.ctx, key, "chunkSum", value).Result()
+}
+
+func (l *UploadChunkLogic) errCallBack(sId int64) {
+	fs := &model.FileSchedule{Stage: constant.StageNeedMerge}
+	if _, err := l.svcCtx.Xorm.ID(sId).Update(fs); err != nil {
+		logx.Errorf("createSchedule->errCallBack，退回schedule:%v 状态出错，ERR：[%v]", sId, err)
+		return
+	}
 }

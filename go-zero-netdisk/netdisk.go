@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"lc/netdisk/common/cron"
 	"lc/netdisk/internal/middleware"
 
 	"lc/netdisk/internal/config"
@@ -27,6 +28,8 @@ func main() {
 
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)
+
+	cron.MergeTask()
 
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
 	server.Start()
