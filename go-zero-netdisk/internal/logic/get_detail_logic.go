@@ -69,6 +69,12 @@ func (l *GetDetailLogic) GetDetail(req *types.IdPathReq, loginUserId int64) (int
 		if err = rdb.HSet(l.ctx, key, m2).Err(); err != nil {
 			logx.Errorf("更新用户info，info->redis失败，ERR: [%v]", err)
 		}
+		go func() {
+			if err2 := rdb.Expire(l.ctx, key, redis.UserInfoExpire).Err(); err2 != nil {
+				logx.Errorf("更新用户info，info->redis设置expire失败，ERR: [%v]", err2)
+				return
+			}
+		}()
 		return m2, nil
 	}
 	return m, nil

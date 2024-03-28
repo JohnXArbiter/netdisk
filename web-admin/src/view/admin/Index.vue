@@ -22,14 +22,14 @@
                 <el-table-column prop="state" label="状态" min-width="180"/>
                 <el-table-column label="操作" width="330">
                     <template #default="scope">
-                        <el-button v-if="scope.row.type === typeMulti"
-                                   type="primary" plain size="small"
-                                   @click="openInfo(`/share/${scope.row.id}`)">进入查看
-                        </el-button>
-                        <el-button v-if="scope.row.type !== typeMulti"
-                                   type="primary" plain size="small"
-                                   @click="getUrl(scope.row.id)">下载查看
-                        </el-button>
+<!--                        <el-button v-if="scope.row.type === typeMulti"-->
+<!--                                   type="primary" plain size="small"-->
+<!--                                   @click="openInfo(`/share/${scope.row.id}`)">进入查看-->
+<!--                        </el-button>-->
+<!--                        <el-button v-if="scope.row.type !== typeMulti"-->
+<!--                                   type="primary" plain size="small"-->
+<!--                                   @click="getUrl(scope.row.id)">下载查看-->
+<!--                        </el-button>-->
                         <el-button v-if="scope.row.status === 1"
                                    type="danger" size="small" disabled
                                    @click="buttonClick(1, scope.row.id, shareIllegal, scope.row.type)">封禁
@@ -38,7 +38,8 @@
                                    type="danger" size="small" 
                                    @click="buttonClick(1, scope.row.id, shareIllegal, scope.row.type)">封禁
                         </el-button>
-                        <el-button v-if="scope.row.status === shareIllegal"
+<!--                        <el-button v-if="scope.row.status === shareIllegal"-->
+                        <el-button
                                    type="primary" size="small"
                                    @click="buttonClick(0, scope.row.id, shareNotExpired, scope.row.type)">恢复
                         </el-button>

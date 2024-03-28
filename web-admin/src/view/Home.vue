@@ -44,7 +44,7 @@
                             <el-icon>
                                 <house/>
                             </el-icon>
-                            <span>首页</span>
+                            <span>首页（日志审计）</span>
                         </el-menu-item>
                         <el-menu-item index="/user/list" @click="">
                             <el-icon>
@@ -58,12 +58,12 @@
                             </el-icon>
                             <span>分享管理</span>
                         </el-menu-item>
-                        <el-menu-item index="/log" @click="saveActiveNav('/log')">
-                            <el-icon>
-                                <Memo/>
-                            </el-icon>
-                            <span>系统日志</span>
-                        </el-menu-item>
+<!--                        <el-menu-item index="/log" @click="saveActiveNav('/log')">-->
+<!--                            <el-icon>-->
+<!--                                <Memo/>-->
+<!--                            </el-icon>-->
+<!--                            <span>系统日志</span>-->
+<!--                        </el-menu-item>-->
                         <el-menu-item v-if="admin.data.status === 1"
                             index="/admin" @click="saveActiveNav('/admin')">
                             <el-icon><Sunny /></el-icon>
