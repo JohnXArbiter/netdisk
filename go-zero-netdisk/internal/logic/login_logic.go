@@ -3,9 +3,12 @@ package logic
 import (
 	"context"
 	"errors"
+	"fmt"
 	"golang.org/x/crypto/bcrypt"
+	"lc/netdisk/common/constant"
 	"lc/netdisk/common/redis"
 	"lc/netdisk/common/utils"
+	"lc/netdisk/common/variable"
 	"lc/netdisk/model"
 	"strconv"
 	"strings"
@@ -40,7 +43,7 @@ func (l *LoginLogic) Login(req *types.LoginReq) (*types.LoginResp, error) {
 	)
 
 	user := &model.User{Username: username}
-	cols := []string{"id", "username", "password", "name"}
+	cols := []string{"id", "username", "password", "name", "status"}
 	if has, err := engine.Cols(cols...).Get(user); err != nil || !has {
 		return nil, errors.New("帐号或密码错误！")
 	}
@@ -48,6 +51,11 @@ func (l *LoginLogic) Login(req *types.LoginReq) (*types.LoginResp, error) {
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password),
 		[]byte(password)); err != nil {
 		return nil, errors.New("帐号或密码错误！")
+	}
+
+	if user.Status != constant.StatusUserOk {
+		reason := fmt.Sprintf(constant.BanStr, variable.BanM[user.Status])
+		return nil, errors.New(reason)
 	}
 
 	token, err := utils.GenToken(user.Id, user.Name)
