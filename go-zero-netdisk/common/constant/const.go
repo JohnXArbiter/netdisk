@@ -66,6 +66,8 @@ const (
 	StatusUserBannedByName
 	StatusUserBannedBySignature
 	StatusUserBannedByShare
+
+	BanStr = "您因%v违规而被封禁，暂时无法登录"
 )
 
 const (

@@ -8,6 +8,14 @@ import (
 var (
 	Upattern, _ = regexp.Compile("^[a-zA-Z0-9]{6,20}$")
 	Ppattern, _ = regexp.Compile("^[a-zA-Z0-9!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~]{6,20}$")
+
+	BanM = map[int8]string{
+		constant.StatusUserBannedByName:      "昵称",
+		constant.StatusUserBannedByUsername:  "用户名",
+		constant.StatusUserBannedBySignature: "签名",
+		constant.StatusUserBannedByAvatar:    "头像",
+		constant.StatusUserBannedByShare:     "分享",
+	}
 )
 
 var (
