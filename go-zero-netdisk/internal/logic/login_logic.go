@@ -6,6 +6,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"lc/netdisk/common/redis"
 	"lc/netdisk/common/utils"
+	"lc/netdisk/internal/logic/mqs"
 	"lc/netdisk/model"
 	"strconv"
 	"strings"
@@ -37,7 +38,10 @@ func (l *LoginLogic) Login(req *types.LoginReq) (*types.LoginResp, error) {
 		password    = strings.TrimSpace(req.Password)
 		engine      = l.svcCtx.Xorm
 		redisClient = l.svcCtx.Redis
+		err         error
 	)
+
+	defer mqs.LogSend(l.ctx, err, "Login", username)
 
 	user := &model.User{Username: username}
 	cols := []string{"id", "username", "password", "name"}

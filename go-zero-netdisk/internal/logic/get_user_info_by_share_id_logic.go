@@ -49,7 +49,7 @@ func (l *GetUserInfoByShareIdLogic) GetUserInfoByShareId(req *types.IdPathReq) (
 		return nil, errors.New("找不到用户信息！")
 	}
 
-	url, err := minioSvc.GenUrl(user.Avatar, false)
+	url, err := minioSvc.GenUrl(user.Avatar, "", false)
 	if err != nil {
 		logx.Errorf("GetUserInfoByShareId，获取头像url失败，ERR: [%v]", err)
 	}

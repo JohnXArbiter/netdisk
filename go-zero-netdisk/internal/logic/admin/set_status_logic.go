@@ -2,6 +2,7 @@ package admin
 
 import (
 	"context"
+	"lc/netdisk/internal/logic/mqs"
 	"lc/netdisk/model"
 
 	"lc/netdisk/internal/svc"
@@ -27,10 +28,13 @@ func NewSetStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SetStat
 func (l *SetStatusLogic) SetStatus(req *types.SetStatusReq) error {
 	var (
 		engine = l.svcCtx.Xorm
+		err    error
 	)
 
+	defer mqs.LogSend(l.ctx, err, "SetStatus", req.Id, req.Status)
+
 	bean := &model.User{Status: req.Status}
-	if _, err := engine.ID(req.Id).
+	if _, err = engine.ID(req.Id).
 		Cols("status").
 		Update(bean); err != nil {
 		logx.Errorf("SetStatus，更新失败，ERR: [%v]", err)

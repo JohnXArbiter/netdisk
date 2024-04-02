@@ -36,7 +36,7 @@ func (l *GetUrlLogic) GetUrl(req *types.GetUrlReq) (url string, err error) {
 
 	var objectName string
 	if req.Type == 0 {
-		if has, err = engine.Table(&model.Share{}).Alias("a").Select("c.object_name").
+		if has, err = engine.Table(&model.Share{}).Alias("a").Select("c.object_name, c.name").
 			Join("LEFT", []string{shareFile.TableName(), "b"}, "a.id = b.share_id").
 			Join("LEFT", []string{file.TableName(), "c"}, "c.id = b.file_id").
 			Where("a.id = ?", req.Id).Get(&objectName); err != nil {
@@ -55,7 +55,7 @@ func (l *GetUrlLogic) GetUrl(req *types.GetUrlReq) (url string, err error) {
 		return "", errors.New("没有找到文件链接")
 	}
 
-	url, err = minioSvc.GenUrl(objectName, true)
+	url, err = minioSvc.GenUrl(objectName, file.Name, true)
 	if err != nil {
 		return "", err
 	}

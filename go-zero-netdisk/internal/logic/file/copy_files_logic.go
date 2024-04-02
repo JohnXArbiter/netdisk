@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/yitter/idgenerator-go/idgen"
 	"lc/netdisk/common/constant"
+	"lc/netdisk/internal/logic/mqs"
 	"lc/netdisk/model"
 	"time"
 
@@ -34,7 +35,10 @@ func (l *CopyFilesLogic) CopyFiles(req *types.CopyFilesReq) error {
 		engine   = l.svcCtx.Xorm
 		folderId = req.FolderId
 		files    []*model.File
+		err      error
 	)
+
+	defer mqs.LogSend(l.ctx, err, "CopyFiles", req.FileIds)
 
 	if folderId != 0 {
 		has, err := engine.ID(folderId).And("user_id = ?", userId).Get(&model.Folder{})
@@ -45,7 +49,7 @@ func (l *CopyFilesLogic) CopyFiles(req *types.CopyFilesReq) error {
 		}
 	}
 
-	if err := engine.In("id", req.FileIds).Find(&files); err != nil {
+	if err = engine.In("id", req.FileIds).Find(&files); err != nil {
 		return errors.New("发生错误！" + err.Error())
 	}
 

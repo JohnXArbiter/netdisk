@@ -18,10 +18,11 @@ func MergeTask() {
 		hours = append(hours, strconv.Itoa(i))
 	}
 
-	_, err := reportCron.AddFunc("*/30 * * * *", common.MergeLogic)
+	_, err := reportCron.AddFunc("* * * * *", common.MergeLogic)
 	if err != nil {
 		logx.Errorf("MergeTask，添加合并定时任务失败，ERR: [%v]", err)
 	}
 
+	logx.Info("MergeTask，添加合并定时任务成功")
 	reportCron.Start()
 }

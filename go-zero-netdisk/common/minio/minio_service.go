@@ -46,12 +46,18 @@ func (s *Service) IfExist(objectName string) (bool, error) {
 	return true, nil
 }
 
-func (s *Service) GenUrl(objectName string, download bool) (string, error) {
-	var u *url.URL
-	var err error
+func (s *Service) GenUrl(objectName string, filename string, download bool) (string, error) {
+	var (
+		u   *url.URL
+		err error
+	)
 
 	if download {
-		kvs := url.Values{"response-content-disposition": []string{"attachment; filename=" + objectName}}
+		kvs := url.Values{}
+		kvs["response-content-disposition"] = []string{"attachment; filename=" + objectName}
+		if filename != "" {
+			kvs["response-content-disposition"] = []string{"attachment; filename=" + filename}
+		}
 		u, err = s.client.PresignedGetObject(s.BucketName, objectName, 7*24*time.Hour, kvs)
 	} else {
 		u, err = s.client.PresignedGetObject(s.BucketName, objectName, 7*24*time.Hour, nil)

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"lc/netdisk/common/constant"
+	"lc/netdisk/internal/logic/mqs"
 	"lc/netdisk/model"
 
 	"lc/netdisk/internal/svc"
@@ -31,9 +32,12 @@ func (l *DeleteFilesTrulyLogic) DeleteFilesTruly(req *types.IdsReq) error {
 		userId = l.ctx.Value(constant.UserIdKey).(int64)
 		engine = l.svcCtx.Xorm
 		files  []*model.File
+		err    error
 	)
 
-	if err := engine.Cols("id").In("id", req).And("user_id = ?", userId).
+	defer mqs.LogSend(l.ctx, err, "DeleteFilesTruly", req.Ids)
+
+	if err = engine.Cols("id").In("id", req).And("user_id = ?", userId).
 		And("del_flag = ?", constant.StatusFileDeleted).Find(&files); err != nil {
 		return err
 	}
@@ -43,11 +47,13 @@ func (l *DeleteFilesTrulyLogic) DeleteFilesTruly(req *types.IdsReq) error {
 		return errors.New("发生错误！")
 	}
 
-	if affected, err := engine.In("id", req.Ids).
-		Delete(&model.File{}); err != nil {
-		return errors.New("发生错误，" + err.Error())
+	if affected, err2 := engine.In("id", req.Ids).
+		Delete(&model.File{}); err2 != nil {
+		err = errors.New("发生错误，" + err2.Error())
+		return err
 	} else if affected != int64(length) {
-		return errors.New("发生错误！")
+		err = errors.New("发生错误！")
+		return err
 	}
 
 	// TODO: MQ

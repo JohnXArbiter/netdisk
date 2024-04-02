@@ -39,7 +39,7 @@ func (l *ListUsersLogic) ListUsers(req *types.PageReq) ([]*model.User, error) {
 
 	//var resp []*types.UserInfo
 	for _, user := range users {
-		url, err := minioSvc.GenUrl(user.Avatar, false)
+		url, err := minioSvc.GenUrl(user.Avatar, "", false)
 		if err != nil {
 			continue
 		}

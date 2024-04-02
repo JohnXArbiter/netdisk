@@ -2,9 +2,11 @@ package file
 
 import (
 	"context"
-	"errors"
 	"lc/netdisk/common/constant"
+	"lc/netdisk/common/variable"
+	"lc/netdisk/internal/logic/mqs"
 	"lc/netdisk/model"
+	"strings"
 
 	"lc/netdisk/internal/svc"
 	"lc/netdisk/internal/types"
@@ -30,14 +32,18 @@ func (l *UpdateFileLogic) UpdateFile(req *types.UpdateNameReq) error {
 	var (
 		userId = l.ctx.Value(constant.UserIdKey).(int64)
 		engine = l.svcCtx.Xorm
+		err    error
 	)
 
-	// TODO: 文件格式
-	if affected, err := engine.ID(req.Id).And("user_id = ?", userId).
-		Update(&model.File{Name: req.Name}); err != nil {
+	defer mqs.LogSend(l.ctx, err, "UpdateFile", req.Id, req.Name)
+
+	ext := req.Name[strings.LastIndex(req.Name, "."):]
+	fType := variable.GetTypeByBruteForce(ext)
+	file := &model.File{Name: req.Name, Type: fType}
+	if _, err = engine.ID(req.Id).
+		And("user_id = ?", userId).
+		Update(file); err != nil {
 		return err
-	} else if affected != 1 {
-		return errors.New("文件信息有误！")
 	}
 
 	return nil

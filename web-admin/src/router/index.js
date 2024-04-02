@@ -59,6 +59,14 @@ const routes = [
                 props: true
             },
             {
+                path: '/log',
+                meta: {
+                    title: '日志'
+                },
+                component: () => import('../view/log/Index.vue'),
+                props: true
+            },
+            {
                 path: '/admin',
                 meta: {
                     title: '管理员列表'

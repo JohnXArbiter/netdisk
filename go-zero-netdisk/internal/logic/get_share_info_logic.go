@@ -59,7 +59,7 @@ func (l *GetShareInfoLogic) GetShareInfo(req *types.GetShareInfoReq) (*types.Get
 	}
 
 	for _, file := range files {
-		url, err := minioSvc.GenUrl(file.ObjectName, true)
+		url, err := minioSvc.GenUrl(file.ObjectName, file.Name, true)
 		if err != nil {
 			logx.Errorf("获取分享文件列表，生成文件url出错：ERR: [%v]", err)
 			url = ""

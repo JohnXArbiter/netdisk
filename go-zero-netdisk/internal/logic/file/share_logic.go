@@ -7,6 +7,7 @@ import (
 	"lc/netdisk/common/constant"
 	"lc/netdisk/common/variable"
 	"lc/netdisk/common/xorm"
+	"lc/netdisk/internal/logic/mqs"
 	"lc/netdisk/internal/svc"
 	"lc/netdisk/internal/types"
 	"lc/netdisk/model"
@@ -35,19 +36,24 @@ func (l *ShareLogic) Share(req *types.ShareReq) error {
 		userId         = l.ctx.Value(constant.UserIdKey).(int64)
 		engine         = l.svcCtx.Xorm
 		shareType int8 = constant.TypeShareMulti
+		err       error
 	)
+
+	defer mqs.LogSend(l.ctx, err, "Share", req.FileIds)
 
 	if req.Pwd == "" {
 		return errors.New("出错啦，请重试")
 	}
 
 	var file model.File
-	if has, err := engine.Select("name, ext").
+	if has, err2 := engine.Select("name, ext").
 		ID(req.FileIds[0]).Get(&file); err != nil {
-		logx.Errorf("分享多文件，查询file失败，ERR: [%v]", err)
-		return errors.New("出错了")
+		logx.Errorf("分享多文件，查询file失败，ERR: [%v]", err2)
+		err = errors.New("出错了，" + err2.Error())
+		return err
 	} else if !has {
-		return errors.New("信息有误")
+		err = errors.New("信息有误")
+		return err
 	}
 
 	shareName := file.Name
@@ -63,7 +69,7 @@ func (l *ShareLogic) Share(req *types.ShareReq) error {
 		url += "?pwd=" + req.Pwd
 	}
 
-	_, err := engine.DoTransaction(func(session *xorm.Session) (interface{}, error) {
+	_, err = engine.DoTransaction(func(session *xorm.Session) (interface{}, error) {
 		var shareFile []*model.ShareFile
 		for _, fileId := range req.FileIds {
 			shareFile = append(shareFile, &model.ShareFile{

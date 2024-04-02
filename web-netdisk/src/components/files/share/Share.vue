@@ -78,7 +78,7 @@
                     </el-table-column>
                     <el-table-column min-width="100">
                         <template #default="scope">
-                            <span @click="copyLink(scope.row.link, false)">
+                            <span @click="copyLink(scope.row.url, false)">
                                 <el-icon color="#48a3ff"><Link/></el-icon>
                             </span>
                             &nbsp;&nbsp;&nbsp;
@@ -178,10 +178,10 @@ async function cancel() {
 
 async function copyLink(link: string, button: boolean) {
     if (button) {
-        link = (fileTableRef.value!.getSelectionRows())[0].link
+        link = (fileTableRef.value!.getSelectionRows())[0].url
     }
     try {
-        console.log(link)
+        console.log((fileTableRef.value!.getSelectionRows())[0])
         await navigator.clipboard.writeText(link)
         promptSuccess('已将链接复制到剪贴板')
     } catch (e) {

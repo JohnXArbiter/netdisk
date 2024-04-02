@@ -21,13 +21,15 @@ type MergeStruct struct {
 }
 
 func MergeLogic() {
+	//mqs.LogSend(context.Background(), nil, "MergeLogic", time.Now().Local())
+
 	var mss []*MergeStruct
 	cols := "a.id as sId, b.id as fsId, b.object_name, b.hash, b.chunk_num"
 	if err := xorm.Xorm.Select(cols).
 		Table(&model.FileSchedule{}).Alias("a").
 		Join("LEFT", []string{"file_fs", "b"}, "a.fs_id = b.id").
 		Where("a.stage = ?", constant.StageNeedMerge).
-		Limit(1000).Find(mss); err != nil {
+		Limit(1000).Find(&mss); err != nil {
 		logx.Errorf("MergeLogic，查询fileSchedule出错，ERR：[%v]", err)
 		return
 	}
@@ -64,9 +66,10 @@ func Merge(ms *MergeStruct, errCallBack func(int64)) {
 	for i := 0; int64(i) < ms.ChunkNum; i++ {
 		objectName := ms.ObjectName + "@" + strconv.Itoa(i)
 		fileName := ms.Hash + "@" + strconv.Itoa(i)
+		logx.Info(objectName, "    ", fileName)
 		chunk, err2 := minioSvc.DownloadChunk(context.TODO(), objectName, fileName)
 		if err2 != nil {
-			logx.Errorf("MergeLogic，文件%v 下载分片[%v]失败，ERR：[%v]", ms.Hash, i, err2)
+			logx.Errorf("MergeLogic，文件%v 下载分片[%v] 失败，ERR：[%v]", ms.Hash, i, err2)
 			err = err2
 			return
 		}

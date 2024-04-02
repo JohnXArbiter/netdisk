@@ -17,4 +17,11 @@ type Config struct {
 	Idgen struct {
 		WorkerId uint16
 	}
+	KqPusherConfs []*KqPusherConf
+}
+
+type KqPusherConf struct {
+	Type    string
+	Brokers []string
+	Topic   string
 }

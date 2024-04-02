@@ -9,6 +9,7 @@ import (
 	"lc/netdisk/common/redis"
 	"lc/netdisk/common/variable"
 	"lc/netdisk/common/xorm"
+	"lc/netdisk/internal/logic/mqs"
 	"lc/netdisk/internal/svc"
 	"lc/netdisk/internal/types"
 	"lc/netdisk/model"
@@ -36,7 +37,10 @@ func (l *UploadLogic) Upload(req *types.UploadReq, fileParam *types.FileParam) (
 		userId = l.ctx.Value(constant.UserIdKey).(int64)
 		engine = l.svcCtx.Xorm
 		rdb    = l.svcCtx.Redis
+		err    error
 	)
+
+	defer mqs.LogSend(l.ctx, err, "Upload", req.FileId, fileParam.FileHeader.Size)
 
 	fileIdStr := strconv.FormatInt(req.FileId, 10)
 	key := redis.UploadCheckKey + fileIdStr
@@ -54,11 +58,10 @@ func (l *UploadLogic) Upload(req *types.UploadReq, fileParam *types.FileParam) (
 
 	folderId := fileInfo["folderId"]
 	if folderId != "0" {
-		if has, err := engine.Where("id = ?", folderId).
-			Exist(&model.FileFs{}); err != nil {
+		if _, err2 := engine.ID(folderId).
+			Exist(&model.Folder{}); err != nil {
+			err = err2
 			return nil, err
-		} else if !has {
-			return nil, errors.New("信息有误3")
 		}
 	}
 
@@ -85,7 +88,6 @@ func (l *UploadLogic) saveAndUpload(fileInfo map[string]string, fileData multipa
 		fileFs.Ext = fileInfo["ext"]
 		fileFs.Hash = fileInfo["hash"]
 		fileFs.Size = size
-		fileFs.Url = ""
 		fileFs.Status = constant.StatusFsUploaded
 		if _, err := session.Insert(fileFs); err != nil {
 			return nil, err
@@ -95,7 +97,6 @@ func (l *UploadLogic) saveAndUpload(fileInfo map[string]string, fileData multipa
 		folderId, _ := strconv.ParseInt(fileInfo["folderId"], 10, 64)
 		file := &model.File{}
 		file.Name = fileInfo["name"]
-		file.Url = ""
 		file.ObjectName = objectName
 		file.Size = size
 		file.Ext = fileInfo["ext"]

@@ -82,3 +82,27 @@ var ShareExpireType = map[int8]int64{
 	constant.ShareExpireMonth:   2592000,
 	constant.ShareExpireForever: 0,
 }
+
+var OperationM = map[string]string{
+	"Login":               "账号：%v 登录了",
+	"Upload":              "上传了文件，文件id：%v",
+	"CopyFiles":           "复制文件id：%v",
+	"CreateFolder":        "创建了文件夹，名称：%v",
+	"DeleteAllFilesTruly": "清空了回收站",
+	"DeleteFiles":         "删除了文件，文件id：%v",
+	"DeleteFilesTruly":    "删除了回收站文件，文件id：%v",
+	"DeleteFolders":       "删除文件夹，文件夹id：%v",
+	"MoveFiles":           "移动了文件，文件id：%v",
+	"MoveFolders":         "移动了文件夹，文件夹id：%v",
+	"RecoverFiles":        "恢复了文件id：%v",
+	"ShareCancel":         "取消了分享，分享id：%v",
+	"ShareFolder":         "分享了文件夹，分享的文件夹id：%v",
+	"Share":               "分享了文件，分享的文件id：%v",
+	"UpdateFile":          "修改了文件名，文件id：%v",
+	"UpdateFolder":        "修改了文件夹名，文件夹id：%v",
+	"AdminLogin":          "管理员账号：%v 登录了",
+	"SetFileStatus":       "管理员设置文件状态：%v",
+	"SetShareStatus":      "管理员设置分享状态：%v",
+	"SetStatus":           "设置管理员状态：%v",
+	"MergeLogic":          "分片文件合并任务开始，时间：%v",
+}

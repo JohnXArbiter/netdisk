@@ -103,7 +103,6 @@ async function uploadSlice(file: UploadRawFile, fileId: number, hash: string) {
     if (chunks.length != chunkNum) {
         promptError('上传' + file.name + '过程出错！😿')
     }
-    // await Promise.all(chunks.map(checkChunkAndUpload))
 
     for (let i = 0; i < chunkNum; i++) {
         await checkChunkAndUpload(chunks[i], i)

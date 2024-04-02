@@ -7,6 +7,7 @@ import (
 	"lc/netdisk/common/constant"
 	"lc/netdisk/common/variable"
 	"lc/netdisk/common/xorm"
+	"lc/netdisk/internal/logic/mqs"
 	"lc/netdisk/internal/svc"
 	"lc/netdisk/internal/types"
 	"lc/netdisk/model"
@@ -37,7 +38,10 @@ func (l *ShareFolderLogic) ShareFolder(req *types.ShareFolderReq) error {
 		folderIds  = req.FolderIds
 		folders    []*model.Folder
 		shareFiles []*model.ShareFile
+		err        error
 	)
+
+	defer mqs.LogSend(l.ctx, err, "ShareFolder", req.FolderIds)
 
 	if req.Pwd == "" {
 		return errors.New("出错啦，请重试")
@@ -45,19 +49,21 @@ func (l *ShareFolderLogic) ShareFolder(req *types.ShareFolderReq) error {
 
 	id := strconv.FormatInt(idgen.NextId(), 10)
 	url := req.Prefix + id + "?pwd=" + req.Pwd
-	if has, err := engine.In("id", folderIds).
-		Get(&folders); err != nil {
-		logx.Errorf("分享文件夹，查询folder失败，ERR: [%v]", err)
-		return errors.New("出错了")
+	if has, err2 := engine.In("id", folderIds).
+		Get(&folders); err2 != nil {
+		logx.Errorf("分享文件夹，查询folder失败，ERR: [%v]", err2)
+		err = errors.New("出错了，" + err2.Error())
+		return err
 	} else if !has {
-		return errors.New("信息有误")
+		err = errors.New("信息有误")
+		return err
 	}
 
 	folderName := folders[0].Name
 	for len(folderIds) > 0 {
 		// 1.获取当前文件夹下的文件
 		var fileIds []int64
-		if err := engine.In("folder_id", folderIds).
+		if err = engine.In("folder_id", folderIds).
 			And("user_id = ?", userId).
 			And("del_flag = ?", constant.StatusFileUndeleted).
 			Find(&fileIds); err != nil {
@@ -67,7 +73,7 @@ func (l *ShareFolderLogic) ShareFolder(req *types.ShareFolderReq) error {
 
 		// 2.搜索下一层文件夹
 		var folderIds2 []int64
-		if err := engine.Select("id").In("parent_id", folderIds).
+		if err = engine.Select("id").In("parent_id", folderIds).
 			And("user_id = ?", userId).
 			And("del_flag = ?", constant.StatusFolderUndeleted).
 			Find(&folderIds2); err != nil {
@@ -84,7 +90,7 @@ func (l *ShareFolderLogic) ShareFolder(req *types.ShareFolderReq) error {
 		}
 	}
 
-	_, err := engine.DoTransaction(func(session *xorm.Session) (interface{}, error) {
+	_, err = engine.DoTransaction(func(session *xorm.Session) (interface{}, error) {
 		if _, err := session.Insert(shareFiles); err != nil {
 			logx.Errorf("分享文件夹，插入shareFile失败，ERR: [%v]", err)
 			return nil, err

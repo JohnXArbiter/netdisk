@@ -200,6 +200,7 @@ async function recoverOrDelete(option: number) {
         let recoverObj = {fileIds: [], folderIds: []}
         if (singleSelectedFile.value.id === 0) {
             const m = new Map()
+
             selectedFiles.forEach(file => {
                 if (file.folderId !== 0) {
                     if (!m.has(file.folderId)) {

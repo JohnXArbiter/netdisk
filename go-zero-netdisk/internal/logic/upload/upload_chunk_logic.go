@@ -15,6 +15,7 @@ import (
 	"lc/netdisk/model"
 	"mime/multipart"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -39,36 +40,40 @@ func (l *UploadChunkLogic) UploadChunk(req *types.UploadChunkReq, fileParam *typ
 		checkKey = fmt.Sprintf(redis.UploadCheckChunkKeyF, req.FileId, req.ChunkSeq)
 	)
 
+	// 1. 取到分片的临时 key
 	objectName, err := rdb.Get(l.ctx, checkKey).Result()
 	if err != nil {
 		return err
 	}
 
+	// 2. 获取文件信息
 	bigFileKey := redis.UploadCheckBigFileKey + strconv.FormatInt(req.FileId, 10)
 	fileInfo, err := rdb.HGetAll(l.ctx, bigFileKey).Result()
 	if err != nil {
 		return err
 	}
 
+	// 3. 靠 chunkSum 保证总数正确
 	chunkSum, _ := strconv.ParseInt(fileInfo["chunkSum"], 10, 64)
 	chunkNum, _ := strconv.ParseInt(fileInfo["chunkNum"], 10, 64)
 
 	if chunkSum+1 == chunkNum {
 		_, err = engine.DoTransaction(l.createSchedule(req, fileParam.File, objectName, chunkNum, fileInfo))
+		rdb.Del(l.ctx, bigFileKey)
 	} else {
 		if err = l.svcCtx.Minio.NewService().Upload(l.ctx, objectName, fileParam.File); err != nil {
 			return err
 		}
 		_, err = l.incr(bigFileKey, 1)
 	}
-	_, _ = rdb.Del(l.ctx, checkKey).Result()
+	rdb.Del(l.ctx, checkKey)
 	return nil
 }
 
 func (l *UploadChunkLogic) createSchedule(req *types.UploadChunkReq, fileData multipart.File,
 	objectName string, chunkNum int64, fileInfo map[string]string) xorm.TxFn {
 	return func(session *xorm.Session) (interface{}, error) {
-
+		objectName = objectName[:strings.LastIndex(objectName, "@")]
 		size, _ := strconv.ParseInt(fileInfo["size"], 10, 64)
 		fsId := idgen.NextId()
 		fileFs := &model.FileFs{}
@@ -78,7 +83,6 @@ func (l *UploadChunkLogic) createSchedule(req *types.UploadChunkReq, fileData mu
 		fileFs.Name = fileInfo["name"]
 		fileFs.Hash = fileInfo["hash"]
 		fileFs.Size = size
-		fileFs.Url = ""
 		fileFs.ObjectName = objectName
 		fileFs.ChunkNum = chunkNum
 		fileFs.Status = constant.StatusFsFileNeedMerge
@@ -93,7 +97,6 @@ func (l *UploadChunkLogic) createSchedule(req *types.UploadChunkReq, fileData mu
 		file.UserId = userId
 		file.FsId = fsId
 		file.FolderId = folderId
-		file.Url = ""
 		file.Ext = fileInfo["ext"]
 		file.ObjectName = objectName
 		file.Size = size
@@ -101,6 +104,7 @@ func (l *UploadChunkLogic) createSchedule(req *types.UploadChunkReq, fileData mu
 		file.Status = constant.StatusFileNeedMerge
 		file.IsBig = constant.BigFileFlag
 		file.DoneAt = time.Now().Local()
+		file.DelFlag = constant.StatusFileUndeleted
 		if _, err := session.Insert(file); err != nil {
 			return nil, err
 		}

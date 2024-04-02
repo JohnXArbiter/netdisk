@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"lc/netdisk/common/constant"
+	"lc/netdisk/internal/logic/mqs"
 	"lc/netdisk/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,9 +30,12 @@ func (l *DeleteAllFilesTrulyLogic) DeleteAllFilesTruly() error {
 		userId = l.ctx.Value(constant.UserIdKey).(int64)
 		engine = l.svcCtx.Xorm
 		files  []*model.File
+		err    error
 	)
 
-	if err := engine.Where("user_id = ?", userId).
+	defer mqs.LogSend(l.ctx, err, "DeleteAllFilesTruly")
+
+	if err = engine.Where("user_id = ?", userId).
 		And("del_flag = ?", constant.StatusFileDeleted).
 		Find(&files); err != nil {
 		return errors.New("出错啦！，" + err.Error())

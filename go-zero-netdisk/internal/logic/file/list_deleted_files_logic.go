@@ -54,8 +54,8 @@ func (l *ListDeletedFilesLogic) ListDeletedFiles() (resp []*types.DeletedFilesRe
 		}
 	}
 
-	if err = engine.Select("id, name").In("id", folderIds).
-		//And("del_flag = ?", constant.StatusFolderUndeleted).
+	if err = engine.Select("id, name").
+		In("id", folderIds).
 		Find(&folders); err != nil {
 		return nil, err
 	}
@@ -69,7 +69,6 @@ func (l *ListDeletedFilesLogic) ListDeletedFiles() (resp []*types.DeletedFilesRe
 		resp = append(resp, &types.DeletedFilesResp{
 			Id:         file.Id,
 			Name:       file.Name,
-			Url:        file.Url,
 			Status:     file.Status,
 			Size:       file.Size,
 			FolderId:   file.FolderId,

@@ -60,7 +60,7 @@ func (l *ListFileByTypeLogic) ListFileByType(req *types.FileTypeReq) ([]*types.F
 		if len(zs) == len(files) && redisErr == nil {
 			url = zs[i].Member.(string)
 		} else {
-			url2, err := minioSvc.GenUrl(file.ObjectName, true)
+			url2, err := minioSvc.GenUrl(file.ObjectName, file.Name, true)
 			if err != nil {
 				logx.Errorf("通过类型获取文件列表，[%d]获取url失败，err: %v", file.ObjectName, redisErr)
 			} else {

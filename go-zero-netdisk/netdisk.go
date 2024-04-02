@@ -26,11 +26,18 @@ func main() {
 	defer server.Stop()
 	server.Use(middleware.HandleCors)
 
-	ctx := svc.NewServiceContext(c)
-	handler.RegisterHandlers(server, ctx)
+	svcCtx := svc.NewServiceContext(c)
+	handler.RegisterHandlers(server, svcCtx)
+
+	//svcGroup := service.NewServiceGroup()
+	//svcGroup.Add(server)
+	//for _, mq := range mqc.Consumers(c, context.Background(), svcCtx) {
+	//	svcGroup.Add(mq)
+	//}
 
 	cron.MergeTask()
 
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
+	//svcGroup.Start()
 	server.Start()
 }

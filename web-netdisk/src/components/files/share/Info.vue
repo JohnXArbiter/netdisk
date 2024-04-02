@@ -56,8 +56,10 @@
                 <!--                          description="当前分享文件夹没有文件 😺"/>-->
 
                 <div style="margin: 20px 0">
-                    <div style="font-size: 2rem; font-weight: 700; margin-bottom: 10px">
-                        {{ list.name }}
+                    <div style="font-size: 1.8rem; font-weight: 700; margin-bottom: 10px">
+                        <div>
+                            {{ list.name }}
+                        </div>
                         <span style="float: right;">
                             <el-button v-if="ownerInfo.data.userId != list.owner"
                                        size="large" type="primary"
@@ -75,11 +77,18 @@
                                 </el-icon>&nbsp;
                                 下载
                             </el-button>
-                                <el-button plain size="large" type="danger"
+                                <el-button v-if="ownerInfo.data.userId == userInfo.id"
+                                           plain size="large" type="danger"
                                            @click="dialogVisible = true">
                                 <el-icon><CircleClose/></el-icon>&nbsp;
                                 取消分享
                             </el-button>
+                                <el-button v-if="ownerInfo.data.userId !== userInfo.id"
+                                           plain size="large" type="danger"
+                                           @click="tipoff=true; reason=''"
+                                >
+                                    举报
+                                </el-button>
                             </el-button-group>
                         </span>
                     </div>
@@ -138,13 +147,41 @@
       </span>
             </template>
         </el-dialog>
+
+        <el-dialog v-model="tipoff" title="确认举报">
+            <h3>
+                <el-icon>
+                    <Warning/>
+                </el-icon>
+                确定举报这个分享吗😶
+            </h3>
+            <el-form label-position="left">
+                <el-form-item label="举报理由：">
+                    <el-input v-model="reason"></el-input>
+                </el-form-item>
+            </el-form>
+            <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="tipoff = false;">取消</el-button>
+        <el-button type="primary" @click="tipoffCommit()">
+          确定
+        </el-button>
+      </span>
+            </template>
+        </el-dialog>
     </div>
 </template>
 
 <script lang="ts" setup>
 import {ElTable} from "element-plus";
 import {onMounted, reactive, ref} from "vue";
-import {getOwnerInfoByShareId, listFilesByShareId, shareCancel, ShareItem} from "@/components/files/share/Info.ts";
+import {
+    getOwnerInfoByShareId,
+    listFilesByShareId,
+    shareCancel,
+    ShareItem,
+    shareReport
+} from "@/components/files/share/Info.ts";
 import {formatSize, formatState} from "@/utils/util.ts";
 import {
     Clock, Download, CircleClose, Warning
@@ -152,12 +189,15 @@ import {
 import {useRoute} from "vue-router";
 import {codeOk, promptError, promptSuccess} from "@/utils/apis/base.ts";
 import {fileStatus, fileStatusMap, shareIllegal, shareNotExistOrDeleted, userStatus} from "@/utils/constant.ts";
+import {useBaseStore} from "@/store";
 
-const query = useRoute().query
+const query = useRoute().query,
+    userStore = useBaseStore()
 
 let pwd = ref(''),
     pwdInput = ref(''),
-    validated = ref(false)
+    validated = ref(false),
+    userInfo = {id: -1, username: '', name: '', avatar: '', email: '', signature: '', used: 0, capacity: 0, status: 0}
 
 const props = defineProps(['shareId']),
     fileTableRef = ref<InstanceType<typeof ElTable>>(),
@@ -188,7 +228,9 @@ const props = defineProps(['shareId']),
 
 let state = '',
     selected = [],
-    dialogVisible = ref(false)
+    dialogVisible = ref(false),
+    tipoff = ref(false),
+    reason = ref('')
 
 const listItems = async (pwdStr: string) => {
     pwd.value = pwdStr
@@ -242,6 +284,16 @@ async function cancelShare() {
     promptError(`取消失败，${resp.msg}`)
 }
 
+async function tipoffCommit() {
+    const resp = await shareReport(reason.value, props.shareId)
+    if (resp.code === codeOk) {
+        tipoff.value = false
+        promptSuccess('操作成功，窗口即将关闭')
+        return
+    }
+    promptError(`提交失败，${resp.msg}`)
+}
+
 onMounted(async () => {
     await getOwnerInfo()
 
@@ -249,6 +301,13 @@ onMounted(async () => {
     if (query.pwd != undefined) {
         pwd.value = query.pwd
         await listItems(pwd.value)
+    }
+
+    try {
+        userInfo = await userStore.getUserInfo()
+    } catch (e) {
+        console.log(userInfo, "aaaadsaddas")
+        userInfo.id = -1
     }
 })
 </script>

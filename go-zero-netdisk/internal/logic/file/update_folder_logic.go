@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"lc/netdisk/common/constant"
+	"lc/netdisk/internal/logic/mqs"
 	"lc/netdisk/model"
 
 	"lc/netdisk/internal/svc"
@@ -30,7 +31,10 @@ func (l *UpdateFolderLogic) UpdateFolder(req *types.UpdateNameReq) error {
 	var (
 		userId = l.ctx.Value(constant.UserIdKey).(int64)
 		engine = l.svcCtx.Xorm
+		err    error
 	)
+
+	defer mqs.LogSend(l.ctx, err, "UpdateFolder", req.Id, req.Name)
 
 	if affected, err := engine.ID(req.Id).And("user_id = ?", userId).
 		Update(&model.Folder{Name: req.Name}); err != nil {

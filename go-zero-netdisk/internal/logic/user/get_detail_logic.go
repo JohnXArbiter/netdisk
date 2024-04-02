@@ -56,7 +56,7 @@ func (l *GetDetailLogic) GetDetail(req *types.IdPathReq) (interface{}, error) {
 		} else if !has {
 			return nil, errors.New("用户信息有误")
 		}
-		url, _ := minioSvc.GenUrl(user.Avatar, false)
+		url, _ := minioSvc.GenUrl(user.Avatar, "", false)
 		m2 := map[string]interface{}{
 			"id":        user.Id,
 			"name":      user.Name,

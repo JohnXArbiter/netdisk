@@ -40,7 +40,14 @@ export function getOwnerInfoByShareId(shareId: string) {
 }
 
 export function shareCancel(shareIds: string[]) {
-    return api.post<any, Resp<OwnerInfoResp>>(`/file/share-cancel`, {
+    return api.post<any, Resp<any>>(`/file/share-cancel`, {
         "ids": shareIds
+    })
+}
+
+export function shareReport(reason: string, shareId: string) {
+    return api.post<any, Resp<any>>(`/file/share-report`, {
+        "reason": reason,
+        "shareId": shareId,
     })
 }

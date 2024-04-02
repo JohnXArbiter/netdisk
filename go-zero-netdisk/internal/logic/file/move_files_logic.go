@@ -3,8 +3,8 @@ package file
 import (
 	"context"
 	"errors"
-	"fmt"
 	"lc/netdisk/common/constant"
+	"lc/netdisk/internal/logic/mqs"
 	"lc/netdisk/model"
 
 	"lc/netdisk/internal/svc"
@@ -32,24 +32,30 @@ func (l *MoveFilesLogic) MoveFiles(req *types.MoveFilesReq) error {
 		userId   = l.ctx.Value(constant.UserIdKey).(int64)
 		engine   = l.svcCtx.Xorm
 		folderId = req.FolderId
+		err      error
 	)
 
+	defer mqs.LogSend(l.ctx, err, "MoveFiles", req.FileIds, req.FolderId)
+
 	if folderId != 0 {
-		has, err := engine.ID(folderId).And("user_id = ?", userId).Get(&model.Folder{})
-		if err != nil {
-			return errors.New("发生错误！" + err.Error())
+		has, err2 := engine.ID(folderId).And("user_id = ?", userId).Get(&model.Folder{})
+		if err2 != nil {
+			err = errors.New("发生错误！" + err2.Error())
+			return err
 		} else if !has {
-			return errors.New("该目录不存在")
+			err = errors.New("该目录不存在")
+			return err
 		}
 	}
 
 	file := &model.File{FolderId: folderId}
-	affected, err := engine.In("id", req.FileIds).Update(file)
-	fmt.Println(affected, err)
-	if err != nil {
-		return errors.New("移动出错！" + err.Error())
+	if affected, err2 := engine.In("id", req.FileIds).
+		Update(file); err != nil {
+		err = errors.New("移动出错！" + err2.Error())
+		return err
 	} else if affected != int64(len(req.FileIds)) {
-		return errors.New("移动出错！")
+		err = errors.New("移动出错！")
+		return err
 	}
 	return nil
 }

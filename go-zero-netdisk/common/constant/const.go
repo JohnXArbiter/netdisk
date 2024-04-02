@@ -87,3 +87,7 @@ const (
 	TypeOther
 	TypeShareMulti
 )
+
+const (
+	Operation = "用户，ID：[%v]，昵称：[%v]，%v"
+)

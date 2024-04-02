@@ -4,6 +4,7 @@ import (
 	"context"
 	"lc/netdisk/common/constant"
 	"lc/netdisk/common/xorm"
+	"lc/netdisk/internal/logic/mqs"
 	"lc/netdisk/model"
 
 	"lc/netdisk/internal/svc"
@@ -30,9 +31,12 @@ func (l *ShareCancelLogic) ShareCancel(req *types.IdStrsReq) error {
 	var (
 		userId = l.ctx.Value(constant.UserIdKey).(int64)
 		engine = l.svcCtx.Xorm
+		err    error
 	)
 
-	_, err := engine.DoTransaction(func(session *xorm.Session) (interface{}, error) {
+	defer mqs.LogSend(l.ctx, err, "ShareCancel", req.Ids)
+
+	_, err = engine.DoTransaction(func(session *xorm.Session) (interface{}, error) {
 		if _, err := session.In("id", req.Ids).
 			And("user_id = ?", userId).
 			Delete(&model.Share{}); err != nil {

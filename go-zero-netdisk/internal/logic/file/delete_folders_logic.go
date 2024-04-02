@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"lc/netdisk/common/constant"
+	"lc/netdisk/internal/logic/mqs"
 	"lc/netdisk/model"
 	"time"
 	"xorm.io/xorm"
@@ -32,10 +33,13 @@ func (l *DeleteFoldersLogic) DeleteFolders(req *types.IdsReq) error {
 	var (
 		userId = l.ctx.Value(constant.UserIdKey).(int64)
 		engine = l.svcCtx.Xorm
+		err    error
 	)
 
+	defer mqs.LogSend(l.ctx, err, "DeleteFolders", req.Ids)
+
 	folderIds := req.Ids
-	_, err := engine.Transaction(func(session *xorm.Session) (interface{}, error) {
+	_, err = engine.Transaction(func(session *xorm.Session) (interface{}, error) {
 		var (
 			folders []*model.Folder
 			err     error
@@ -84,7 +88,8 @@ func (l *DeleteFoldersLogic) DeleteFolders(req *types.IdsReq) error {
 		return nil, nil
 	})
 	if err != nil {
-		return errors.New("删除过程出错！" + err.Error())
+		err = errors.New("删除过程出错！" + err.Error())
+		return err
 	}
 
 	return nil

@@ -6,6 +6,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"lc/netdisk/common/constant"
 	"lc/netdisk/common/xorm"
+	"lc/netdisk/internal/logic/mqs"
 	"lc/netdisk/internal/svc"
 	"lc/netdisk/internal/types"
 	"lc/netdisk/model"
@@ -31,10 +32,13 @@ func (l *RecoverFilesLogic) RecoverFiles(req *types.RecoverFilesReq) error {
 		ctx    = l.ctx
 		userId = ctx.Value(constant.UserIdKey).(int64)
 		engine = l.svcCtx.Xorm
+		err    error
 	)
 
+	defer mqs.LogSend(l.ctx, err, "RecoverFiles", req.FileIds)
+
 	fileIds, folderIds := req.FileIds, req.FolderIds
-	_, err := engine.DoTransaction(func(session *xorm.Session) (interface{}, error) {
+	_, err = engine.DoTransaction(func(session *xorm.Session) (interface{}, error) {
 		// 1.恢复文件delFlag字段
 		fileBean := &model.File{
 			DelFlag: constant.StatusFileUndeleted,

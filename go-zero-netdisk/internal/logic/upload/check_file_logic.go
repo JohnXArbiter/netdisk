@@ -91,13 +91,18 @@ func (l *CheckFileLogic) doWhenExist(req *types.CheckFileReq, fileFs *model.File
 	)
 
 	// 先判断该用户在该目录下有无该文件
-	has, err := engine.Where("fs_id = ?", fileFs.Id).
+	if _, err := engine.
+		Where("fs_id = ?", fileFs.Id).
 		And("folder_id = ?", req.FolderId).
-		And("user_id = ?", userId).Get(&file)
-	if err != nil {
+		Get(&file); err != nil {
+		logx.Errorf("CheckFile->doWhenExist，查询file错误，ERR: [%v]", err)
 		return nil, err
-	} else if has {
-		return nil, errors.New("当前文件夹已存在该文件😈")
+	}
+
+	if file.Id != 0 {
+		if file.Status != constant.StatusFileDeleted {
+			return nil, errors.New("当前文件夹已存在该文件😈")
+		}
 	}
 
 	// 该文件夹无该文件，信息落库
@@ -111,7 +116,6 @@ func (l *CheckFileLogic) doWhenExist(req *types.CheckFileReq, fileFs *model.File
 	file.FolderId = req.FolderId
 	file.Type = variable.GetTypeByBruteForce(req.Ext)
 	file.Status = constant.StatusFileUploaded
-	file.Url = fileFs.Url
 	file.ObjectName = fileFs.ObjectName
 	file.IsBig = isBigFlag
 	file.DoneAt = time.Now().Local()
@@ -119,7 +123,7 @@ func (l *CheckFileLogic) doWhenExist(req *types.CheckFileReq, fileFs *model.File
 	if fileFs.Size > int64(constant.ShardingFloor) {
 		file.IsBig = constant.BigFileFlag
 	}
-	if _, err = engine.Insert(&file); err != nil {
+	if _, err := engine.Insert(&file); err != nil {
 		return nil, err
 	}
 

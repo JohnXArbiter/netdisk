@@ -44,9 +44,9 @@
                             <el-icon>
                                 <house/>
                             </el-icon>
-                            <span>首页（日志审计）</span>
+                            <span>首页</span>
                         </el-menu-item>
-                        <el-menu-item index="/user/list" @click="">
+                        <el-menu-item index="/user/list" @click="saveActiveNav('/user/list')">
                             <el-icon>
                                 <user/>
                             </el-icon>
@@ -58,15 +58,17 @@
                             </el-icon>
                             <span>分享管理</span>
                         </el-menu-item>
-<!--                        <el-menu-item index="/log" @click="saveActiveNav('/log')">-->
-<!--                            <el-icon>-->
-<!--                                <Memo/>-->
-<!--                            </el-icon>-->
-<!--                            <span>系统日志</span>-->
-<!--                        </el-menu-item>-->
+                        <el-menu-item index="/log" @click="saveActiveNav('/log')">
+                            <el-icon>
+                                <Memo/>
+                            </el-icon>
+                            <span>系统日志</span>
+                        </el-menu-item>
                         <el-menu-item v-if="admin.data.status === 1"
-                            index="/admin" @click="saveActiveNav('/admin')">
-                            <el-icon><Sunny /></el-icon>
+                                      index="/admin" @click="saveActiveNav('/admin')">
+                            <el-icon>
+                                <Sunny/>
+                            </el-icon>
                             <span>管理员列表</span>
                         </el-menu-item>
                     </el-menu>
@@ -74,9 +76,6 @@
 
                 <el-container>
                     <el-main>
-                        <!-- 面包屑 -->
-                        <!-- <Breadcrumb /> -->
-                        <!-- 主要内容 -->
                         <router-view></router-view>
                     </el-main>
                     <el-footer>Copyright © 2024 咪咪网盘</el-footer>
@@ -87,7 +86,7 @@
 </template>
 <script setup>
 import {
-    Memo, User, Share, House, ArrowDown,Sunny
+    Memo, User, Share, House, ArrowDown, Sunny
 } from '@element-plus/icons-vue'
 import {onBeforeMount, reactive, ref} from 'vue';
 import avatar from "../assets/img/img.png"
@@ -95,6 +94,10 @@ import {useRouter} from 'vue-router'
 import {useBaseStore} from "../../store/index.js";
 import adminApi from "@/api/admin.js";
 import {codeOk, promptError} from "@/utils/http/base.js";
+
+function qwe() {
+    window.open("http://127.0.0.1:5601/app/discover#/")
+}
 
 const router = useRouter(),
     baseStore = useBaseStore(),

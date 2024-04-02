@@ -11,7 +11,7 @@ export interface Share {
     downloadNum: number
     clickNum: number
     type: number
-    link?: string
+    url?: string
     state?: string
 }
 

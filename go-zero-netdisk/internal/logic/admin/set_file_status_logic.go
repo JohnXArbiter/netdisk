@@ -2,6 +2,7 @@ package admin
 
 import (
 	"context"
+	"lc/netdisk/internal/logic/mqs"
 	"lc/netdisk/model"
 
 	"lc/netdisk/internal/svc"
@@ -27,10 +28,13 @@ func NewSetFileStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Set
 func (l *SetFileStatusLogic) SetFileStatus(req *types.SetFileStatusReq) error {
 	var (
 		engine = l.svcCtx.Xorm
+		err    error
 	)
 
+	defer mqs.LogSend(l.ctx, err, "SetFileStatus", req.Ids, req.Status)
+
 	bean := &model.File{Status: req.Status}
-	if _, err := engine.In("id", req.Ids).
+	if _, err = engine.In("id", req.Ids).
 		Cols("status").
 		Update(bean); err != nil {
 		logx.Errorf("SetFileStatus，更新失败，ERR: [%v]", err)

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"lc/netdisk/common/constant"
+	"lc/netdisk/internal/logic/mqs"
 	"lc/netdisk/internal/svc"
 	"lc/netdisk/internal/types"
 	"lc/netdisk/model"
@@ -30,7 +31,10 @@ func (l *CreateFolderLogic) CreateFolder(req *types.CreateFolderReq) error {
 		userId         = l.ctx.Value(constant.UserIdKey).(int64)
 		engine         = l.svcCtx.Xorm
 		parentFolderId = req.ParentFolderId
+		err            error
 	)
+
+	defer mqs.LogSend(l.ctx, err, "CreateFolder", req.Name)
 
 	folder := &model.Folder{}
 	if parentFolderId != 0 {
@@ -58,7 +62,7 @@ func (l *CreateFolderLogic) CreateFolder(req *types.CreateFolderReq) error {
 		UserId:   userId,
 		DelFlag:  constant.StatusFolderUndeleted,
 	}
-	if _, err := engine.Insert(newFolder); err != nil {
+	if _, err = engine.Insert(newFolder); err != nil {
 		return errors.New("创建失败了，" + err.Error())
 	}
 

@@ -6,6 +6,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"lc/netdisk/common/redis"
 	"lc/netdisk/common/utils"
+	"lc/netdisk/internal/logic/mqs"
 	"lc/netdisk/model"
 	"strconv"
 	"strings"
@@ -37,15 +38,19 @@ func (l *AdminLoginLogic) AdminLogin(req *types.LoginReq) (*types.LoginResp, err
 		password = strings.TrimSpace(req.Password)
 		engine   = l.svcCtx.Xorm
 		rdb      = l.svcCtx.Redis
+		err      error
 	)
 
+	defer mqs.LogSend(l.ctx, err, "AdminLogin", username)
+
 	admin := &model.Admin{Username: username}
-	if has, err := engine.Cols("id", "username", "password",
-		"name").Get(admin); err != nil || !has {
-		return nil, errors.New("帐号或密码错误！")
+	if _, err2 := engine.Cols("id", "username", "password",
+		"name").Get(admin); err2 != nil {
+		err = errors.New("帐号或密码错误，" + err2.Error())
+		return nil, err
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(admin.Password),
+	if err = bcrypt.CompareHashAndPassword([]byte(admin.Password),
 		[]byte(password)); err != nil {
 		return nil, errors.New("帐号或密码错误！")
 	}
@@ -57,7 +62,7 @@ func (l *AdminLoginLogic) AdminLogin(req *types.LoginReq) (*types.LoginResp, err
 
 	key := redis.UserLogin + strconv.FormatInt(admin.Id, 10)
 	if err = rdb.Set(l.ctx, key, token, 7*24*time.Hour).Err(); err != nil {
-		logx.Errorf("[REDIS ERROR] Login 保存用户token失败，userid：%v %v\n", admin.Id, err)
+		logx.Errorf("AdminLogin，保存用户token失败，userid：%v %v\n", admin.Id, err)
 		l.svcCtx.Redis.Set(l.ctx, key, token, 7*24*time.Hour) // 重试
 	}
 

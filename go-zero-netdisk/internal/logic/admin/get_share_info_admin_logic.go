@@ -41,7 +41,7 @@ func (l *GetShareInfoAdminLogic) GetShareInfoAdmin(req *types.IdStrReq) (*types.
 
 	resp := &types.GetShareInfoResp{}
 	for _, file := range files {
-		url, err := minioSvc.GenUrl(file.ObjectName, true)
+		url, err := minioSvc.GenUrl(file.ObjectName, file.Name, true)
 		if err != nil {
 			logx.Errorf("GetShareInfoAdmin，生成文件url出错：ERR: [%v]", err)
 			url = ""

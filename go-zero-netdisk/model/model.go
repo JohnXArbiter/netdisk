@@ -41,7 +41,6 @@ type (
 		FolderId   int64     `xorm:"bigint notnull default 0 'folder_id'"`
 		Name       string    `xorm:"varchar(255) notnull default '' 'name' comment('用户视角文件名')"`
 		ObjectName string    `xorm:"varchar(255) notnull default '' 'object_name' comment('存储路径名')"`
-		Url        string    `xorm:"varchar(255) notnull default '' 'url' comment('')"`
 		Ext        string    `xorm:"varchar(255) notnull default '' 'ext' comment('文件扩展名')"`
 		Size       int64     `xorm:"bigint notnull default 0 'size' comment('文件大小')"`
 		Type       int8      `xorm:"tinyint notnull default 0 comment('类别')"`
@@ -62,7 +61,6 @@ type (
 		Name       string    `xorm:"varchar(255) notnull default '' 'name' comment('实际文件名')"`
 		Size       int64     `xorm:"bigint notnull default 0 'size' comment('文件大小')"`
 		ChunkNum   int64     `xorm:"bigint notnull default 0 'chunk_num' comment('分片数量')"`
-		Url        string    `xorm:"varchar(255) notnull default '' 'url' comment('访问地址')"`
 		Status     int8      `xorm:"tinyint notnull default 0 'status' comment('文件状态，0：大文件未上传，1：大文件待合并，2：小文件未上传，3：上传成功')"` //
 		DoneAt     time.Time `xorm:"datetime 'done_at' comment('大文件合并完成时间')"`
 	}
@@ -102,6 +100,7 @@ type (
 		ClickNum    int64     `xorm:"bigint notnull default 0 'click_num'" json:"clickNum"`
 		Status      int8      `xorm:"tinyint notnull default 0 'status'" json:"status"`
 		Type        int8      `xorm:"tinyint notnull default 0 'type'" json:"type"`
+		Reason      string    `xorm:"varchar(1023) notnull default '' 'reason'" json:"reason"`
 	}
 
 	ShareFile struct {
