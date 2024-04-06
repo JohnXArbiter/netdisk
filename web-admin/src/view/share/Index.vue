@@ -19,7 +19,7 @@
                 <el-table-column prop="downloadNum" label="下载次数" min-width="60"/>
                 <el-table-column prop="clickNum" label="点击次数" min-width="60"/>
                 <el-table-column prop="state" label="状态" min-width="180"/>
-                <el-table-column label="操作" width="330">
+                <el-table-column label="操作" width="200">
                     <template #default="scope">
                         <el-button v-if="scope.row.type === typeMulti"
                                    type="primary" plain size="small"

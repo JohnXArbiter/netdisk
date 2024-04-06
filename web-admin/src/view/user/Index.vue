@@ -21,14 +21,14 @@
                 <el-table-column prop="username" label="账号" min-width="150"/>
                 <el-table-column prop="name" label="昵称" min-width="200"/>
                 <el-table-column prop="email" label="邮件" min-width="150"/>
-                <el-table-column prop="signature" label="签名" min-width="300"/>
+                <el-table-column prop="signature" label="签名" min-width="200"/>
                 <el-table-column prop="state" label="状态" min-width="150"/>
                 <el-table-column prop="used" label="已使用容量" min-width="180">
                     <template #default="scope">
                         {{ scope.row.usedStr }} / {{ scope.row.capacityStr }}
                     </template>
                 </el-table-column>
-                <el-table-column label="操作" width="330">
+                <el-table-column label="操作" width="200">
                     <template #default="scope">
                         <el-button size="small" type="primary"
                                    plain @click="buttonClick(0, scope.row)">恢复

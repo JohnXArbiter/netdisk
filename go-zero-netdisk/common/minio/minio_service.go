@@ -26,7 +26,6 @@ func (c *Client) NewService() *Service {
 // Upload 上传文件
 func (s *Service) Upload(ctx context.Context, objectName string, file io.Reader) error {
 	_, err := s.client.PutObjectWithContext(ctx, s.BucketName, objectName, file, -1, minio.PutObjectOptions{})
-	fmt.Println(s.BucketName)
 	if err != nil {
 		logx.Errorf("minio-上传文件出错，err: %v", err)
 		return err
@@ -34,16 +33,26 @@ func (s *Service) Upload(ctx context.Context, objectName string, file io.Reader)
 	return nil
 }
 
-func (s *Service) IfExist(objectName string) (bool, error) {
-	_, err := s.client.StatObject(s.BucketName, objectName, minio.StatObjectOptions{})
+// FUpload 上传文件 by file
+func (s *Service) FUpload(ctx context.Context, objectName, filePath string) error {
+	_, err := s.client.FPutObjectWithContext(ctx, s.BucketName, objectName, filePath, minio.PutObjectOptions{})
+	if err != nil {
+		logx.Errorf("minio-上传文件出错，err: %v", err)
+		return err
+	}
+	return nil
+}
+
+func (s *Service) IfExist(objectName string) (bool, int64, error) {
+	info, err := s.client.StatObject(s.BucketName, objectName, minio.StatObjectOptions{})
 	if err != nil {
 		if strings.Contains(err.Error(), "The specified key does not exist") {
-			return false, nil
+			return false, 0, nil
 		}
 		logx.Errorf("minio-判断文件是否存在出错，err: %v", err)
-		return false, err
+		return false, 0, err
 	}
-	return true, nil
+	return true, info.Size, nil
 }
 
 func (s *Service) GenUrl(objectName string, filename string, download bool) (string, error) {
@@ -70,34 +79,29 @@ func (s *Service) GenUrl(objectName string, filename string, download bool) (str
 	return fmt.Sprintf("%v", u), nil
 }
 
-// DownloadChunk 下载文件切片
-func (s *Service) DownloadChunk(ctx context.Context, objectName, name string) (*os.File, error) {
-	filename := os.TempDir() + "/" + name
+// DownloadChunk2Local 下载文件切片
+func (s *Service) DownloadChunk2Local(ctx context.Context, objectName, filename string) error {
 	file, err := os.Create(filename)
 	if err != nil {
-		logx.Errorf("DownloadChunk，minio下载文件出错，ERR: [%v]", err)
-		return nil, err
+		logx.Errorf("DownloadChunk2Local，创建临时文件：[%v]，出错，ERR: [%v]", err)
+		return err
 	}
+	file.Close()
 
 	if err = s.client.FGetObjectWithContext(ctx, s.BucketName, objectName,
 		filename, minio.GetObjectOptions{}); err != nil {
-		logx.Errorf("DownloadChunk，minio下载出错，ERR: [%v]", err)
-		return nil, err
+		logx.Errorf("DownloadChunk2Local，minio下载出错，ERR: [%v]", err)
+		return err
 	}
-
-	return file, nil
+	return nil
 }
 
-//
-//// DeleteFile 删除文件
-//func (s *Service) DeleteFile(bucketName, objectName string) (bool, error) {的miniokehuduan1
-//	// 删除存储桶中的文件
-//	err := s.Client.RemoveObject(bucketName, objectName)
-//	if err != nil {
-//		log.Println("remove object fail: ", err)
-//		return false, err
-//	}
-//
-//	fmt.Println("Successfully deleted", objectName)
-//	return true, err
-//}
+// DeleteFile 删除文件
+func (s *Service) DeleteFile(objectName string) error {
+	err := s.client.RemoveObject(s.BucketName, objectName)
+	if err != nil {
+		logx.Errorf("DeleteFile，删除分片出错，ERR: [%v]", err)
+		return err
+	}
+	return err
+}

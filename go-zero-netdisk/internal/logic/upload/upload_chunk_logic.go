@@ -73,7 +73,7 @@ func (l *UploadChunkLogic) UploadChunk(req *types.UploadChunkReq, fileParam *typ
 func (l *UploadChunkLogic) createSchedule(req *types.UploadChunkReq, fileData multipart.File,
 	objectName string, chunkNum int64, fileInfo map[string]string) xorm.TxFn {
 	return func(session *xorm.Session) (interface{}, error) {
-		objectName = objectName[:strings.LastIndex(objectName, "@")]
+		objectName2 := objectName[:strings.LastIndex(objectName, "@")]
 		size, _ := strconv.ParseInt(fileInfo["size"], 10, 64)
 		fsId := idgen.NextId()
 		fileFs := &model.FileFs{}
@@ -83,7 +83,7 @@ func (l *UploadChunkLogic) createSchedule(req *types.UploadChunkReq, fileData mu
 		fileFs.Name = fileInfo["name"]
 		fileFs.Hash = fileInfo["hash"]
 		fileFs.Size = size
-		fileFs.ObjectName = objectName
+		fileFs.ObjectName = objectName2
 		fileFs.ChunkNum = chunkNum
 		fileFs.Status = constant.StatusFsFileNeedMerge
 		if _, err := session.Insert(fileFs); err != nil {
@@ -98,7 +98,7 @@ func (l *UploadChunkLogic) createSchedule(req *types.UploadChunkReq, fileData mu
 		file.FsId = fsId
 		file.FolderId = folderId
 		file.Ext = fileInfo["ext"]
-		file.ObjectName = objectName
+		file.ObjectName = objectName2
 		file.Size = size
 		file.Type = variable.GetTypeByBruteForce(fileInfo["ext"])
 		file.Status = constant.StatusFileNeedMerge
@@ -136,6 +136,7 @@ func (l *UploadChunkLogic) createSchedule(req *types.UploadChunkReq, fileData mu
 		ms.FsId = fsId
 		ms.SId = fileScheduleId
 		ms.ChunkNum = chunkNum
+		ms.Size = size
 		go common.Merge(ms, l.errCallBack)
 
 		return nil, nil

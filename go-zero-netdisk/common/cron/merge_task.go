@@ -14,12 +14,12 @@ func MergeTask() {
 	reportCron := cron.New(cron.WithLocation(timezone))
 
 	hours := make([]string, 0, 24)
-	for i := 0; i < 24; i++ {
-		hours = append(hours, strconv.Itoa(i))
-	}
 
-	_, err := reportCron.AddFunc("* * * * *", common.MergeLogic)
+	_, err := reportCron.AddFunc("*/10 * * * *", common.MergeLogic)
 	if err != nil {
+		for i := 0; i < 24; i++ {
+			hours = append(hours, strconv.Itoa(i))
+		}
 		logx.Errorf("MergeTask，添加合并定时任务失败，ERR: [%v]", err)
 	}
 

@@ -44,8 +44,11 @@ async function handleUpload(param: UploadRequestOptions) {
                 param.file.size > uploadConst.shardingFloor &&
                 res.confirmShard == uploadConst.shardConfirmed
             ) {
+                console.log(1111111)
                 await uploadSlice(param.file, res.fileId, res.hash)
             } else {
+                console.log(22222222)
+
                 await uploadSingle(param.file, res.fileId)
             }
         } else {
@@ -115,7 +118,9 @@ async function checkChunkAndUpload({chunk, fileId, hash}: any, chunkSeq: number)
         hash: hash,
         chunkSeq: chunkSeq
     })
-    if (resp.code === codeOk && resp.data.status === 1) {
+
+    if (resp.code === codeOk &&
+        resp.data.status === 1) {
         return
     }
     const formData = new FormData();
@@ -123,7 +128,6 @@ async function checkChunkAndUpload({chunk, fileId, hash}: any, chunkSeq: number)
     formData.append('fileId', fileId.toString())
     formData.append('chunkSeq', chunkSeq.toString())
     await uploadChunk(formData)
-    // TODO
 }
 
 async function genMd5(file: UploadRawFile) {

@@ -52,7 +52,7 @@ func (l *LoginLogic) Login(req *types.LoginReq) (*types.LoginResp, error) {
 		return nil, errors.New("帐号或密码错误！")
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(user.Password),
+	if err = bcrypt.CompareHashAndPassword([]byte(user.Password),
 		[]byte(password)); err != nil {
 		return nil, errors.New("帐号或密码错误！")
 	}

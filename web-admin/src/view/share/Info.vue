@@ -32,7 +32,7 @@
                 </template>
             </el-table-column>
             <el-table-column prop="state" label="状态" min-width="100"/>
-            <el-table-column label="操作" min-width="150">
+            <el-table-column label="操作" min-width="250">
                 <template #default="scope">
                     <el-button type="primary" plain size="small" @click="getUrl(scope.row.id)">下载查看</el-button>
                     <el-button type="primary" plain size="small"

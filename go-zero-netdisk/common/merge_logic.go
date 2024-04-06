@@ -13,18 +13,18 @@ import (
 )
 
 type MergeStruct struct {
-	FsId       int64
-	SId        int64
+	FsId       int64 `xorm:"fsId"`
+	SId        int64 `xorm:"sId"`
 	ObjectName string
 	Hash       string
 	ChunkNum   int64
+	Size       int64
 }
 
 func MergeLogic() {
-	//mqs.LogSend(context.Background(), nil, "MergeLogic", time.Now().Local())
 
 	var mss []*MergeStruct
-	cols := "a.id as sId, b.id as fsId, b.object_name, b.hash, b.chunk_num"
+	cols := "a.id as sId, b.id as fsId, b.object_name, b.hash, b.chunk_num, b.size"
 	if err := xorm.Xorm.Select(cols).
 		Table(&model.FileSchedule{}).Alias("a").
 		Join("LEFT", []string{"file_fs", "b"}, "a.fs_id = b.id").
@@ -54,32 +54,55 @@ func Merge(ms *MergeStruct, errCallBack func(int64)) {
 	}()
 
 	minioSvc := minio.Minio.NewService()
-	bigFile, err := os.CreateTemp("", "netdisk")
+	exist, size, _ := minioSvc.IfExist(ms.ObjectName)
+	if exist && size == ms.Size {
+		logx.Infof("MergeLogic, 文件：[%v] 已上传1", ms.ObjectName)
+		return
+	}
+
+	//bigFile, err := os.CreateTemp("", "netdisk")
+	bigFileName := "D:/netdisk_tmp/bigFile" + ms.Hash
+	stat, err := os.Stat(bigFileName)
+	if err == nil && stat.Size() == ms.Size {
+		uploadAndUpdateDb(minioSvc, ms, bigFileName)
+		logx.Infof("MergeLogic, 文件：[%v] 已上传2", ms.ObjectName)
+		_ = os.Remove(bigFileName)
+		return
+	}
+
+	bigFile, err := os.Create(bigFileName)
 	if err != nil {
 		logx.Errorf("MergeLogic，创建临时文件出错，ERR：[%v]", err)
 		return
 	}
 	defer DeleteTemp(bigFile)
 
-	var chunks []*os.File
-	defer deleteChunks(chunks)
+	var (
+		chunks          []*os.File
+		chunkObjectName []string
+	)
+	defer deleteChunks(minioSvc, chunks, chunkObjectName)
 	for i := 0; int64(i) < ms.ChunkNum; i++ {
 		objectName := ms.ObjectName + "@" + strconv.Itoa(i)
-		fileName := ms.Hash + "@" + strconv.Itoa(i)
-		logx.Info(objectName, "    ", fileName)
-		chunk, err2 := minioSvc.DownloadChunk(context.TODO(), objectName, fileName)
-		if err2 != nil {
+		//fileName := os.TempDir() + "/" + ms.Hash + "@" + strconv.Itoa(i)
+		name := ms.Hash + "@" + strconv.Itoa(i)
+		fileName := "D:/netdisk_tmp/" + name
+		logx.Infof("MergeLogic，分片：[%v] 开始合并", fileName)
+		if err2 := minioSvc.DownloadChunk2Local(context.TODO(), objectName, fileName); err2 != nil {
 			logx.Errorf("MergeLogic，文件%v 下载分片[%v] 失败，ERR：[%v]", ms.Hash, i, err2)
 			err = err2
 			return
 		}
 
+		chunk, err2 := os.Open(fileName)
 		fileInfo, err2 := chunk.Stat()
 		if err2 != nil {
 			logx.Errorf("MergeLogic，文件%v 下载分片[%v]有误，ERR：[%v]", ms.Hash, i, err2)
 			err = err2
 			return
 		}
+
+		chunkObjectName = append(chunkObjectName, objectName)
 		chunks = append(chunks, chunk)
 		buffer := make([]byte, fileInfo.Size())
 		_, err2 = io.CopyBuffer(bigFile, chunk, buffer)
@@ -90,27 +113,32 @@ func Merge(ms *MergeStruct, errCallBack func(int64)) {
 		}
 	}
 
-	_, err = xorm.Xorm.DoTransaction(func(session *xorm.Session) (interface{}, error) {
+	CloseTemp(bigFile)
+	uploadAndUpdateDb(minioSvc, ms, bigFileName)
+}
+
+func uploadAndUpdateDb(minioSvc *minio.Service, ms *MergeStruct, bigFileName string) {
+	_, _ = xorm.Xorm.DoTransaction(func(session *xorm.Session) (interface{}, error) {
 		fs1 := &model.FileFs{Status: constant.StatusFsUploaded}
-		if _, err = session.ID(ms.FsId).Update(fs1); err != nil {
+		if _, err := session.ID(ms.FsId).Update(fs1); err != nil {
 			logx.Errorf("MergeLogic，文件%v 更新fs状态出错，ERR：[%v]", ms.Hash, err)
 			return nil, err
 		}
 
 		file := &model.File{Status: constant.StatusFileUploaded}
-		if _, err = session.Where("fs_id = ?", ms.FsId).
+		if _, err := session.Where("fs_id = ?", ms.FsId).
 			Update(file); err != nil {
 			logx.Errorf("MergeLogic，文件%v 更新file状态出错，ERR：[%v]", ms.Hash, err)
 			return nil, err
 		}
 
 		fs2 := &model.FileSchedule{Stage: constant.StageMergeDone}
-		if _, err = session.ID(ms.SId).Update(fs2); err != nil {
+		if _, err := session.ID(ms.SId).Update(fs2); err != nil {
 			logx.Errorf("MergeLogic，文件%v 更新fileSchedule状态出错，ERR：[%v]", ms.Hash, err)
 			return nil, err
 		}
 
-		if err = minioSvc.Upload(context.TODO(), ms.ObjectName, bigFile); err != nil {
+		if err := minioSvc.FUpload(context.TODO(), ms.ObjectName, bigFileName); err != nil {
 			logx.Errorf("MergeLogic，上传大文件：[%v]，出错，ERR：[%v]", ms.ObjectName, err)
 			return nil, err
 		}
@@ -119,23 +147,34 @@ func Merge(ms *MergeStruct, errCallBack func(int64)) {
 }
 
 func DeleteTemp(temp *os.File) {
-	name := temp.Name()
-	if err := temp.Close(); err != nil {
-		logx.Errorf("DeleteTemp，关闭临时文件 %v 出错，ERR：[%v]", name, err)
-	}
-	if err := os.Remove(name); err != nil {
-		logx.Errorf("DeleteTemp，删除临时文件 %v 出错，ERR：[%v]", name, err)
+	CloseTemp(temp)
+	err := os.Remove(temp.Name())
+	if err != nil {
+		logx.Errorf("DeleteTemp，删除临时文件 %v 出错，ERR：[%v]", temp.Name(), err)
 	}
 }
 
-func deleteChunks(chunks []*os.File) {
+func CloseTemp(temp *os.File) {
+	err := temp.Close()
+	if err != nil {
+		logx.Errorf("DeleteTemp，关闭临时文件 %v 出错，ERR：[%v]", temp.Name(), err)
+	}
+}
+
+func deleteChunks(minioSvc *minio.Service, chunks []*os.File, chunkObjectName []string) {
+	logx.Infof("MergeLogic->deleteChunks，准备删除分片，删除文件中")
 	for _, chunk := range chunks {
-		if chunk == nil {
-			continue
-		}
-		if err := os.Remove(chunk.Name()); err != nil {
-			logx.Errorf("deleteChunks，删除分片临时文件出错，ERR：[%v]", err)
+		name := chunk.Name()
+		if err := os.Remove(name); err != nil {
+			logx.Errorf("MergeLogic->deleteChunks，删除分片临时文件：[%v]，出错，ERR：[%v]", name, err)
 			return
 		}
+		logx.Infof("MergeLogic->deleteChunks，删除分片：[%v]中", name)
+	}
+
+	logx.Infof("MergeLogic->deleteChunks，删除minio分片中")
+	for _, objectName := range chunkObjectName {
+		_ = minioSvc.DeleteFile(objectName)
+		logx.Infof("MergeLogic->deleteChunks，删除minio分片：[%v]中", objectName)
 	}
 }

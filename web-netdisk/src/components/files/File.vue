@@ -41,7 +41,7 @@
                                 <el-image v-if="scope.row.type === typeImage && scope.row.status != fileStatus.banned"
                                           class="small-pic"
                                           :src="scope.row.url"
-                                          alt="../../assets/alt_type1.jpg"
+                                          alt="/src/assets/alt_type1.jpg"
                                           :fit="'cover'"/>
                                 <el-image v-else
                                           :src="`/src/assets/alt_type${scope.row.type}.jpg`"

@@ -42,7 +42,7 @@ func (l *CheckChunkLogic) CheckChunk(req *types.CheckChunkReq) (*types.CheckChun
 
 	// 2. 检查是否已上传
 	objectName := minio.GenChunkObjectName(req.Hash, req.ChunkSeq)
-	exist, err := minioSvc.IfExist(objectName)
+	exist, _, err := minioSvc.IfExist(objectName)
 	if err != nil {
 		return resp, err
 	} else if exist {

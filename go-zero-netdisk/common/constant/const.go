@@ -91,5 +91,11 @@ const (
 )
 
 const (
+	StatusAdminNormal = iota
+	StatusAdminSuper
+	StatusAdminBanned
+)
+
+const (
 	Operation = "用户，ID：[%v]，昵称：[%v]，%v"
 )

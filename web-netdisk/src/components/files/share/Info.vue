@@ -297,7 +297,6 @@ async function tipoffCommit() {
 onMounted(async () => {
     await getOwnerInfo()
 
-    console.log(query.pwd, 123)
     if (query.pwd != undefined) {
         pwd.value = query.pwd
         await listItems(pwd.value)
@@ -306,7 +305,6 @@ onMounted(async () => {
     try {
         userInfo = await userStore.getUserInfo()
     } catch (e) {
-        console.log(userInfo, "aaaadsaddas")
         userInfo.id = -1
     }
 })

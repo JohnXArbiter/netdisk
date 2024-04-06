@@ -100,9 +100,17 @@ func (l *CheckFileLogic) doWhenExist(req *types.CheckFileReq, fileFs *model.File
 	}
 
 	if file.Id != 0 {
-		if file.Status != constant.StatusFileDeleted {
+		if file.Status != constant.StatusFileDeleted &&
+			file.Status != constant.StatusFileNeedMerge {
 			return nil, errors.New("当前文件夹已存在该文件😈")
 		}
+	}
+
+	if file.Status == constant.StatusFileNeedMerge {
+		resp.FileId = file.Id
+		resp.ConfirmShard = constant.ConfirmShard
+		resp.Status = constant.StatusFileUnuploaded
+		return &resp, nil
 	}
 
 	// 该文件夹无该文件，信息落库

@@ -7,7 +7,7 @@
                     <el-button icon="Search" @click="searchUser"/>
                 </template>
             </el-input>
-            <el-table :data="shares" border style="width: 100%; margin-top:20px">
+            <el-table :data="admins" border style="width: 100%; margin-top:20px">
                 <el-table-column prop="id" label="ID" min-width="100"/>
                 <el-table-column prop="name" label="名称" min-width="200"/>
                 <!--                <el-table-column prop="password" label="密码" min-width="200"/>-->
@@ -22,26 +22,18 @@
                 <el-table-column prop="state" label="状态" min-width="180"/>
                 <el-table-column label="操作" width="330">
                     <template #default="scope">
-<!--                        <el-button v-if="scope.row.type === typeMulti"-->
-<!--                                   type="primary" plain size="small"-->
-<!--                                   @click="openInfo(`/share/${scope.row.id}`)">进入查看-->
-<!--                        </el-button>-->
-<!--                        <el-button v-if="scope.row.type !== typeMulti"-->
-<!--                                   type="primary" plain size="small"-->
-<!--                                   @click="getUrl(scope.row.id)">下载查看-->
-<!--                        </el-button>-->
                         <el-button v-if="scope.row.status === 1"
                                    type="danger" size="small" disabled
                                    @click="buttonClick(1, scope.row.id, shareIllegal, scope.row.type)">封禁
                         </el-button>
                         <el-button v-else
-                                   type="danger" size="small" 
+                                   type="danger" size="small"
                                    @click="buttonClick(1, scope.row.id, shareIllegal, scope.row.type)">封禁
                         </el-button>
-<!--                        <el-button v-if="scope.row.status === shareIllegal"-->
+                        <!--                        <el-button v-if="scope.row.status === shareIllegal"-->
                         <el-button
-                                   type="primary" size="small"
-                                   @click="buttonClick(0, scope.row.id, shareNotExpired, scope.row.type)">恢复
+                                type="primary" size="small"
+                                @click="buttonClick(0, scope.row.id, shareNotExpired, scope.row.type)">恢复
                         </el-button>
                     </template>
                 </el-table-column>
@@ -94,9 +86,9 @@ import adminApi from "@/api/admin.js";
 import {onMounted, reactive, ref} from "vue";
 import {ElMessage, ElMessageBox} from 'element-plus';
 import {useRouter} from 'vue-router'
-import {formatState} from "@/utils/util.js";
-import {shareExpired, shareIllegal, shareNotExpired, typeMap, typeMulti} from "@/utils/constant.js";
+import {shareIllegal, shareNotExpired} from "@/utils/constant.js";
 import {codeOk, promptError, promptSuccess} from "@/utils/http/base.js";
+import {adminBanned, adminNormal, adminSuper} from "../../utils/constant.js";
 
 const router = useRouter();
 
@@ -104,7 +96,7 @@ onMounted(() => {
     listAdmins()
 })
 
-let shares = ref([])
+let admins = ref([])
 let total = ref(0)
 let urlMap = new Map()
 
@@ -121,22 +113,19 @@ const searchForm = reactive({
 const listAdmins = async () => {
     const res = await adminApi.getAdminList({'page': 0, 'size': 100});
     console.log(res.data);
-    shares.value = res.data.data
-    shares.value.forEach(share => {
-        if (share.state === 1) {
-            share.state = '当前管理员账号'
+    admins.value = res.data.data
+    admins.value.forEach(admin => {
+        switch (admin.status) {
+            case adminSuper:
+                admin.state = '当前管理员账号'
+                return
+            case adminNormal:
+                admin.state = '可用'
+                return
+            case adminBanned:
+                admin.state = '停用'
+                return
         }
-        // switch (share.status) {
-        //     case shareNotExpired:
-        //         share.state = formatState(share.expired)
-        //         break
-        //     case shareIllegal:
-        //         share.state = '内涵非法内容，已封禁'
-        //         break
-        //     case shareExpired:
-        //         share.state = '已过期'
-        //         break
-        // }
     })
     total.value = res.data.data.total;
 }

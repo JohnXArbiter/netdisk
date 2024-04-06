@@ -52,3 +52,7 @@ export const fileStatusMap = {
     3: '已被删除',
     4: '已封禁',
 }
+
+export const adminNormal = 0,
+    adminSuper = 1,
+    adminBanned = 2
