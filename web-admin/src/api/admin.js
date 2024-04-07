@@ -8,6 +8,10 @@ function getAdminList(page) {
     return http.post('/admin/list', page)
 }
 
+function add(form) {
+    return http.post('/admin/add', form)
+}
+
 export default {
-    getAdminInfo, getAdminList
+    getAdminInfo, getAdminList, add
 }

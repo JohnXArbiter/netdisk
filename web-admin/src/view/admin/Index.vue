@@ -7,6 +7,14 @@
                     <el-button icon="Search" @click="searchUser"/>
                 </template>
             </el-input>
+            <el-button type="primary"
+                       @click="dialogVisible.option[2] = true"
+                       style="margin-left: 3rem">
+                <el-icon>
+                    <Plus/>
+                </el-icon>
+                &nbsp;新增管理员
+            </el-button>
             <el-table :data="admins" border style="width: 100%; margin-top:20px">
                 <el-table-column prop="id" label="ID" min-width="100"/>
                 <el-table-column prop="name" label="名称" min-width="200"/>
@@ -46,12 +54,12 @@
         </el-card>
     </div>
 
-    <el-dialog v-model="dialogVisible.option[0]" title="恢复分享">
+    <el-dialog v-model="dialogVisible.option[0]" title="启用账号">
         <h3>
             <el-icon>
                 <Warning/>
             </el-icon>
-            需要恢复这个分享吗？😶
+            需要启用这个账号吗？😶
         </h3>
         <template #footer>
               <span class="dialog-footer">
@@ -63,12 +71,12 @@
         </template>
     </el-dialog>
 
-    <el-dialog v-model="dialogVisible.option[1]" title="封禁分享">
+    <el-dialog v-model="dialogVisible.option[1]" title="停用账号">
         <h3>
             <el-icon>
                 <Warning/>
             </el-icon>
-            确定封禁这个分享吗😶，如果包含多个文件需要进入详情操作，单个文件可被直接封禁
+            确定停用这个账号吗😶
         </h3>
         <template #footer>
               <span class="dialog-footer">
@@ -79,16 +87,43 @@
               </span>
         </template>
     </el-dialog>
+
+    <el-dialog v-model="dialogVisible.option[2]" title="新增管理员">
+        <el-form label-position="top">
+            <el-form-item label="账号">
+                <el-input v-model="addForm.username"></el-input>
+            </el-form-item>
+            <el-form-item label="密码">
+                <el-input v-model="addForm.password"></el-input>
+            </el-form-item>
+            <el-form-item label="确认密码">
+                <el-input v-model="addForm.password2"></el-input>
+            </el-form-item>
+            <el-form-item label="名称">
+                <el-input v-model="addForm.name"></el-input>
+            </el-form-item>
+        </el-form>
+
+        <template #footer>
+              <span class="dialog-footer">
+                <el-button @click="dialogVisible.option[2]=false">取消</el-button>
+                <el-button type="primary" @click="addAdmin()">
+                  确定
+                </el-button>
+              </span>
+        </template>
+    </el-dialog>
 </template>
 
-<script setup>
+<script lang="js" setup>
+import {Plus} from "@element-plus/icons-vue";
 import adminApi from "@/api/admin.js";
 import {onMounted, reactive, ref} from "vue";
 import {ElMessage, ElMessageBox} from 'element-plus';
 import {useRouter} from 'vue-router'
 import {shareIllegal, shareNotExpired} from "@/utils/constant.js";
 import {codeOk, promptError, promptSuccess} from "@/utils/http/base.js";
-import {adminBanned, adminNormal, adminSuper} from "../../utils/constant.js";
+import {adminBanned, adminNormal, adminSuper} from "@/utils/constant.js";
 
 const router = useRouter();
 
@@ -96,21 +131,21 @@ onMounted(() => {
     listAdmins()
 })
 
-let admins = ref([])
-let total = ref(0)
-let urlMap = new Map()
+let admins = ref([]),
+    total = ref(0)
 
 const searchForm = reactive({
         current: 1,
         size: 10,
         name: ''
     }),
-    dialogVisible = reactive({option: [false, false]}),
+    dialogVisible = reactive({option: [false, false, false]}),
     setStatusObj = {
         id: 0, status: 0, type: 0
-    }
+    },
+    addForm = reactive({})
 
-const listAdmins = async () => {
+async function listAdmins() {
     const res = await adminApi.getAdminList({'page': 0, 'size': 100});
     console.log(res.data);
     admins.value = res.data.data
@@ -128,24 +163,6 @@ const listAdmins = async () => {
         }
     })
     total.value = res.data.data.total;
-}
-
-function openInfo(link) {
-    window.open(link)
-}
-
-async function getUrl(id) {
-    if (urlMap.has(id)) {
-        window.open(urlMap.get(id))
-        return
-    }
-    const resp = await shareApi.getUrl(id, 0)
-    if (resp.data.code === codeOk) {
-        urlMap.set(id, resp.data.data.url)
-        window.open(resp.data.data)
-        return
-    }
-    promptError(`获取链接失败，${resp.data.msg}`)
 }
 
 function buttonClick(option, id, status, type) {
@@ -167,18 +184,32 @@ async function setStatus(option) {
     promptError(`操作失败，${resp.data.msg}`)
 }
 
+async function addAdmin() {
+    const resp = await adminApi.add(addForm)
+    if (resp.data.code === codeOk) {
+        await listAdmins()
+        promptSuccess('操作成功')
+        dialogVisible.option[2] = false
+        return
+    }
+    promptError(`操作失败，${resp.data.msg}`)
+}
+
 const handleSizeChange = (size) => {
     searchForm.size = size;
     listAdmins();
 }
+
 const handleCurrentChange = (current) => {
     searchForm.current = current;
     listAdmins();
 }
+
 const searchUser = () => {
     searchForm.current = 1;
     listAdmins();
 }
+
 // 删除用户
 const deleteUser = (id) => {
     ElMessageBox.confirm(
