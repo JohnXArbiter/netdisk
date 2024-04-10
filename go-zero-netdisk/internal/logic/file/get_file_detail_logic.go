@@ -52,6 +52,7 @@ func (l *GetFileDetailLogic) GetFileDetail(req *types.IdPathReq) (*types.FileRes
 	resp.Url = url
 	resp.Ext = file.Ext
 	resp.Size = file.Size
+	resp.Type = file.Type
 	resp.Status = file.Status
 	resp.FolderId = file.FolderId
 	resp.Created = file.Created.Format(constant.TimeFormat1)

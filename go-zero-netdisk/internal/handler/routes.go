@@ -57,6 +57,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/admin/login",
 				Handler: adminLoginHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/file/share-report",
+				Handler: shareReportHandler(serverCtx),
+			},
 		},
 	)
 
@@ -246,6 +251,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/share-cancel",
 					Handler: file.ShareCancelHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/search",
+					Handler: file.SearchHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithPrefix("/file"),
@@ -268,7 +278,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				{
 					Method:  http.MethodPost,
 					Path:    "/user-status",
-					Handler: admin.SetStatusHandler(serverCtx),
+					Handler: admin.SetUserStatusHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodGet,
@@ -289,6 +299,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/list",
 					Handler: admin.GetAdminListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/status",
+					Handler: admin.SetAdminStatusHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodGet,

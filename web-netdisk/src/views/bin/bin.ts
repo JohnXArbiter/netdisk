@@ -11,6 +11,7 @@ export interface DeleteFile {
     delTimeStr?: string
     sizeStr?: string
     left?: string
+    src?: string
 }
 
 export function getDeletedFiles() {

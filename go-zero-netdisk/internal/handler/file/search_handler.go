@@ -1,28 +1,28 @@
-package admin
+package file
 
 import (
 	xhttp "github.com/zeromicro/x/http"
 	"net/http"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
-	"lc/netdisk/internal/logic/admin"
+	"lc/netdisk/internal/logic/file"
 	"lc/netdisk/internal/svc"
 	"lc/netdisk/internal/types"
 )
 
-func SetStatusHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func SearchHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.SetStatusReq
-		if err := httpx.ParseJsonBody(r, &req); err != nil {
+		var req types.SearchReq
+		if err := httpx.ParseForm(r, &req); err != nil {
 			xhttp.JsonBaseResponseCtx(r.Context(), w, err)
 			return
 		}
 
-		l := admin.NewSetStatusLogic(r.Context(), svcCtx)
-		if err := l.SetStatus(&req); err != nil {
+		l := file.NewSearchLogic(r.Context(), svcCtx)
+		if resp, err := l.Search(&req); err != nil {
 			xhttp.JsonBaseResponseCtx(r.Context(), w, err)
 		} else {
-			xhttp.JsonBaseResponseCtx(r.Context(), w, nil)
+			xhttp.JsonBaseResponseCtx(r.Context(), w, resp)
 		}
 	}
 }

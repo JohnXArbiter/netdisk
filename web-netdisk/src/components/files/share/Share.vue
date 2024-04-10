@@ -88,7 +88,7 @@
                         </template>
                     </el-table-column>
                 </el-table>
-            </div>
+            </div>        
         </el-col>
     </el-row>
 
@@ -181,7 +181,10 @@ async function copyLink(link: string, button: boolean) {
         link = (fileTableRef.value!.getSelectionRows())[0].url
     }
     try {
-        console.log((fileTableRef.value!.getSelectionRows())[0])
+        link = '分享链接：http://' + link + '\n复制后点击链接即可'
+        if (link.includes('pwd')) {
+            link += '，无需输入提取码'
+        }
         await navigator.clipboard.writeText(link)
         promptSuccess('已将链接复制到剪贴板')
     } catch (e) {

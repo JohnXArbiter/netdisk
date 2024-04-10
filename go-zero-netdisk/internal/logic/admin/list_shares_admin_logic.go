@@ -2,6 +2,7 @@ package admin
 
 import (
 	"context"
+	"lc/netdisk/common/constant"
 	"lc/netdisk/model"
 
 	"lc/netdisk/internal/svc"
@@ -31,7 +32,9 @@ func (l *ListSharesAdminLogic) ListSharesAdmin(req *types.PageReq) ([]*model.Sha
 	)
 
 	offset := int((req.Page - 1) * req.Size)
-	if err := engine.Limit(int(req.Size), offset).Find(&shares); err != nil {
+	if err := engine.Limit(int(req.Size), offset).
+		Where("status = ?", constant.StatusShareIllegal).
+		Find(&shares); err != nil {
 		logx.Errorf("获取分享列表，查询shares失败，ERR: [%v]", err)
 		return nil, err
 	}

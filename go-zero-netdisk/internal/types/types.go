@@ -159,13 +159,22 @@ type ShareFolderReq struct {
 	ShareStruct
 }
 
+type SearchReq struct {
+	Phrase string `form:"phrase"`
+}
+
+type ReportReq struct {
+	ShareId string `json:"shareId"`
+	Reason  string `json:"reason"`
+}
+
 type DeletedFilesResp struct {
 	Id         int64  `json:"id"`
 	Name       string `json:"name"`
 	Url        string `json:"url"`
 	Status     int8   `json:"status"`
 	Size       int64  `json:"size"`
-	FolderId   int64  `json:"folderId,omitempty"`
+	FolderId   int64  `json:"folderId"`
 	FolderName string `json:"folderName"`
 	DelTime    int64  `json:"delTime"`
 }
@@ -178,7 +187,7 @@ type FileResp struct {
 	Ext      string `json:"ext"`
 	Status   int8   `json:"status"`
 	Size     int64  `json:"size"`
-	FolderId int64  `json:"folderId,omitempty"`
+	FolderId int64  `json:"folderId"`
 	Created  string `json:"created"`
 	Updated  string `json:"updated"`
 }

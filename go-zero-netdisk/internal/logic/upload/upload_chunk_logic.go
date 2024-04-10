@@ -105,6 +105,7 @@ func (l *UploadChunkLogic) createSchedule(req *types.UploadChunkReq, fileData mu
 		file.IsBig = constant.BigFileFlag
 		file.DoneAt = time.Now().Local()
 		file.DelFlag = constant.StatusFileUndeleted
+		file.SyncFlag = constant.FlagSyncWrite
 		if _, err := session.Insert(file); err != nil {
 			return nil, err
 		}

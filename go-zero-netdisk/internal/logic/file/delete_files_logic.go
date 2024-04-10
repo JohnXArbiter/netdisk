@@ -42,15 +42,15 @@ func (l *DeleteFilesLogic) DeleteFiles(req *types.DeleteFilesReq) error {
 	defer mqs.LogSend(l.ctx, err, "DeleteFiles", req.FileIds)
 
 	bean := &model.File{
-		DelFlag: constant.StatusFileDeleted,
-		DelTime: time.Now().Local().Unix(),
+		DelFlag:  constant.StatusFileDeleted,
+		DelTime:  time.Now().Local().Unix(),
+		SyncFlag: constant.FlagSyncDelete,
 	}
-	if affected, err := engine.In("id", req.FileIds).
-		And("user_id = ?", userId).Update(bean); err != nil {
+	if _, err = engine.In("id", req.FileIds).
+		And("user_id = ?", userId).
+		Update(bean); err != nil {
 		logx.Errorf("删除文件失败，ERR: [%v]", err)
 		return errors.New("删除过程出错，" + err.Error())
-	} else if affected != int64(len(req.FileIds)) {
-		return errors.New("删除过程出错！")
 	}
 
 	key := fmt.Sprintf(redis.FileFolderDownloadUrlKey, userId, req.FolderId)

@@ -21,21 +21,55 @@
 
             <div v-if="showCase[1]">
                 <div style="margin: 3% 0 3% 0">文件详情</div>
-                <el-image style="border-radius: 5px; width: 100%; max-height: 600px;"
+
+                <el-image v-if="fileDetail.data.type === typeImage"
                           :src="fileDetail.data.url"
-                          :fit="'cover'"/>
+                          :fit="'cover'" class="small-img"/>
+                <el-image v-else
+                          :src="`/src/assets/alt_type${fileDetail.data.type}.jpg`"
+                          :fit="'cover'" class="small-img"/>
                 <div style="margin-top: 4%; padding-left: 4%;">
                     <div class="file-name">{{ fileDetail.data.name }}</div>
                     <div class="file-info">创建时间：{{ fileDetail.data.created }}</div>
                     <div class="file-info">修改时间：{{ fileDetail.data.updated }}</div>
                     <div class="file-info">文件格式：{{ fileDetail.data.ext }}</div>
                     <div class="file-info">文件大小：{{ fileDetail.data.sizeStr }}</div>
+                    <div class="file-info">文件类型：{{ typeMap[fileDetail.data.type] }}</div>
                 </div>
             </div>
 
             <div v-if="showCase[2]">
                 <div style="margin: 3% 0 3% 0">文件夹内容</div>
 
+            </div>
+
+            <div v-if="showCase[3]">
+                <div style="margin: 3% 0 3% 0">搜索结果</div>
+
+                <el-table v-if="files.data && files.data.length!=0"
+                          ref="fileTableRef"
+                          :data="files.data" style="width: 100%"
+                >
+                    <el-table-column width="50">
+                        <template #default="scope">
+                            <el-image :src="`/src/assets/alt_type${scope.row.type}.jpg`"
+                                      class="tiny-img"
+                                      :fit="'cover'"/>
+                        </template>
+                    </el-table-column>
+
+                    <el-table-column prop="name"/>
+                    <el-table-column>
+                        <template #default="scope">
+                            <el-button type="primary" plain size="small"
+                                       @click="toFolder(scope.row.folderId)">位置
+                            </el-button>
+                            <el-button type="primary" plain
+                                       size="small">下载
+                            </el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
             </div>
         </el-col>
     </el-row>
@@ -44,18 +78,18 @@
 <script lang="ts" setup>
 import {Search} from '@element-plus/icons-vue';
 import {onUnmounted, reactive, ref} from "vue";
-import {useFileFolderStore} from "../../store/fileFolder.ts";
+import {useFileFolderStore} from "@/store/fileFolder.ts";
 import {getFileDetailById, listFolderDetailById, search} from "./Info.ts";
-import {codeOk} from "../../utils/apis/base.ts";
-import {formatSize} from "../../utils/util.ts";
+import {codeOk} from "@/utils/apis/base.ts";
+import {formatSize} from "@/utils/util.ts";
+import {typeImage, typeMap} from "@/utils/constant.ts";
+import {ElTable} from "element-plus";
 
 const fileFolderStore = useFileFolderStore()
 
-let showCase = ref([true, false, false])
-const url = 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
-const fileDetail: { data: {} } = reactive({
-    data: {}
-})
+let showCase = ref([true, false, false, false])
+const fileDetail: { data: {} } = reactive({data: {}}),
+    files = reactive({data: []})
 
 let searchStr = ref('')
 let selectedNum = ref(0)
@@ -63,7 +97,9 @@ let selectedNum = ref(0)
 async function searchConfirm() {
     const resp = await search(searchStr.value)
     if (resp && resp.code === codeOk) {
-// TODO
+        files.data = resp.data
+        showCase.value = [false, false, false, true]
+
     }
 }
 
@@ -97,6 +133,10 @@ const unsubscribe = fileFolderStore.$subscribe((_, state) => {
     }
 })
 
+function toFolder(folderId: number) {
+    window.location.href = `/file/folder/${folderId}`
+}
+
 onUnmounted(() => {
     unsubscribe()
 })
@@ -117,5 +157,17 @@ onUnmounted(() => {
     margin-top: 3%;
     font-size: 1.2rem;
     color: #878c9c;
+}
+
+.small-img {
+    border-radius: 5px;
+    width: 100%;
+    max-height: 600px;
+}
+
+.tiny-img {
+    border-radius: 5px;
+    width: 100%;
+    max-height: 50px;
 }
 </style>

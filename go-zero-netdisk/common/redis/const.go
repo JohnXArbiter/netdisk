@@ -17,10 +17,10 @@ const (
 
 const (
 	RegisterCodeExpire = 5*time.Minute + 10*time.Minute
-	UserInfoExpire     = 7 * 24 * time.Hour
+	UserInfoExpire     = 7 * 23 * time.Hour
 
 	UploadCheckExpire      = 24 * time.Hour
 	UploadCheckChunkExpire = 10 * time.Minute
 
-	DownloadTypeExpire = 7*24*time.Hour - 10000
+	DownloadExpire = 7*24*time.Hour - 10000
 )

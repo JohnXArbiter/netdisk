@@ -30,7 +30,7 @@
                           description="文件列表为空，上传你的第一个文件吧！😺"/>
 
                 <el-table v-if="fileList && fileList.data.length!=0"
-                          ref="fileTableRef"
+                          ref="fileTableRef" stripe
                           :data="fileList.data" style="width: 100%"
                           @selection-change="fileSelectionChange"
                 >

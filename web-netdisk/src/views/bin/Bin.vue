@@ -52,7 +52,7 @@
                     </el-table-column>
                     <el-table-column label="来源文件夹" min-width="100">
                         <template #default="scope">
-                            <div>{{ scope.row.folderName }}</div>
+                            <div>{{ scope.row.src }}</div>
                         </template>
                     </el-table-column>
                     <el-table-column min-width="100">
@@ -172,7 +172,11 @@ async function listDeletedFiles() {
             file.sizeStr = formatSize(file.size)
             file.delTimeStr = formatTime(file.delTime)
             file.left = formatLeft(file.delTime + 30 * 24 * 60 * 60)
-            console.log(file)
+            file.src = file.folderName
+            if (file.folderId === 0) {
+                file.src = '根文件夹'
+            }
+            console.log(file.folderId)
         })
     } else {
         promptError(resp.msg)

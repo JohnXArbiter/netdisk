@@ -111,6 +111,8 @@ var OperationM = map[string]string{
 	"AdminLogin":          "管理员账号：%v 登录了",
 	"SetFileStatus":       "管理员设置文件状态：%v",
 	"SetShareStatus":      "管理员设置分享状态：%v",
-	"SetStatus":           "设置管理员状态：%v",
+	"SetUserStatus":       "设置用户状态：%v",
+	"SetAdminStatus":      "设置管理员状态：%v",
 	"MergeLogic":          "分片文件合并任务开始，时间：%v",
+	"Search":              "搜索文件，搜索词条：%v",
 }

@@ -30,18 +30,22 @@
                 <el-table-column prop="state" label="状态" min-width="180"/>
                 <el-table-column label="操作" width="330">
                     <template #default="scope">
-                        <el-button v-if="scope.row.status === 1"
+                        <el-button v-if="scope.row.status === adminSuper"
                                    type="danger" size="small" disabled
-                                   @click="buttonClick(1, scope.row.id, shareIllegal, scope.row.type)">封禁
+                                   @click="buttonClick(1, scope.row.id, adminBanned, scope.row.type)">停用
                         </el-button>
                         <el-button v-else
                                    type="danger" size="small"
-                                   @click="buttonClick(1, scope.row.id, shareIllegal, scope.row.type)">封禁
+                                   @click="buttonClick(1, scope.row.id, adminBanned, scope.row.type)">停用
                         </el-button>
-                        <!--                        <el-button v-if="scope.row.status === shareIllegal"-->
-                        <el-button
-                                type="primary" size="small"
-                                @click="buttonClick(0, scope.row.id, shareNotExpired, scope.row.type)">恢复
+
+                        <el-button v-if="scope.row.status === adminSuper"
+                                   type="primary" size="small" disabled
+                                   @click="buttonClick(0, scope.row.id, adminNormal, scope.row.type)">恢复
+                        </el-button>
+                        <el-button v-else
+                                   type="primary" size="small"
+                                   @click="buttonClick(0, scope.row.id, adminNormal, scope.row.type)">恢复
                         </el-button>
                     </template>
                 </el-table-column>
@@ -121,7 +125,6 @@ import adminApi from "@/api/admin.js";
 import {onMounted, reactive, ref} from "vue";
 import {ElMessage, ElMessageBox} from 'element-plus';
 import {useRouter} from 'vue-router'
-import {shareIllegal, shareNotExpired} from "@/utils/constant.js";
 import {codeOk, promptError, promptSuccess} from "@/utils/http/base.js";
 import {adminBanned, adminNormal, adminSuper} from "@/utils/constant.js";
 
@@ -140,9 +143,7 @@ const searchForm = reactive({
         name: ''
     }),
     dialogVisible = reactive({option: [false, false, false]}),
-    setStatusObj = {
-        id: 0, status: 0, type: 0
-    },
+    setStatusObj = {id: 0, status: 0},
     addForm = reactive({})
 
 async function listAdmins() {
@@ -165,16 +166,15 @@ async function listAdmins() {
     total.value = res.data.data.total;
 }
 
-function buttonClick(option, id, status, type) {
+function buttonClick(option, id, status) {
     setStatusObj.id = id
     setStatusObj.status = status
-    setStatusObj.type = type
     dialogVisible.option[option] = true
 }
 
 async function setStatus(option) {
     console.log(setStatusObj)
-    const resp = await shareApi.setStatus(setStatusObj)
+    const resp = await adminApi.setStatus(setStatusObj)
     if (resp.data.code === codeOk) {
         await listAdmins()
         promptSuccess('操作成功')

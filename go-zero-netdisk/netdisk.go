@@ -1,9 +1,12 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
+	"github.com/zeromicro/go-zero/core/service"
 	"lc/netdisk/common/cron"
+	"lc/netdisk/internal/logic/mqs/mqc"
 	"lc/netdisk/internal/middleware"
 
 	"lc/netdisk/internal/config"
@@ -29,15 +32,16 @@ func main() {
 	svcCtx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, svcCtx)
 
-	//svcGroup := service.NewServiceGroup()
-	//svcGroup.Add(server)
-	//for _, mq := range mqc.Consumers(c, context.Background(), svcCtx) {
-	//	svcGroup.Add(mq)
-	//}
+	svcGroup := service.NewServiceGroup()
+	svcGroup.Add(server)
+	for _, mq := range mqc.Consumers(c, context.Background(), svcCtx) {
+		svcGroup.Add(mq)
+	}
 
 	cron.MergeTask()
+	cron.SyncTask()
 
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
-	//svcGroup.Start()
-	server.Start()
+	svcGroup.Start()
+	//server.Start()
 }

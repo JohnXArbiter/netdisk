@@ -8,16 +8,16 @@ import (
 	"time"
 )
 
-func MergeTask() {
+func SyncTask() {
 
 	timezone, _ := time.LoadLocation("Asia/Shanghai")
 	mergeCron := cron.New(cron.WithLocation(timezone))
 
-	_, err := mergeCron.AddFunc("*/10 * * * *", common.MergeLogic)
+	_, err := mergeCron.AddFunc("*/3 * * * *", common.SyncLogic)
 	if err != nil {
-		log.Fatalf("MergeTask，添加合并定时任务失败，ERR: [%v]", err)
+		log.Fatalf("SyncTask，添加同步定时任务失败，ERR: [%v]", err)
 	}
 
-	logx.Info("MergeTask，添加合并定时任务成功")
+	logx.Info("SyncTask，添加同步定时任务成功")
 	mergeCron.Start()
 }

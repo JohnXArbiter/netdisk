@@ -52,7 +52,8 @@ export const fileStatus = {
     ok: 1,
     undeleted: 2,
     deleted: 3,
-    banned: 4
+    banned: 4,
+    needMerge: 5
 }
 
 export const fileStatusMap = {
@@ -61,4 +62,5 @@ export const fileStatusMap = {
     2: '未删除',
     3: '已被删除',
     4: '已封禁',
+    5: '服务器处理中'
 }

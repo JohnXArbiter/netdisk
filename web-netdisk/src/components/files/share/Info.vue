@@ -77,13 +77,13 @@
                                 </el-icon>&nbsp;
                                 下载
                             </el-button>
-                                <el-button v-if="ownerInfo.data.userId == userInfo.id"
+                                <el-button v-if="ownerInfo.data.userId == userInfo.data.id"
                                            plain size="large" type="danger"
                                            @click="dialogVisible = true">
                                 <el-icon><CircleClose/></el-icon>&nbsp;
                                 取消分享
                             </el-button>
-                                <el-button v-if="ownerInfo.data.userId !== userInfo.id"
+                                <el-button v-if="ownerInfo.data.userId !== userInfo.data.id"
                                            plain size="large" type="danger"
                                            @click="tipoff=true; reason=''"
                                 >
@@ -197,7 +197,19 @@ const query = useRoute().query,
 let pwd = ref(''),
     pwdInput = ref(''),
     validated = ref(false),
-    userInfo = {id: -1, username: '', name: '', avatar: '', email: '', signature: '', used: 0, capacity: 0, status: 0}
+    userInfo = reactive({
+        data: {
+            id: -1,
+            username: '',
+            name: '',
+            avatar: '',
+            email: '',
+            signature: '',
+            used: 0,
+            capacity: 0,
+            status: 0
+        }
+    })
 
 const props = defineProps(['shareId']),
     fileTableRef = ref<InstanceType<typeof ElTable>>(),
@@ -218,7 +230,7 @@ const props = defineProps(['shareId']),
         data:
             {
                 shareStatus: 0,
-                userId: -1,
+                userId: 0,
                 name: '',
                 avatar: '',
                 signature: '',
@@ -289,6 +301,9 @@ async function tipoffCommit() {
     if (resp.code === codeOk) {
         tipoff.value = false
         promptSuccess('操作成功，窗口即将关闭')
+        setTimeout(()=> {
+            window.close()
+        }, 2000)
         return
     }
     promptError(`提交失败，${resp.msg}`)
@@ -303,9 +318,10 @@ onMounted(async () => {
     }
 
     try {
-        userInfo = await userStore.getUserInfo()
+        userInfo.data = await userStore.getUserInfo()
+        userInfo.data.id = Number(userInfo.data.id)
     } catch (e) {
-        userInfo.id = -1
+        userInfo.data.id = -1
     }
 })
 </script>

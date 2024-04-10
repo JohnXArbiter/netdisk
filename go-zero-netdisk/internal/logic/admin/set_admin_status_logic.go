@@ -2,6 +2,8 @@ package admin
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"lc/netdisk/internal/logic/mqs"
 	"lc/netdisk/model"
 
@@ -11,35 +13,35 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type SetStatusLogic struct {
+type SetAdminStatusLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewSetStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SetStatusLogic {
-	return &SetStatusLogic{
+func NewSetAdminStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SetAdminStatusLogic {
+	return &SetAdminStatusLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *SetStatusLogic) SetStatus(req *types.SetStatusReq) error {
+func (l *SetAdminStatusLogic) SetAdminStatus(req *types.SetStatusReq) error {
 	var (
 		engine = l.svcCtx.Xorm
 		err    error
 	)
 
-	defer mqs.LogSend(l.ctx, err, "SetStatus", req.Id, req.Status)
+	defer mqs.LogSend(l.ctx, err, "SetAdminStatus", req.Id, req.Status)
 
-	bean := &model.User{Status: req.Status}
+	bean := &model.Admin{Status: req.Status}
 	if _, err = engine.ID(req.Id).
 		Cols("status").
 		Update(bean); err != nil {
-		logx.Errorf("SetStatus，更新失败，ERR: [%v]", err)
+		err = errors.New(fmt.Sprintf("SetAdminStatus，更新失败，ERR: [%v]", err.Error()))
+		logx.Error(err)
 		return err
 	}
-
 	return nil
 }

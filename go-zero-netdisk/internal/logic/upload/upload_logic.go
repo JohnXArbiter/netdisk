@@ -108,6 +108,7 @@ func (l *UploadLogic) saveAndUpload(fileInfo map[string]string, fileData multipa
 		file.DoneAt = time.Now().Local()
 		file.Status = constant.StatusFileUploaded
 		file.DelFlag = constant.StatusFileUndeleted
+		file.SyncFlag = constant.FlagSyncWrite
 		if _, err := session.Insert(file); err != nil {
 			return nil, err
 		}

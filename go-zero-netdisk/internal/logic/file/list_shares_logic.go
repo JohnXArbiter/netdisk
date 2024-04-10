@@ -33,7 +33,8 @@ func (l *ListSharesLogic) ListShares() (resp []*types.ListShareStruct, err error
 		shares []*model.Share
 	)
 
-	if err = engine.Where("user_id = ?", userId).Find(&shares); err != nil {
+	if err = engine.Where("user_id = ?", userId).
+		Find(&shares); err != nil {
 		logx.Errorf("获取分享列表失败，ERR: [%v]", err)
 		return nil, err
 	}

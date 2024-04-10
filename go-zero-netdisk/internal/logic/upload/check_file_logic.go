@@ -128,6 +128,7 @@ func (l *CheckFileLogic) doWhenExist(req *types.CheckFileReq, fileFs *model.File
 	file.IsBig = isBigFlag
 	file.DoneAt = time.Now().Local()
 	file.DelFlag = constant.StatusFileUndeleted
+	file.SyncFlag = constant.FlagSyncWrite
 	if fileFs.Size > int64(constant.ShardingFloor) {
 		file.IsBig = constant.BigFileFlag
 	}

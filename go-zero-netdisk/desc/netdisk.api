@@ -31,6 +31,9 @@ service netdisk-api {
 	// admin
 	@handler adminLogin
 	post /admin/login (loginReq) returns (LoginResp)
+	
+	@handler shareReport
+	post /file/share-report (ReportReq) returns ()
 }
 
 @server(
@@ -158,6 +161,9 @@ service netdisk-api {
 	
 	@handler shareCancel
 	post /share-cancel (IdStrsReq) returns ()
+	
+	@handler search
+	get /search (SearchReq) returns ()
 }
 
 @server(
@@ -172,7 +178,7 @@ service netdisk-api {
 	@handler listSharesAdmin
 	post /share-list (PageReq) returns ()
 	
-	@handler setStatus
+	@handler setUserStatus
 	post /user-status (SetStatusReq) returns ()
 	
 	@handler getUrl
@@ -186,6 +192,9 @@ service netdisk-api {
 	
 	@handler getAdminList
 	post /list (PageReq) returns ()
+	
+	@handler setAdminStatus
+	post /status (SetStatusReq) returns ()
 	
 	@handler getShareInfoAdmin
 	get /share-file/:id (IdStrReq) returns (GetShareInfoResp)

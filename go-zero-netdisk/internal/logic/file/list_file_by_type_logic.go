@@ -6,11 +6,9 @@ import (
 	redis2 "github.com/redis/go-redis/v9"
 	"lc/netdisk/common/constant"
 	"lc/netdisk/common/redis"
-	"lc/netdisk/model"
-	"time"
-
 	"lc/netdisk/internal/svc"
 	"lc/netdisk/internal/types"
+	"lc/netdisk/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -56,6 +54,10 @@ func (l *ListFileByTypeLogic) ListFileByType(req *types.FileTypeReq) ([]*types.F
 
 	var urls []redis2.Z
 	for i, file := range files {
+		if file.Status == constant.StatusFileNeedMerge {
+			continue
+		}
+
 		var url string
 		if len(zs) == len(files) && redisErr == nil {
 			url = zs[i].Member.(string)
@@ -69,8 +71,11 @@ func (l *ListFileByTypeLogic) ListFileByType(req *types.FileTypeReq) ([]*types.F
 				if err = rdb.ZAdd(l.ctx, key, urls...).Err(); err != nil {
 					logx.Errorf("通过类型获取文件列表，redis缓存url失败，err: %v", err)
 				}
-				if err = rdb.Expire(l.ctx, key, 7*24*time.Hour).Err(); err != nil {
-					logx.Errorf("通过类型获取文件列表，设置缓存expire失败，ERR: [%v]", err)
+			}
+			if i == len(files)-1 {
+				if err = rdb.Expire(l.ctx, key, redis.DownloadExpire).Err(); err != nil {
+					logx.Errorf("ListFileByType，设置过期时间失败，ERR: [%v]", err)
+					return nil, err
 				}
 			}
 		}
@@ -85,11 +90,5 @@ func (l *ListFileByTypeLogic) ListFileByType(req *types.FileTypeReq) ([]*types.F
 			Updated: file.Updated.Format(constant.TimeFormat1),
 		})
 	}
-
-	if err := rdb.Expire(l.ctx, key, redis.DownloadTypeExpire).Err(); err != nil {
-		logx.Errorf("ListFileByType，设置过期时间失败，ERR: [%v]", err)
-		return nil, err
-	}
-
 	return resp, nil
 }

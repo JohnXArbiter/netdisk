@@ -2,7 +2,6 @@ package file
 
 import (
 	"context"
-	"errors"
 	"github.com/zeromicro/go-zero/core/logx"
 	"lc/netdisk/common/constant"
 	"lc/netdisk/common/xorm"
@@ -41,16 +40,15 @@ func (l *RecoverFilesLogic) RecoverFiles(req *types.RecoverFilesReq) error {
 	_, err = engine.DoTransaction(func(session *xorm.Session) (interface{}, error) {
 		// 1.恢复文件delFlag字段
 		fileBean := &model.File{
-			DelFlag: constant.StatusFileUndeleted,
-			DelTime: 0,
+			DelFlag:  constant.StatusFileUndeleted,
+			DelTime:  0,
+			SyncFlag: constant.FlagSyncWrite,
 		}
-		if affected, err := session.In("id", fileIds).
+		if _, err = session.In("id", fileIds).
 			And("user_id = ?", userId).
 			Update(fileBean); err != nil {
 			logx.Errorf("恢复文件信息出错，err: %v", err)
 			return nil, err
-		} else if affected != int64(len(fileIds)) {
-			return nil, errors.New("恢复文件信息出错！")
 		}
 
 		for len(folderIds) > 0 {
@@ -59,7 +57,7 @@ func (l *RecoverFilesLogic) RecoverFiles(req *types.RecoverFilesReq) error {
 				DelFlag: constant.StatusFolderUndeleted,
 				DelTime: 0,
 			}
-			if _, err := session.In("id", folderIds).
+			if _, err = session.In("id", folderIds).
 				And("del_flag = ?", constant.StatusFolderDeleted).
 				Update(folderBean); err != nil {
 				logx.Errorf("恢复文件夹信息出错，err: %v", err)
@@ -75,7 +73,7 @@ func (l *RecoverFilesLogic) RecoverFiles(req *types.RecoverFilesReq) error {
 					subQuery += ","
 				}
 			}
-			if err := session.Select("id").Table(&model.Folder{}).
+			if err = session.Select("id").Table(&model.Folder{}).
 				Where("id in ( "+subQuery+") )").
 				And("del_flag = ?", constant.StatusFolderDeleted).
 				Find(&ids); err != nil {

@@ -22,6 +22,7 @@ type MergeStruct struct {
 }
 
 func MergeLogic() {
+	logx.Infof("合并任务开始")
 
 	var mss []*MergeStruct
 	cols := "a.id as sId, b.id as fsId, b.object_name, b.hash, b.chunk_num, b.size"

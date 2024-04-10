@@ -25,9 +25,7 @@ func NewLogPusher(confs []*config.KqPusherConf) {
 }
 
 func LogSend(ctx context.Context, err error, operation string, ids ...interface{}) {
-	if err != nil {
-		ErrSend(operation, err)
-	}
+	ErrSend(operation, err)
 	OperationSend(ctx, operation, err, ids)
 }
 

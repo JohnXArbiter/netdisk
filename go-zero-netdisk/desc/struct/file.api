@@ -72,6 +72,15 @@ type (
         FolderIds []int64 `json:"folderIds"`
         ShareStruct
     }
+
+    SearchReq {
+        Phrase string `form:"phrase"`
+    }
+
+    ReportReq {
+        ShareId string `json:"shareId"`
+        Reason string `json:"reason"`
+    }
 )
 
 type (
@@ -81,7 +90,7 @@ type (
         Url string `json:"url"`
         Status int8 `json:"status"`
         Size int64 `json:"size"`
-        FolderId int64 `json:"folderId,omitempty"`
+        FolderId int64 `json:"folderId"`
         FolderName string `json:"folderName"`
         DelTime int64 `json:"delTime"`
     }
@@ -94,7 +103,7 @@ type (
         Ext string `json:"ext"`
         Status int8 `json:"status"`
         Size int64 `json:"size"`
-        FolderId int64 `json:"folderId,omitempty"`
+        FolderId int64 `json:"folderId"`
         Created string `json:"created"`
         Updated string `json:"updated"`
     }
