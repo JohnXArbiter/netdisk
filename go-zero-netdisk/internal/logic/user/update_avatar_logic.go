@@ -2,9 +2,11 @@ package user
 
 import (
 	"context"
+	"errors"
 	"lc/netdisk/common/constant"
 	"lc/netdisk/common/redis"
 	"lc/netdisk/common/xorm"
+	"lc/netdisk/internal/logic/mqs"
 	"lc/netdisk/internal/svc"
 	"lc/netdisk/internal/types"
 	"lc/netdisk/model"
@@ -35,56 +37,34 @@ func (l *UpdateAvatarLogic) UpdateAvatar(fileParam *types.FileParam) (interface{
 		engine      = l.svcCtx.Xorm
 		rdb         = l.svcCtx.Redis
 		minioSvc    = l.svcCtx.Minio.NewService()
+		objectName  string
+		err         error
 	)
+
+	defer mqs.LogSend(l.ctx, err, "UpdateAvatar", objectName)
 
 	index := strings.LastIndex(fileParam.FileHeader.Filename, ",")
 	ext := fileParam.FileHeader.Filename[index+1:]
-	objectName := "/avatar/" + userIdStr + ext
+	objectName = "/avatar/" + userIdStr + ext
 
-	var (
-		urlErr error
-		url    string
-	)
-	_, err := engine.DoTransaction(func(session *xorm.Session) (interface{}, error) {
+	return engine.DoTransaction(func(session *xorm.Session) (interface{}, error) {
 		user := &model.User{Avatar: objectName}
-		if _, err := session.ID(loginUserId).
+		if _, err = session.ID(loginUserId).
 			Update(user); err != nil {
-			logx.Errorf("更新头像，更新数据库失败，ERR: [%v]", err)
+			err = errors.New("更新头像，更新数据库失败，ERR: " + err.Error())
 			return nil, err
 		}
 
-		if err := minioSvc.Upload(l.ctx, objectName, fileParam.File); err != nil {
+		if err = minioSvc.Upload(l.ctx, objectName, fileParam.File); err != nil {
+			err = errors.New("更新头像，上传头像失败，ERR: " + err.Error())
 			return nil, err
 		}
 
-		url, urlErr = minioSvc.GenUrl(objectName, "", false)
-
+		key := redis.UserInfoKey + userIdStr
+		if err = rdb.Del(l.ctx, key).Err(); err != nil {
+			err = errors.New("更新头像，上传头像失败了，ERR: " + err.Error())
+			return nil, err
+		}
 		return nil, nil
 	})
-	if err != nil {
-		return nil, err
-	}
-
-	if urlErr != nil {
-		logx.Errorf("更新头像，生成url失败，ERR: [%v]", urlErr)
-		return nil, nil
-	}
-
-	userInfoKey := redis.UserInfoKey + userIdStr
-	m := make(map[string]interface{})
-	if _, err = engine.Select("id, name, username, email, signature, status, used, capacity").
-		ID(loginUserId).Table(&model.User{}).Get(&m); err != nil {
-		logx.Errorf("更新头像，获取用户信息失败，ERR: [%v]", err)
-		return nil, nil
-	}
-
-	m["avatar"] = url
-	pipeline := rdb.Pipeline()
-	pipeline.HSet(l.ctx, userInfoKey, m)
-	pipeline.Expire(l.ctx, userInfoKey, redis.UserInfoExpire)
-	if _, err = pipeline.Exec(l.ctx); err != nil {
-		logx.Errorf("更新头像，用户信息->redis失败，ERR: [%v]", err)
-	}
-
-	return nil, nil
 }

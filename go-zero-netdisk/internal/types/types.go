@@ -168,6 +168,10 @@ type ReportReq struct {
 	Reason  string `json:"reason"`
 }
 
+type DFReq struct {
+	FolderIds []int64 `json:"folderIds"`
+}
+
 type DeletedFilesResp struct {
 	Id         int64  `json:"id"`
 	Name       string `json:"name"`
@@ -289,4 +293,11 @@ type SetFileStatusReq struct {
 type GetUrlReq struct {
 	Id   string `path:"id"`
 	Type int8   `path:"type"`
+}
+
+type AddAdminReq struct {
+	Username       string `json:"username"`
+	Password       string `json:"password"`
+	PasswordRepeat string `json:"passwordRepeat"`
+	Name           string `json:"name"`
 }

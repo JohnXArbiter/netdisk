@@ -65,17 +65,18 @@ func (l *ListFileLogic) ListFile(req *types.ParentFolderIdReq) ([]*types.FileRes
 			url2, err := minioSvc.GenUrl(file.ObjectName, file.Name, true)
 			if err != nil {
 				logx.Errorf("通过文件夹id获取文件列表，[%d]获取url失败，ERR: [%v]", file.Id, err)
+				continue
 			} else {
 				url = url2
 				urls = append(urls, redis2.Z{Member: url, Score: float64(file.Created.Unix())})
+			}
+			if i == len(files)-1 {
 				if err = rdb.ZAdd(l.ctx, key, urls...).Err(); err != nil {
 					logx.Errorf("通过文件夹id获取文件列表，redis缓存url失败，ERR: [%v]", err)
 				}
-				if i == len(files)-1 {
-					if err = rdb.Expire(l.ctx, key, redis.DownloadExpire).Err(); err != nil {
-						logx.Errorf("ListFileByType，设置过期时间失败，ERR: [%v]", err)
-						return nil, err
-					}
+				if err = rdb.Expire(l.ctx, key, redis.DownloadExpire).Err(); err != nil {
+					logx.Errorf("ListFileByType，设置过期时间失败，ERR: [%v]", err)
+					return nil, err
 				}
 			}
 		}

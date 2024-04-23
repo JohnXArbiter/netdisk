@@ -3,6 +3,7 @@ package upload
 import (
 	"context"
 	"fmt"
+	redis2 "github.com/redis/go-redis/v9"
 	"lc/netdisk/common/redis"
 	"lc/netdisk/internal/svc"
 	"lc/netdisk/internal/types"
@@ -36,7 +37,8 @@ func (l *CheckChunkLogic) CheckChunk(req *types.CheckChunkReq) (*types.CheckChun
 	// 1. 判断之前是否正确写入了文件的数据
 	fileIdStr := strconv.FormatInt(req.FileId, 10)
 	_, err := rdb.Exists(l.ctx, redis.UploadCheckBigFileKey+fileIdStr).Result()
-	if err != nil {
+	if err != nil && err != redis2.Nil {
+		logx.Errorf("CheckChunk，文件：%v，分片：%v 检查redis信息失败，ERR：[%v]", req.Hash, req.ChunkSeq, err)
 		return nil, err
 	}
 

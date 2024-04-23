@@ -32,6 +32,7 @@ func LogSend(ctx context.Context, err error, operation string, ids ...interface{
 func ErrSend(operation string, err error) {
 	if err != nil {
 		msg := err.Error()
+		logx.Error("打印错误日志：%v", err)
 		if err2 := m[errKqPusher].Push(operation + msg); err2 != nil {
 			logx.Errorf("Kafka发送错误日志失败, Msg: [%v], ERR: [%v]", msg, err2)
 		}

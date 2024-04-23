@@ -81,6 +81,10 @@ type (
         ShareId string `json:"shareId"`
         Reason string `json:"reason"`
     }
+
+    DFReq {
+        FolderIds []int64 `json:"folderIds"`
+    }
 )
 
 type (

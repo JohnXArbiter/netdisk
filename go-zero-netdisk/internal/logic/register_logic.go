@@ -71,9 +71,14 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) error {
 // 校验账号密码
 func (l *RegisterLogic) validate(req *types.RegisterReq) (*model.User, error) {
 	var (
-		username = strings.TrimSpace(req.Username)
-		password = []byte(strings.TrimSpace(req.Password))
+		username       = strings.TrimSpace(req.Username)
+		password       = []byte(strings.TrimSpace(req.Password))
+		passwordRepeat = []byte(strings.TrimSpace(req.PasswordRepeat))
 	)
+
+	if string(passwordRepeat) != string(password) {
+		return nil, errors.New("两次密码不相等")
+	}
 
 	if !variable.Upattern.MatchString(username) {
 		return nil, errors.New("账号格式错误，只能包含数字和字母，5-20位")

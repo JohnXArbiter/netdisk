@@ -16,7 +16,11 @@ function add(form) {
     return http.post('/admin/add', form)
 }
 
+function del(id) {
+    return http.del(`/admin/${id}`)
+}
+
 export default {
     getAdminInfo, getAdminList,
-    setStatus, add
+    setStatus, add, del
 }

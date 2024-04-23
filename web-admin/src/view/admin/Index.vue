@@ -21,14 +21,14 @@
                 <!--                <el-table-column prop="password" label="密码" min-width="200"/>-->
                 <el-table-column prop="created" label="创建时间" min-width="150"/>
                 <el-table-column prop="updated" label="更新时间" min-width="150"/>
-                <el-table-column label="类型" min-width="60">
+                <el-table-column label="类型" min-width="70">
                     <template #default="scope">
-                        <div v-if="scope.row.status === 1">超管</div>
+                        <div v-if="scope.row.status === 1">超级管理员</div>
                         <div v-else>管理员</div>
                     </template>
                 </el-table-column>
-                <el-table-column prop="state" label="状态" min-width="180"/>
-                <el-table-column label="操作" width="330">
+                <el-table-column prop="state" label="状态" min-width="120"/>
+                <el-table-column label="操作" width="250">
                     <template #default="scope">
                         <el-button v-if="scope.row.status === adminSuper"
                                    type="danger" size="small" disabled
@@ -41,11 +41,19 @@
 
                         <el-button v-if="scope.row.status === adminSuper"
                                    type="primary" size="small" disabled
-                                   @click="buttonClick(0, scope.row.id, adminNormal, scope.row.type)">恢复
+                                   @click="buttonClick(0, scope.row.id, adminNormal, scope.row.type)">启用
                         </el-button>
                         <el-button v-else
                                    type="primary" size="small"
-                                   @click="buttonClick(0, scope.row.id, adminNormal, scope.row.type)">恢复
+                                   @click="buttonClick(0, scope.row.id, adminNormal, scope.row.type)">启用
+                        </el-button>
+                        <el-button v-if="scope.row.status === adminSuper"
+                                   type="danger" size="small" disabled
+                                   @click="buttonClick(3, scope.row.id, adminNormal, scope.row.type)">删除
+                        </el-button>
+                        <el-button v-else
+                                   type="danger" size="small"
+                                   @click="buttonClick(3, scope.row.id, adminNormal, scope.row.type)">删除
                         </el-button>
                     </template>
                 </el-table-column>
@@ -98,10 +106,10 @@
                 <el-input v-model="addForm.username"></el-input>
             </el-form-item>
             <el-form-item label="密码">
-                <el-input v-model="addForm.password"></el-input>
+                <el-input v-model="addForm.password" type="password"></el-input>
             </el-form-item>
             <el-form-item label="确认密码">
-                <el-input v-model="addForm.password2"></el-input>
+                <el-input v-model="addForm.passwordRepeat" type="password"></el-input>
             </el-form-item>
             <el-form-item label="名称">
                 <el-input v-model="addForm.name"></el-input>
@@ -117,13 +125,29 @@
               </span>
         </template>
     </el-dialog>
+
+    <el-dialog v-model="dialogVisible.option[3]" title="删除账号">
+        <h3>
+            <el-icon>
+                <Warning/>
+            </el-icon>
+            确定删除这个账号吗😶
+        </h3>
+        <template #footer>
+              <span class="dialog-footer">
+                <el-button @click="dialogVisible.option[3]=false">取消</el-button>
+                <el-button type="primary" @click="deleteAdmin(1)">
+                  确定
+                </el-button>
+              </span>
+        </template>
+    </el-dialog>
 </template>
 
 <script lang="js" setup>
 import {Plus} from "@element-plus/icons-vue";
 import adminApi from "@/api/admin.js";
 import {onMounted, reactive, ref} from "vue";
-import {ElMessage, ElMessageBox} from 'element-plus';
 import {useRouter} from 'vue-router'
 import {codeOk, promptError, promptSuccess} from "@/utils/http/base.js";
 import {adminBanned, adminNormal, adminSuper} from "@/utils/constant.js";
@@ -143,12 +167,11 @@ const searchForm = reactive({
         name: ''
     }),
     dialogVisible = reactive({option: [false, false, false]}),
-    setStatusObj = {id: 0, status: 0},
+    selected = {id: 0, status: 0},
     addForm = reactive({})
 
 async function listAdmins() {
     const res = await adminApi.getAdminList({'page': 0, 'size': 100});
-    console.log(res.data);
     admins.value = res.data.data
     admins.value.forEach(admin => {
         switch (admin.status) {
@@ -159,7 +182,7 @@ async function listAdmins() {
                 admin.state = '可用'
                 return
             case adminBanned:
-                admin.state = '停用'
+                admin.state = '已停用'
                 return
         }
     })
@@ -167,14 +190,13 @@ async function listAdmins() {
 }
 
 function buttonClick(option, id, status) {
-    setStatusObj.id = id
-    setStatusObj.status = status
+    selected.id = id
+    selected.status = status
     dialogVisible.option[option] = true
 }
 
 async function setStatus(option) {
-    console.log(setStatusObj)
-    const resp = await adminApi.setStatus(setStatusObj)
+    const resp = await adminApi.setStatus(selected)
     if (resp.data.code === codeOk) {
         await listAdmins()
         promptSuccess('操作成功')
@@ -195,6 +217,17 @@ async function addAdmin() {
     promptError(`操作失败，${resp.data.msg}`)
 }
 
+async function deleteAdmin() {
+    const resp = await adminApi.del(selected.id)
+    if (resp.data.code === codeOk) {
+        await listAdmins()
+        promptSuccess('操作成功')
+        dialogVisible.option[3] = false
+        return
+    }
+    promptError(`操作失败，${resp.data.msg}`)
+}
+
 const handleSizeChange = (size) => {
     searchForm.size = size;
     listAdmins();
@@ -208,31 +241,6 @@ const handleCurrentChange = (current) => {
 const searchUser = () => {
     searchForm.current = 1;
     listAdmins();
-}
-
-// 删除用户
-const deleteUser = (id) => {
-    ElMessageBox.confirm(
-        '确定要删除该用户信息吗?',
-        {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning',
-        }
-    ).then(async () => {
-        const res = await userApi.delUser({id: id});
-        if (res.data.success) {
-            ElMessage.success("删除成功")
-            getUserList();
-        } else {
-            ElMessage.error("删除失败")
-        }
-    }).catch(() => {
-        ElMessage({
-            type: 'info',
-            message: '取消删除',
-        })
-    })
 }
 </script>
 

@@ -18,6 +18,7 @@
                 </el-table-column>
                 <el-table-column prop="downloadNum" label="下载次数" min-width="60"/>
                 <el-table-column prop="clickNum" label="点击次数" min-width="60"/>
+                <el-table-column prop="reason" label="举报理由"/>
                 <el-table-column prop="state" label="状态" min-width="180"/>
                 <el-table-column label="操作" width="200">
                     <template #default="scope">

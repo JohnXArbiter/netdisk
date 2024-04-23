@@ -3,8 +3,9 @@
         <el-row>
 
             <el-col :span="24" v-if="!validated">
-                <div style="position: absolute; left: -20%;color: #adabab;
-    font: 800 23px Arial, sans-serif; line-height: 100%;">提取文件
+                <div
+                        style="position: absolute;color: #adabab;font: 800 23px Arial, sans-serif; line-height: 100%;">
+                    提取文件
                 </div>
                 <div v-if="ownerInfo.data.shareStatus === shareNotExistOrDeleted"
                      class="small-zi">
@@ -19,7 +20,7 @@
                     当前用户已被违法封禁！😡
                 </div>
 
-                <div>
+                <div v-if="ownerInfo.data.shareStatus === shareNotExpired && !validated">
                     <div class="pwd-box">
                         <el-image class="big-pic"
                                   :src="ownerInfo.data.avatar"
@@ -50,11 +51,9 @@
                 </div>
             </el-col>
 
-            <el-col v-if="list.items && list.items.length!=0 && validated"
-                    :span="24" style="margin-bottom: 100px">
-                <!--                <el-empty v-if="!list.items || list.items.length==0"-->
-                <!--                          description="当前分享文件夹没有文件 😺"/>-->
-
+            <el-col v-if="list.items && list.items.length!=0
+            && ownerInfo.data.shareStatus === shareNotExpired
+            && validated" :span="24" style="margin-bottom: 100px">
                 <div style="margin: 20px 0">
                     <div style="font-size: 1.8rem; font-weight: 700; margin-bottom: 10px">
                         <div>
@@ -188,7 +187,14 @@ import {
 } from "@element-plus/icons-vue";
 import {useRoute} from "vue-router";
 import {codeOk, promptError, promptSuccess} from "@/utils/apis/base.ts";
-import {fileStatus, fileStatusMap, shareIllegal, shareNotExistOrDeleted, userStatus} from "@/utils/constant.ts";
+import {
+    fileStatus,
+    fileStatusMap,
+    shareIllegal,
+    shareNotExistOrDeleted,
+    shareNotExpired,
+    userStatus
+} from "@/utils/constant.ts";
 import {useBaseStore} from "@/store";
 
 const query = useRoute().query,
@@ -279,7 +285,6 @@ async function getOwnerInfo() {
     const resp = await getOwnerInfoByShareId(props.shareId)
     if (resp.code === codeOk) {
         ownerInfo.data = resp.data
-        console.log(ownerInfo.data.userStatus, ownerInfo.data.shareStatus)
     }
 }
 
@@ -301,7 +306,7 @@ async function tipoffCommit() {
     if (resp.code === codeOk) {
         tipoff.value = false
         promptSuccess('操作成功，窗口即将关闭')
-        setTimeout(()=> {
+        setTimeout(() => {
             window.close()
         }, 2000)
         return
@@ -312,9 +317,12 @@ async function tipoffCommit() {
 onMounted(async () => {
     await getOwnerInfo()
 
-    if (query.pwd != undefined) {
-        pwd.value = query.pwd
-        await listItems(pwd.value)
+    if (ownerInfo.data.shareStatus === shareNotExpired) {
+        console.log(ownerInfo.data.shareStatus)
+        if (query.pwd != undefined) {
+            pwd.value = query.pwd
+            await listItems(pwd.value)
+        }
     }
 
     try {

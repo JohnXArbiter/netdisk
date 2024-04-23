@@ -256,6 +256,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/search",
 					Handler: file.SearchHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/folder-download",
+					Handler: file.DownloadFolderHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithPrefix("/file"),
@@ -314,6 +319,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/share-status",
 					Handler: admin.SetShareStatusHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/add",
+					Handler: admin.AddAdminHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodDelete,
+					Path:    "/:id",
+					Handler: admin.DeleteAdminHandler(serverCtx),
 				},
 			}...,
 		),

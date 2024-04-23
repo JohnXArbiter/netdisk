@@ -50,3 +50,7 @@ export function copyFolders(parentFolderId: number, folderIds: number[]) {
 export function deleteFolders(ids: number[]) {
     return api.put<any, Resp<any>>('/file/folder-delete', {'ids': ids})
 }
+
+export function downloadFolder(ids: number[]) {
+    return api.post<any, Resp<string[]>>('/file/folder-download', {'folderIds': ids})
+}

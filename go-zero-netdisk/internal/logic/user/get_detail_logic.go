@@ -50,10 +50,10 @@ func (l *GetDetailLogic) GetDetail(req *types.IdPathReq) (interface{}, error) {
 		logx.Errorf("获取用户info，redis获取失败，ERR: [%v]", err)
 	} else if id, ok := m["id"]; err == redis2.Nil || !ok || id == "" {
 		cols := "id, name, username, avatar, email, signature, status, used, capacity"
-		if has, err := engine.Select(cols).ID(targetUserId).Get(&user); err != nil {
+		if _, err = engine.Select(cols).ID(targetUserId).Get(&user); err != nil {
 			logx.Errorf("更新用户info，数据库info获取失败，ERR: [%v]", err)
 			return nil, err
-		} else if !has {
+		} else if user.Id <= 0 {
 			return nil, errors.New("用户信息有误")
 		}
 		url, _ := minioSvc.GenUrl(user.Avatar, "", false)

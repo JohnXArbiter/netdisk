@@ -115,4 +115,8 @@ var OperationM = map[string]string{
 	"SetAdminStatus":      "设置管理员状态：%v",
 	"MergeLogic":          "分片文件合并任务开始，时间：%v",
 	"Search":              "搜索文件，搜索词条：%v",
+	"UpdateDetail":        "更新信息：%v",
+	"UpdateAvatar":        "更新头像：%v",
+	"AddAdmin":            "新增了管理员：%v",
+	"DeleteAdmin":         "删除了管理员：%v",
 }

@@ -65,14 +65,15 @@ func (l *ListFileByTypeLogic) ListFileByType(req *types.FileTypeReq) ([]*types.F
 			url2, err := minioSvc.GenUrl(file.ObjectName, file.Name, true)
 			if err != nil {
 				logx.Errorf("通过类型获取文件列表，[%d]获取url失败，err: %v", file.ObjectName, redisErr)
+				continue
 			} else {
 				url = url2
 				urls = append(urls, redis2.Z{Member: url, Score: float64(file.Created.Unix())})
+			}
+			if i == len(files)-1 {
 				if err = rdb.ZAdd(l.ctx, key, urls...).Err(); err != nil {
 					logx.Errorf("通过类型获取文件列表，redis缓存url失败，err: %v", err)
 				}
-			}
-			if i == len(files)-1 {
 				if err = rdb.Expire(l.ctx, key, redis.DownloadExpire).Err(); err != nil {
 					logx.Errorf("ListFileByType，设置过期时间失败，ERR: [%v]", err)
 					return nil, err

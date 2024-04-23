@@ -61,6 +61,7 @@
                             <div>{{ scope.row.state }}</div>
                         </template>
                     </el-table-column>
+                    <el-table-column prop="pwd" label="提取码" min-width="100"/>
                     <el-table-column label="类型" min-width="100">
                         <template #default="scope">
                             <div>{{ typeMap[scope.row.type] }}</div>

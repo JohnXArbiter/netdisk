@@ -14,7 +14,7 @@
 
                     <el-popover v-if="loginState"
                             placement="top-start"
-                            width="10vw"
+                            width="15vw"
                             trigger="hover"
                     >
                         <template #reference>
@@ -125,7 +125,7 @@ onMounted(async () => {
     margin-bottom: 5px;
     color: #213547;
     font-family: Arial, sans-serif;
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     font-weight: 700;
 }
 </style>

@@ -29,4 +29,11 @@ type (
         Id string `path:"id"`
         Type int8 `path:"type"`
     }
+
+    AddAdminReq {
+        Username string `json:"username"`
+        Password string `json:"password"`
+        PasswordRepeat string `json:"passwordRepeat"`
+        Name string `json:"name"`
+    }
 )

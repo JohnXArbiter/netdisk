@@ -42,6 +42,7 @@ instance.interceptors.response.use(
                     break;
                 case 401:
                     ElMessage.error("未授权，请重新登录");
+                    window.location.href = '/login'
                     break;
                 case 403:
                     ElMessage.error("拒绝访问");

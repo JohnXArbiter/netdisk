@@ -164,6 +164,9 @@ service netdisk-api {
 	
 	@handler search
 	get /search (SearchReq) returns ()
+	
+	@handler downloadFolder
+	post /folder-download (DFReq) returns ([]string)
 }
 
 @server(
@@ -201,6 +204,12 @@ service netdisk-api {
 	
 	@handler setShareStatus
 	post /share-status (SetShareStatusReq) returns ()
+	
+	@handler addAdmin
+	post /add (AddAdminReq) returns ()
+	
+	@handler deleteAdmin
+	delete /:id (IdStrReq) returns ()
 }
 
 type (
