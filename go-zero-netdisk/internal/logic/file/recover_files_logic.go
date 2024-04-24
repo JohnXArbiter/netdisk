@@ -57,7 +57,8 @@ func (l *RecoverFilesLogic) RecoverFiles(req *types.RecoverFilesReq) error {
 				DelFlag: constant.StatusFolderUndeleted,
 				DelTime: 0,
 			}
-			if _, err = session.In("id", folderIds).
+			if _, err = session.Cols("del_flag", "del_time").
+				In("id", folderIds).
 				And("del_flag = ?", constant.StatusFolderDeleted).
 				Update(folderBean); err != nil {
 				logx.Errorf("恢复文件夹信息出错，err: %v", err)
@@ -80,7 +81,8 @@ func (l *RecoverFilesLogic) RecoverFiles(req *types.RecoverFilesReq) error {
 				logx.Errorf("查询父文件夹出错，err: %v", err)
 				return nil, err
 			}
-			folderIds = ids
+			folderIds = make([]int64, len(ids))
+			copy(folderIds, ids)
 		}
 		return nil, nil
 	})
