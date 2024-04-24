@@ -21,7 +21,7 @@
                 <el-empty v-if="!fileList.data || fileList.data.length==0"
                           description="回收站暂时为空😚"/>
 
-                <el-table v-if="fileList && fileList.data.length!=0"
+                <el-table v-if="fileList.data && fileList.data.length!=0"
                           ref="fileTableRef"
                           :data="fileList.data" style="width: 100%"
                           @selection-change="fileSelectionChange"
@@ -132,14 +132,10 @@ import {ElTable} from "element-plus";
 import {onMounted, reactive, ref} from "vue";
 import {deleteAllFilesTruly, DeleteFile, deleteFilesTruly, getDeletedFiles, recoverFiles} from "./bin.ts";
 import {
-    Download, Warning,
-    RefreshRight, Delete, DeleteFilled
+    Warning, RefreshRight, Delete, DeleteFilled
 } from "@element-plus/icons-vue";
 import {codeOk, promptError} from "@/utils/apis/base.ts";
 import {formatLeft, formatSize, formatTime} from "@/utils/util.ts";
-import {File} from "@/components/files/file.ts";
-import {types} from "sass";
-import Map = types.Map;
 
 const fileList = reactive<{ data: DeleteFile[] }>({
         data: []
@@ -147,7 +143,7 @@ const fileList = reactive<{ data: DeleteFile[] }>({
     dialogVisible = reactive({option: [false, false, false]}),
     fileTableRef = ref<InstanceType<typeof ElTable>>()
 
-let singleSelectedFile = ref({}),
+let singleSelectedFile = ref({id: 0}),
     selectedFiles: DeleteFile[],
     fileButtonsState = ref(0)
 
@@ -167,6 +163,10 @@ function fileSelectionChange(files: DeleteFile[]) {
 async function listDeletedFiles() {
     const resp = await getDeletedFiles()
     if (resp.code === codeOk) {
+        if (!resp.data) {
+            fileList.data = []
+            return
+        }
         fileList.data = resp.data
         fileList.data.forEach(file => {
             file.sizeStr = formatSize(file.size)
@@ -176,7 +176,6 @@ async function listDeletedFiles() {
             if (file.folderId === 0) {
                 file.src = '根文件夹'
             }
-            console.log(file.folderId)
         })
     } else {
         promptError(resp.msg)
@@ -194,23 +193,17 @@ async function clearBin() {
 }
 
 async function recoverOrDelete(option: number) {
-    let ids, resp
-    if (singleSelectedFile.value !== 0) {
-        ids = [singleSelectedFile.value]
-    } else {
-        ids = selectedFiles.map(file => file.id)
-    }
+    let resp
     if (option === 1) {
         let recoverObj = {fileIds: [], folderIds: []}
-        if (singleSelectedFile.value.id === 0) {
+        if (singleSelectedFile.value.id === 0 && selectedFiles.length > 0) {
             const m = new Map()
-
             selectedFiles.forEach(file => {
                 if (file.folderId !== 0) {
                     if (!m.has(file.folderId)) {
                         recoverObj.folderIds.push(file.folderId)
                     }
-                    m.set(file.folderId)
+                    m.set(file.folderId, 0)
                 }
                 recoverObj.fileIds.push(file.id)
             })
@@ -220,6 +213,13 @@ async function recoverOrDelete(option: number) {
         }
         resp = await recoverFiles(recoverObj)
     } else {
+        let ids
+        if (singleSelectedFile.value.id !== 0) {
+            ids = [singleSelectedFile.value]
+        } else {
+            ids = selectedFiles.map(file => file.id)
+        }
+        console.log(ids)
         resp = await deleteFilesTruly(ids)
     }
     if (resp.code === codeOk) {

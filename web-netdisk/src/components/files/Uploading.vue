@@ -7,8 +7,9 @@
                :http-request="handleUpload"
     >
         <!--               :on-change="change"-->
-
-        <el-button type="primary" :icon="Upload" round>选择上传</el-button>
+        <template #trigger>
+            <el-button type="primary" :icon="Upload" round>选择上传</el-button>
+        </template>
         <!--        <div v-if="!progress" class="el-upload__text">-->
         <!--            Drop file here or <em>click to upload</em>-->
         <!--        </div>-->
@@ -21,12 +22,14 @@
         <!--                :percentage="progress"-->
         <!--                status="success"-->
         <!--        />-->
-
+        <el-button type="primary" round plain :icon="RefreshRight" @click="refresh()"
+                   style="margin-left: 20px;position: absolute">刷新
+        </el-button>
     </el-upload>
 </template>
 
 <script lang="ts" setup>
-import {Upload} from "@element-plus/icons-vue";
+import {RefreshRight, Upload} from "@element-plus/icons-vue";
 import {UploadRequestOptions} from "element-plus";
 import {UploadRawFile} from "element-plus/es/components/upload/src/upload";
 import {useFileFolderStore} from "@/store/fileFolder.ts";
@@ -34,7 +37,8 @@ import SparkMD5 from 'spark-md5'
 import {checkChunk, checkFile, upload, uploadChunk, uploadConst} from "./uploading.ts";
 import {codeOk, promptError, promptSuccess} from "@/utils/apis/base.ts";
 
-const fileFolderStore = useFileFolderStore()
+const fileFolderStore = useFileFolderStore(),
+    emit = defineEmits(['list'])
 
 async function handleUpload(param: UploadRequestOptions) {
     const res = await checkBeforeUpload(param.file)
@@ -44,11 +48,8 @@ async function handleUpload(param: UploadRequestOptions) {
                 param.file.size > uploadConst.shardingFloor &&
                 res.confirmShard == uploadConst.shardConfirmed
             ) {
-                console.log(1111111)
                 await uploadSlice(param.file, res.fileId, res.hash)
             } else {
-                console.log(22222222)
-
                 await uploadSingle(param.file, res.fileId)
             }
         } else {
@@ -90,6 +91,7 @@ async function uploadSingle(file: UploadRawFile, fileId: number) {
     const resp = await upload(formData)
     if (resp && resp.code === codeOk) {
         promptSuccess(file.name + ' 上传成功！😺')
+        emit('list')
     }
 }
 
@@ -110,6 +112,9 @@ async function uploadSlice(file: UploadRawFile, fileId: number, hash: string) {
     for (let i = 0; i < chunkNum; i++) {
         await checkChunkAndUpload(chunks[i], i)
     }
+    setTimeout(() => {
+        emit('list')
+    }, 1000)
 }
 
 async function checkChunkAndUpload({chunk, fileId, hash}: any, chunkSeq: number) {
@@ -140,20 +145,8 @@ async function genMd5(file: UploadRawFile) {
     }
 }
 
-function formatSize(file) {
-    //console.log("size",file.size);
-    let size = file.size;
-    let unit;
-    const units = [" B", " K", " M", " G"];
-    let pointLength = 2;
-    while ((unit = units.shift()) && size > 1024) {
-        size = size / 1024;
-    }
-    return (
-        (unit === "B"
-            ? size
-            : size.toFixed(pointLength === undefined ? 2 : pointLength)) + unit
-    );
+function refresh() {
+    emit('list')
 }
 
 // function asd(e: Event) {

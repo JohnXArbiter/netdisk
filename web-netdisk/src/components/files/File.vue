@@ -3,7 +3,7 @@
         <el-col :span="24">
             <div class="file-table">
                 <template v-if="fileButtonsState === 0">
-                    <uploading></uploading>
+                    <uploading @list="listFiles"/>
                 </template>
 
                 <div class="button-group">
@@ -23,6 +23,9 @@
                             <el-button type="danger" round plain :icon="DeleteFilled" @click="fileButton(5)">删除
                             </el-button>
                         </el-button-group>
+                        <el-button type="primary" round plain :icon="RefreshRight" @click="listFiles()"
+                                   style="margin-left: 20px">刷新
+                        </el-button>
                     </template>
                 </div>
 
@@ -30,8 +33,7 @@
                           description="文件列表为空，上传你的第一个文件吧！😺"/>
 
                 <el-table v-if="fileList && fileList.data.length!=0"
-                          ref="fileTableRef" stripe
-                          :data="fileList.data" style="width: 100%"
+                          ref="fileTableRef" :data="fileList.data" style="width: 100%"
                           @selection-change="fileSelectionChange"
                 >
                     <el-table-column type="selection" width="55"/>
@@ -179,7 +181,7 @@ import {ElTable} from "element-plus";
 import {
     CopyDocument, DeleteFilled, Download,
     EditPen, FolderOpened, Rank, Warning,
-    Share
+    Share, RefreshRight
 } from "@element-plus/icons-vue";
 import {onMounted, reactive, ref} from "vue";
 import {
@@ -190,11 +192,11 @@ import {
 } from "./file.ts";
 import type {File} from '/file.ts'
 import type {Folder} from "./folder.ts";
-import {codeError, codeOk, promptError, promptSuccess, Resp} from "@/utils/apis/base.ts";
+import {codeOk, promptError, promptSuccess, Resp} from "@/utils/apis/base.ts";
 import Uploading from "./Uploading.vue";
 import {useFileFolderStore} from "@/store/fileFolder.ts";
 import {formatSize} from "@/utils/util.ts";
-import {expireType, fileStatus, fileStatusMap, typeImage} from "@/utils/constant.ts";
+import {fileStatus, fileStatusMap, typeImage} from "@/utils/constant.ts";
 
 let fileFolderStore = useFileFolderStore(),
     forFolder = false,
@@ -225,22 +227,21 @@ let fileButtonsState = ref(0),
     selectedFiles: File[],
     fileMovableFolderList = reactive<{ data: Folder[] }>({data: folderList.data})
 
-const
-    listFiles = async () => {
-        let resp
-        if (forFolder) {
-            resp = await listFilesByFolderId(folderId)
-        } else {
-            resp = await listFilesByFileType(fileType)
-        }
-        if (resp.code === 0 && resp.data) {
-            fileList.data = resp.data
-        }
-        fileList.data.forEach(file => {
-            file.sizeStr = formatSize(file.size)
-            file.state = fileStatusMap[file.status]
-        })
+const listFiles = async () => {
+    let resp
+    if (forFolder) {
+        resp = await listFilesByFolderId(folderId)
+    } else {
+        resp = await listFilesByFileType(fileType)
     }
+    if (resp.code === 0 && resp.data) {
+        fileList.data = resp.data
+    }
+    fileList.data.forEach(file => {
+        file.sizeStr = formatSize(file.size)
+        file.state = fileStatusMap[file.status]
+    })
+}
 
 // 对话框
 async function fileButton(option: number) {
@@ -300,7 +301,7 @@ async function fileCopyAndMoveConfirm() {
 }
 
 async function deleteFilesConfirm() {
-   const resp = await deleteFiles(selectedFiles.map(file => file.id), folderId)
+    const resp = await deleteFiles(selectedFiles.map(file => file.id), folderId)
     if (resp.code === codeOk) {
         await listFiles()
         promptSuccess('删除成功')

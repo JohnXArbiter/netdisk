@@ -37,8 +37,10 @@ func (l *DeleteFilesTrulyLogic) DeleteFilesTruly(req *types.IdsReq) error {
 
 	defer mqs.LogSend(l.ctx, err, "DeleteFilesTruly", req.Ids)
 
-	if err = engine.Cols("id").In("id", req).And("user_id = ?", userId).
-		And("del_flag = ?", constant.StatusFileDeleted).Find(&files); err != nil {
+	if err = engine.In("id", req.Ids).
+		And("user_id = ?", userId).
+		And("del_flag = ?", constant.StatusFileDeleted).
+		Find(&files); err != nil {
 		return err
 	}
 

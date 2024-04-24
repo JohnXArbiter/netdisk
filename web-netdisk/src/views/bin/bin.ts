@@ -19,7 +19,7 @@ export function getDeletedFiles() {
 }
 
 export function deleteFilesTruly(ids: number[]) {
-    return api.post<any, Resp<any>>('/file/delete', ids)
+    return api.post<any, Resp<any>>('/file/delete', {ids})
 }
 
 export function deleteAllFilesTruly() {

@@ -40,13 +40,11 @@ func (l *DeleteFoldersLogic) DeleteFolders(req *types.IdsReq) error {
 
 	folderIds := req.Ids
 	_, err = engine.Transaction(func(session *xorm.Session) (interface{}, error) {
-		var (
-			folders []*model.Folder
-			err     error
-			now     = time.Now().Local().Unix()
-		)
+		now := time.Now().Local().Unix()
 
 		for len(folderIds) > 0 {
+			var folders []*model.Folder
+
 			// 1.删除当前文件夹下的文件
 			fileBean := &model.File{
 				DelFlag: constant.StatusFileDeleted,
@@ -83,7 +81,6 @@ func (l *DeleteFoldersLogic) DeleteFolders(req *types.IdsReq) error {
 			for _, folder := range folders {
 				folderIds = append(folderIds, folder.Id)
 			}
-			folders = []*model.Folder{}
 		}
 		return nil, nil
 	})

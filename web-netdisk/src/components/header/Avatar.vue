@@ -81,7 +81,6 @@ async function showUserInfo() {
         if (percentage.value > 90) {
             status.value = 'exception'
         }
-        console.log(user.data, percentage.value)
     }
 }
 
