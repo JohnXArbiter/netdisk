@@ -20,7 +20,7 @@
                 </el-table-column>
                 <el-table-column prop="username" label="账号" min-width="150"/>
                 <el-table-column prop="name" label="昵称" min-width="200"/>
-                <el-table-column prop="email" label="邮件" min-width="150"/>
+                <el-table-column prop="email" label="邮箱" min-width="150"/>
                 <el-table-column prop="signature" label="签名" min-width="200"/>
                 <el-table-column prop="state" label="状态" min-width="150"/>
                 <el-table-column prop="used" label="已使用容量" min-width="180">
@@ -62,32 +62,29 @@
     <el-dialog v-model="dialogVisible[1]" title="封禁选项">
         <el-form label-position="top">
             <el-radio-group v-model="radio" style="display: flex; flex-direction: column; align-items: baseline">
-                <el-radio :value="1" size="large" border style="margin-bottom: 20px">
+                <el-radio :label="1" size="large" border style="margin-bottom: 20px">
                     头像：
                     <el-image :src="selectedUser.avatar" fit="cover"
                               style="width: 30px; height: 30px; border-radius: 5px;"/>
                 </el-radio>
-                <el-radio :value="2" size="large" border
+                <el-radio :label="2" size="large" border
                           style="margin-bottom: 20px">
                     账号：{{ selectedUser.username }}
                 </el-radio>
-                <el-radio :value="3" size="large" border
+                <el-radio :label="3" size="large" border
                           style="margin-bottom: 20px">
                     昵称：{{ selectedUser.name }}
                 </el-radio>
-                <el-radio :value="4" size="large" border
+                <el-radio :label="4" size="large" border
                           style="margin-bottom: 20px">
                     签名：{{ selectedUser.signature }}
                 </el-radio>
             </el-radio-group>
-            <!--            <el-form-item label="封禁理由">-->
-            <!--                <el-input v-model="reason"/>-->
-            <!--            </el-form-item>-->
         </el-form>
         <template #footer>
       <span class="dialog-footer">
-        <el-button @click="dialogVisible[1] = false">关闭</el-button>
-                  <el-button @click="setStatus(radio, 1,true)" type="warning">确定</el-button>
+          <el-button @click="dialogVisible[1] = false">关闭</el-button>
+          <el-button @click="setStatus(radio, 1,true)" type="warning">确定</el-button>
       </span>
         </template>
     </el-dialog>
@@ -98,7 +95,7 @@ import userApi from "../../api/user";
 import {onMounted, reactive, ref} from "vue";
 import {ElMessage, ElMessageBox} from 'element-plus';
 import {useRouter} from 'vue-router'
-import {formatSize, formatState} from "@/utils/util.js";
+import {formatSize} from "@/utils/util.js";
 import {userMap, userOk} from "@/utils/constant.js";
 import {codeOk, promptError, promptSuccess} from "@/utils/http/base.js";
 
@@ -107,7 +104,7 @@ const router = useRouter();
 // 用户数据
 let users = ref([]),
     total = ref(0),
-    radio = ref(0),
+    radio = ref(1),
     selectedUser
 
 // 搜索条件

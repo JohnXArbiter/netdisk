@@ -103,7 +103,6 @@ async function showUserInfo() {
         if (percentage.value > 90) {
             status.value = 'exception'
         }
-        console.log(user.data, user.data.name)
     }
 }
 
@@ -118,11 +117,13 @@ async function changeAvatar(param: UploadRequestOptions) {
         promptError('文件大小不能超过1MB')
         return
     }
+
     const formData = new FormData()
     formData.append('file', file)
     const resp = await updateAvatar(formData)
     if (resp.code === codeOk) {
         user.data.avatar = resp.data.url
+        await showUserInfo()
         await baseStore.updateUserInfo(user.data, false)
     }
 }

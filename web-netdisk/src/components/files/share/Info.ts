@@ -51,3 +51,7 @@ export function shareReport(reason: string, shareId: string) {
         "shareId": shareId,
     })
 }
+
+export function downloadCount(shareId: number) {
+    return api.post<any, Resp<any>>(`/file/share-cnt/${shareId}`)
+}

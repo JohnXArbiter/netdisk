@@ -53,7 +53,7 @@
 
             <el-col v-if="list.items && list.items.length!=0
             && ownerInfo.data.shareStatus === shareNotExpired
-            && validated" :span="24" style="margin-bottom: 100px">
+            && validated" :span="12" style="margin-bottom: 100px">
                 <div style="margin: 20px 0">
                     <div style="font-size: 1.8rem; font-weight: 700; margin-bottom: 10px">
                         <div>
@@ -175,6 +175,7 @@
 import {ElTable} from "element-plus";
 import {onMounted, reactive, ref} from "vue";
 import {
+    downloadCount,
     getOwnerInfoByShareId,
     listFilesByShareId,
     shareCancel,
@@ -279,6 +280,7 @@ async function downloadFiles() {
         }
         await window.open(file.url)
     }
+    await downloadCount(props.shareId)
 }
 
 async function getOwnerInfo() {

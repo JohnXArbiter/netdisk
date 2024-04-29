@@ -111,6 +111,10 @@ type (
 	}
 )
 
+type Basic struct {
+	Capacity int64 `xorm:"bigint notnull default 0 'capacity'"`
+}
+
 func (*User) TableName() string {
 	return "user"
 }
@@ -137,4 +141,8 @@ func (*ShareFile) TableName() string {
 
 func (*Admin) TableName() string {
 	return "admin"
+}
+
+func (*Basic) TableName() string {
+	return "basic"
 }

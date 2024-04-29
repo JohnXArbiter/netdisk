@@ -64,10 +64,8 @@ func (l *ListSharesLogic) ListShares() (resp []*types.ListShareStruct, err error
 	if len(expiredShares) > 0 {
 		if _, err = engine.In("id", expiredShares).Update(&model.Share{
 			Status: constant.StatusShareExpired}); err != nil {
-			logx.Errorf("获取分享列表，更新 [%v] 过期状态失败，ERR: [%v]",
-				expiredShares, err)
+			logx.Errorf("获取分享列表，更新 [%v] 过期状态失败，ERR: [%v]", expiredShares, err)
 		}
 	}
-
 	return
 }

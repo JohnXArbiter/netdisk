@@ -113,6 +113,11 @@ func (l *UploadLogic) saveAndUpload(fileInfo map[string]string, fileData multipa
 			return nil, err
 		}
 
+		if _, err := session.SetExpr("used", "used + "+strconv.FormatInt(size, 10)).
+			ID(userId).Update(&model.User{}); err != nil {
+			return nil, err
+		}
+
 		if err := l.svcCtx.Minio.NewService().Upload(l.ctx, objectName, fileData); err != nil {
 			return nil, err
 		}

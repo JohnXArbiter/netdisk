@@ -167,6 +167,9 @@ service netdisk-api {
 	
 	@handler downloadFolder
 	post /folder-download (DFReq) returns ([]string)
+	
+	@handler downloadCount
+	post /share-cnt/:id (IdPathReq) returns ()
 }
 
 @server(
@@ -210,6 +213,9 @@ service netdisk-api {
 	
 	@handler deleteAdmin
 	delete /:id (IdStrReq) returns ()
+	
+	@handler statistic
+	get /statistic () returns ()
 }
 
 type (

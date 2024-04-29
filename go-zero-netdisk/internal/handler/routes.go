@@ -261,6 +261,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/folder-download",
 					Handler: file.DownloadFolderHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/share-cnt/:id",
+					Handler: file.DownloadCountHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithPrefix("/file"),
@@ -329,6 +334,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodDelete,
 					Path:    "/:id",
 					Handler: admin.DeleteAdminHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/statistic",
+					Handler: admin.StatisticHandler(serverCtx),
 				},
 			}...,
 		),

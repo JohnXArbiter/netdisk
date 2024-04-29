@@ -74,5 +74,11 @@ func (l *GetShareInfoLogic) GetShareInfo(req *types.GetShareInfoReq) (*types.Get
 		})
 	}
 
+	if _, err := engine.Where("id = ?", req.Id).
+		SetExpr("click_num", "click_num + 1").
+		Update(&model.Share{}); err != nil {
+		logx.Errorf("获取分享列表，更新点击次数失败，ERR: [%v]", err)
+	}
+
 	return resp, nil
 }
