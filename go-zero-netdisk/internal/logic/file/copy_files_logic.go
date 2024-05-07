@@ -41,29 +41,32 @@ func (l *CopyFilesLogic) CopyFiles(req *types.CopyFilesReq) error {
 	defer mqs.LogSend(l.ctx, err, "CopyFiles", req.FileIds)
 
 	if folderId != 0 {
-		has, err := engine.ID(folderId).And("user_id = ?", userId).Get(&model.Folder{})
-		if err != nil {
-			return errors.New("发生错误！" + err.Error())
-		} else if !has {
+		folder := &model.Folder{}
+		if _, err = engine.ID(folderId).
+			And("user_id = ?", userId).
+			Get(folder); err != nil {
+			err = errors.New("发生错误！." + err.Error())
+			return err
+		}
+		if folder.Id == 0 {
 			return errors.New("该目录不存在")
 		}
 	}
 
-	if err = engine.In("id", req.FileIds).Find(&files); err != nil {
-		return errors.New("发生错误！" + err.Error())
+	if err = engine.In("id", req.FileIds).
+		Find(&files); err != nil {
+		err = errors.New("发生错误！.." + err.Error())
+		return err
 	}
 
-	now := time.Now()
 	for _, file := range files {
 		file.Id = idgen.NextId()
 		file.Name = file.Name + "_" + time.Now().Format(constant.TimeFormat2) + "复制"
-		file.Created = now
-		file.Updated = now
+		file.FolderId = req.FolderId
 	}
 
-	affected, err := engine.Insert(files)
-	if err != nil || affected != int64(len(files)) {
-		return errors.New("发生错误！" + err.Error())
+	if _, err = engine.Insert(&files); err != nil {
+		return errors.New("发生错误！..." + err.Error())
 	}
 	return nil
 }

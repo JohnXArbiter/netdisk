@@ -7,7 +7,7 @@
                     <template #append>
                         <el-button @click="searchConfirm">
                             <el-icon>
-                                <search/>
+                                <Search/>
                             </el-icon>
                         </el-button>
                     </template>
@@ -64,8 +64,8 @@
                             <el-button type="primary" plain size="small"
                                        @click="toFolder(scope.row.folderId)">位置
                             </el-button>
-                            <el-button type="primary" plain
-                                       size="small">下载
+                            <el-button type="primary" plain size="small"
+                                       @click="download(scope.row.url)">下载
                             </el-button>
                         </template>
                     </el-table-column>
@@ -135,6 +135,11 @@ const unsubscribe = fileFolderStore.$subscribe((_, state) => {
 
 function toFolder(folderId: number) {
     window.location.href = `/file/folder/${folderId}`
+}
+
+async function download(url: string) {
+    console.log(url)
+    await window.open(url)
 }
 
 onUnmounted(() => {

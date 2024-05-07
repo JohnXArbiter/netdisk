@@ -1,3 +1,24 @@
+import 	"struct/common.api"
+
+@server(
+    group: download
+    prefix: /download
+    middleware: Auth
+)
+service netdisk-api {
+    // 检查大小
+    @handler checkSize
+    post /check_size (checkSizeReq) returns (checkSizeResp)
+
+    // 下载小文件
+    @handler download
+    post / (downloadReq) returns ()
+
+    // 下载分片
+    @handler chunkDownload
+    post /chunk (chunkDownloadReq) returns ()
+}
+
 type (
     checkSizeReq {
         fileId int64 `json:"fileId"`

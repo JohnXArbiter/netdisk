@@ -34,8 +34,9 @@ func (l *ListFolderLogic) ListFolder(req *types.ParentFolderIdReq) ([]*types.Lis
 	)
 
 	if err := engine.Where("parent_id = ?", req.ParentFolderId).
-		And("user_id = ?", userId).And("del_flag = ?",
-		constant.StatusFolderUndeleted).Find(&folders); err != nil {
+		And("user_id = ?", userId).
+		And("del_flag = ?", constant.StatusFolderUndeleted).
+		Find(&folders); err != nil {
 		return nil, err
 	}
 

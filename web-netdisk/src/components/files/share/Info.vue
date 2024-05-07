@@ -1,11 +1,13 @@
 <template>
     <div class="form-div">
         <el-row>
-
             <el-col :span="24" v-if="!validated">
-                <div
-                        style="position: absolute;color: #adabab;font: 800 23px Arial, sans-serif; line-height: 100%;">
+                <div style="position: absolute;color: #adabab;font: 800 23px Arial, sans-serif; line-height: 100%;">
                     提取文件
+                </div>
+                <div v-if="ownerInfo.data.shareStatus === shareExpired"
+                     class="small-zi">
+                    当前分享已过期！😣
                 </div>
                 <div v-if="ownerInfo.data.shareStatus === shareNotExistOrDeleted"
                      class="small-zi">
@@ -53,13 +55,14 @@
 
             <el-col v-if="list.items && list.items.length!=0
             && ownerInfo.data.shareStatus === shareNotExpired
-            && validated" :span="12" style="margin-bottom: 100px">
-                <div style="margin: 20px 0">
-                    <div style="font-size: 1.8rem; font-weight: 700; margin-bottom: 10px">
-                        <div>
-                            {{ list.name }}
-                        </div>
-                        <span style="float: right;">
+            && validated" :span="24" style="margin-bottom: 100px; display: flex; justify-content: center">
+                <div style="width: 90%;">
+                    <div style="margin: 20px 0">
+                        <div style="font-size: 1.8rem; font-weight: 700; margin-bottom: 10px">
+                            <div>
+                                {{ list.name }}
+                            </div>
+                            <span style="float: right;">
                             <el-button v-if="ownerInfo.data.userId != list.owner"
                                        size="large" type="primary"
                                        @click="downloadFiles">
@@ -90,42 +93,40 @@
                                 </el-button>
                             </el-button-group>
                         </span>
+                        </div>
+                        <div style="font-size: 1.4rem">
+                            <el-icon>
+                                <Clock/>
+                            </el-icon>&nbsp;
+                            <span>{{ list.created }}</span>
+                            <span style="margin-left: 50px;">{{ state }}</span>
+                        </div>
                     </div>
-                    <div style="font-size: 1.4rem">
-                        <el-icon>
-                            <Clock/>
-                        </el-icon>&nbsp;
-                        <span>{{ list.created }}</span>
-                        <span style="margin-left: 50px;">{{ state }}</span>
-                    </div>
-                </div>
 
-                <el-table
-                        ref="fileTableRef"
-                        :data="list.items" style="width: 100%"
-                >
-                    <el-table-column type="selection" width="55"/>
-                    <el-table-column label="文件名" min-width="500">
-                        <template #default="scope">
-                            <div style="display: flex; align-items: center">
-                                <el-image :src="`/src/assets/alt_type${scope.row.type}.jpg`"
-                                          class="small-pic"
-                                          :fit="'cover'"/>
-                                <span style="margin-left: 5px">{{ scope.row.name }}</span>
-                            </div>
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="修改时间" min-width="200">
-                        <template #default="scope">
-                            <div>{{ scope.row.updated }}</div>
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="大小" min-width="200">
-                        <template #default="scope">
-                            <div>{{ scope.row.sizeStr }}</div>
-                        </template>
-                    </el-table-column>
-                </el-table>
+                    <el-table ref="fileTableRef" :data="list.items" style="width: 100%">
+                        <el-table-column type="selection" width="55"/>
+                        <el-table-column label="文件名" min-width="500">
+                            <template #default="scope">
+                                <div style="display: flex; align-items: center">
+                                    <el-image :src="`/src/assets/alt_type${scope.row.type}.jpg`"
+                                              class="small-pic"
+                                              :fit="'cover'"/>
+                                    <span style="margin-left: 5px">{{ scope.row.name }}</span>
+                                </div>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="修改时间" min-width="200">
+                            <template #default="scope">
+                                <div>{{ scope.row.updated }}</div>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="大小" min-width="200">
+                            <template #default="scope">
+                                <div>{{ scope.row.sizeStr }}</div>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
             </el-col>
             <el-footer>Copyright © 2024 咪咪网盘</el-footer>
         </el-row>
@@ -190,7 +191,7 @@ import {useRoute} from "vue-router";
 import {codeOk, promptError, promptSuccess} from "@/utils/apis/base.ts";
 import {
     fileStatus,
-    fileStatusMap,
+    fileStatusMap, shareExpired,
     shareIllegal,
     shareNotExistOrDeleted,
     shareNotExpired,
@@ -356,6 +357,7 @@ onMounted(async () => {
     border-radius: 10px;
     display: flex;
     justify-content: center;
+    width: 100%;
 }
 
 .pwd-box {

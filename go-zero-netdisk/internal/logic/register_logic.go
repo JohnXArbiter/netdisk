@@ -57,7 +57,7 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) error {
 	userInfo.Id = idgen.NextId()
 	userInfo.Name = "user_" + strconv.FormatInt(int64(rand.Int31()), 10)
 	userInfo.Capacity = constant.DefaultCapacity
-	//userInfo.Avatar = l.svcCtx.BgUrl + "/avatar" + strconv.Itoa(rand.Intn(3)) + ".jpg"
+	userInfo.Avatar = "/2024-05/0/7/07eb5776fa4a6f01aba7a9126a78b344/07eb5776fa4a6f01aba7a9126a78b344.png"
 	if _, err = engine.Insert(userInfo); err != nil {
 		if strings.Contains(err.Error(), "Duplicate entry") {
 			return errors.New("账号已经被抢走啦🫠")

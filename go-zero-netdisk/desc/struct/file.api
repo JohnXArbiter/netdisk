@@ -1,5 +1,92 @@
 syntax = "v1"
 
+import "struct/common.api"
+
+@server(
+    group: file
+    prefix: /file
+    middleware: Auth
+)
+service netdisk-api {
+    @handler getFileDetail
+    get /:id (IdPathReq) returns (FileResp)
+
+    @handler listFile
+    get /list/:parentFolderId (parentFolderIdReq) returns ([]*FileResp)
+
+    @handler listFileByType
+    get /type/:fileType (FileTypeReq) returns ([]*FileResp)
+
+    @handler listFolder
+    get /folder-list/:parentFolderId (parentFolderIdReq) returns ([]*ListFolderStruct)
+
+    @handler listFileMovableFolder
+    get /move/:parentFolderId (parentFolderIdReq) returns ([]ListFolderStruct)
+
+    @handler listFolderMovableFolder
+    post /folder-move (ListFolderMovableFolderReq) returns ([]ListFolderStruct)
+
+    @handler moveFiles
+    put /move (moveFilesReq) returns ()
+
+    @handler moveFolders
+    put /folder-move (moveFoldersReq) returns ()
+
+    @handler updateFile
+    put / (UpdateNameReq) returns ()
+
+    @handler updateFolder
+    put /folder (UpdateNameReq) returns ()
+
+    @handler copyFiles
+    post /copy (CopyFilesReq) returns ()
+
+    @handler copyFolders
+    post /folder-copy (CopyFoldersReq) returns ()
+
+    @handler deleteFiles
+    put /delete (DeleteFilesReq) returns ()
+
+    @handler deleteFilesTruly
+    post /delete (IdsReq) returns ()
+
+    @handler deleteFolders
+    put /folder-delete (IdsReq) returns ()
+
+    @handler deleteAllFilesTruly
+    post /clear () returns ()
+
+    @handler recoverFiles
+    put /recover (RecoverFilesReq) returns ()
+
+    @handler createFolder
+    post /folder (createFolderReq) returns ()
+
+    @handler listDeletedFiles
+    get /delete () returns ([]*DeletedFilesResp)
+
+    @handler listShares
+    get /share () returns ([]*ListShareStruct)
+
+    @handler share
+    post /share (ShareReq) returns ()
+
+    @handler shareFolder
+    post /share-folder (ShareFolderReq) returns ()
+
+    @handler shareCancel
+    post /share-cancel (IdStrsReq) returns ()
+
+    @handler search
+    get /search (SearchReq) returns ()
+
+    @handler downloadFolder
+    post /folder-download (DFReq) returns ([]string)
+
+    @handler downloadCount
+    post /share-cnt/:id (IdPathReq) returns ()
+}
+
 type (
     IdsReq {
         Ids []int64 `json:"ids"`
@@ -11,8 +98,13 @@ type (
     }
 
     CopyFilesReq {
-        FolderId int64 `path:"folderId"`
+        FolderId int64 `json:"folderId"`
         FileIdsStruct
+    }
+
+    CopyFoldersReq {
+        ParentFolderId int64 `json:"parentFolderId"`
+        FolderIdsStruct
     }
 
     DeleteFilesReq {

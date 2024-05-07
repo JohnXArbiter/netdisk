@@ -100,7 +100,7 @@ func (l *CheckFileLogic) doWhenExist(req *types.CheckFileReq, fileFs *model.File
 	}
 
 	if file.Id != 0 {
-		if file.Status != constant.StatusFileDeleted &&
+		if file.DelFlag != constant.StatusFileDeleted &&
 			file.Status != constant.StatusFileNeedMerge {
 			return nil, errors.New("当前文件夹已存在该文件😈")
 		}
@@ -122,6 +122,7 @@ func (l *CheckFileLogic) doWhenExist(req *types.CheckFileReq, fileFs *model.File
 	file.FsId = fileFs.Id
 	file.Name = req.Name
 	file.FolderId = req.FolderId
+	file.Size = req.Size
 	file.Type = variable.GetTypeByBruteForce(req.Ext)
 	file.Status = constant.StatusFileUploaded
 	file.ObjectName = fileFs.ObjectName

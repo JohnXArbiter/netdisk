@@ -1,5 +1,20 @@
 syntax = "v1"
 
+import 	"struct/common.api"
+
+@server(
+    group: user
+    prefix: /user
+    middleware: Auth
+)
+service netdisk-api {
+    @handler updateDetail
+    post /detail (UpdateUserDetailReq) returns ()
+
+    @handler updateAvatar
+    post /avatar () returns ()
+}
+
 type (
     UpdateUserDetailReq {
         Name string `json:"name"`

@@ -1,12 +1,52 @@
 syntax = "v1"
 
-info(
-    title: "type title here"
-    desc: "type desc here"
-    author: "type author here"
-    email: "type email here"
-    version: "type version here"
+import    "struct/common.api"
+
+@server(
+    group: admin
+    prefix: /admin
+    middleware: Auth
 )
+service netdisk-api {
+    @handler listUsers
+    post /user-list (PageReq) returns ([]*UserInfo)
+
+    @handler listSharesAdmin
+    post /share-list (PageReq) returns ()
+
+    @handler setUserStatus
+    post /user-status (SetStatusReq) returns ()
+
+    @handler getUrl
+    get /file-url/:id/:type (GetUrlReq) returns ()
+
+    @handler setFileStatus
+    post /file-status (SetFileStatusReq) returns ()
+
+    @handler getAdminInfo
+    get /info () returns ()
+
+    @handler getAdminList
+    post /list (PageReq) returns ()
+
+    @handler setAdminStatus
+    post /status (SetStatusReq) returns ()
+
+    @handler getShareInfoAdmin
+    get /share-file/:id (IdStrReq) returns (GetShareInfoResp)
+
+    @handler setShareStatus
+    post /share-status (SetShareStatusReq) returns ()
+
+    @handler addAdmin
+    post /add (AddAdminReq) returns ()
+
+    @handler deleteAdmin
+    delete /:id (IdStrReq) returns ()
+
+    @handler statistic
+    get /statistic () returns ()
+}
 
 type (
     SetStatusReq {

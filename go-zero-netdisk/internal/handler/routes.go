@@ -99,49 +99,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.Auth},
 			[]rest.Route{
 				{
-					Method:  http.MethodPost,
-					Path:    "/check_size",
-					Handler: download.CheckSizeHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodPost,
-					Path:    "/",
-					Handler: download.DownloadHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodPost,
-					Path:    "/chunk",
-					Handler: download.ChunkDownloadHandler(serverCtx),
-				},
-			}...,
-		),
-		rest.WithPrefix("/download"),
-	)
-
-	server.AddRoutes(
-		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.Auth},
-			[]rest.Route{
-				{
-					Method:  http.MethodPost,
-					Path:    "/detail",
-					Handler: user.UpdateDetailHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodPost,
-					Path:    "/avatar",
-					Handler: user.UpdateAvatarHandler(serverCtx),
-				},
-			}...,
-		),
-		rest.WithPrefix("/user"),
-	)
-
-	server.AddRoutes(
-		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.Auth},
-			[]rest.Route{
-				{
 					Method:  http.MethodGet,
 					Path:    "/:id",
 					Handler: file.GetFileDetailHandler(serverCtx),
@@ -195,6 +152,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/copy",
 					Handler: file.CopyFilesHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/folder-copy",
+					Handler: file.CopyFoldersHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodPut,
@@ -269,6 +231,49 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			}...,
 		),
 		rest.WithPrefix("/file"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.Auth},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/check_size",
+					Handler: download.CheckSizeHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/",
+					Handler: download.DownloadHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/chunk",
+					Handler: download.ChunkDownloadHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/download"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.Auth},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/detail",
+					Handler: user.UpdateDetailHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/avatar",
+					Handler: user.UpdateAvatarHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/user"),
 	)
 
 	server.AddRoutes(

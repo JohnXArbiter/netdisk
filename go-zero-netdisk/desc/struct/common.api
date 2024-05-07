@@ -1,0 +1,59 @@
+syntax = "v1"
+
+
+type (
+    IdPathReq {
+        Id int64 `path:"id"`
+    }
+
+    IdStrReq {
+        Id string `path:"id"`
+    }
+
+    GetShareInfoReq {
+        Id  string `json:"id"`
+        Pwd string `json:"pwd"`
+    }
+
+    IdStrsReq {
+        Ids []string `json:"ids"`
+    }
+
+    loginReq {
+        Username string `json:"username"`
+        Password string `json:"password"`
+    }
+
+    RegisterReq {
+        Username       string `json:"username"`
+        Password       string `json:"password"`
+        PasswordRepeat string `json:"passwordRepeat"`
+        Email          string `json:"email"`
+        Code           string `json:"code"`
+    }
+
+    SendCodeReq {
+        Email string `json:"email"`
+    }
+
+    PageReq {
+        Page int64 `json:"page"`
+        Size int64 `json:"size"`
+    }
+)
+
+type (
+    LoginResp {
+        Token    string   `json:"token"`
+        UserInfo UserInfo `json:"userInfo"`
+    }
+
+    UserInfo {
+        UserId    int64  `json:"userId"`
+        Name      string `json:"name"`
+        Avatar    string `json:"avatar"`
+        Email     string `json:"email"`
+        Signature string `json:"signature"`
+        Status    int8   `json:"status"`
+    }
+)

@@ -4,13 +4,12 @@ import (
 	"context"
 	"fmt"
 	redis2 "github.com/redis/go-redis/v9"
+	"github.com/zeromicro/go-zero/core/logx"
 	"lc/netdisk/common/constant"
 	"lc/netdisk/common/redis"
 	"lc/netdisk/internal/svc"
 	"lc/netdisk/internal/types"
 	"lc/netdisk/model"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type ListFileLogic struct {
@@ -54,29 +53,27 @@ func (l *ListFileLogic) ListFile(req *types.ParentFolderIdReq) ([]*types.FileRes
 
 	var urls []redis2.Z
 	for i, file := range files {
-		if file.Status == constant.StatusFileNeedMerge {
-			continue
-		}
-
 		var url string
-		if len(zs) == len(files) && redisErr == nil {
-			url = zs[i].Member.(string)
-		} else {
-			url2, err := minioSvc.GenUrl(file.ObjectName, file.Name, true)
-			if err != nil {
-				logx.Errorf("通过文件夹id获取文件列表，[%d]获取url失败，ERR: [%v]", file.Id, err)
-				continue
+		if file.Status == constant.StatusFileUploaded {
+			if len(zs) == len(files) && redisErr == nil {
+				url = zs[i].Member.(string)
 			} else {
-				url = url2
-				urls = append(urls, redis2.Z{Member: url, Score: float64(file.Created.Unix())})
-			}
-			if i == len(files)-1 {
-				if err = rdb.ZAdd(l.ctx, key, urls...).Err(); err != nil {
-					logx.Errorf("通过文件夹id获取文件列表，redis缓存url失败，ERR: [%v]", err)
+				url2, err := minioSvc.GenUrl(file.ObjectName, file.Name, true)
+				if err != nil {
+					logx.Errorf("通过文件夹id获取文件列表，[%d]获取url失败，ERR: [%v]", file.Id, err)
+					continue
+				} else {
+					url = url2
+					urls = append(urls, redis2.Z{Member: url, Score: float64(file.Created.Unix())})
 				}
-				if err = rdb.Expire(l.ctx, key, redis.DownloadExpire).Err(); err != nil {
-					logx.Errorf("ListFileByType，设置过期时间失败，ERR: [%v]", err)
-					return nil, err
+				if i == len(files)-1 {
+					if err = rdb.ZAdd(l.ctx, key, urls...).Err(); err != nil {
+						logx.Errorf("通过文件夹id获取文件列表，redis缓存url失败，ERR: [%v]", err)
+					}
+					if err = rdb.Expire(l.ctx, key, redis.DownloadExpire).Err(); err != nil {
+						logx.Errorf("ListFileByType，设置过期时间失败，ERR: [%v]", err)
+						return nil, err
+					}
 				}
 			}
 		}

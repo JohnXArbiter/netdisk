@@ -33,8 +33,11 @@ func (l *ListFileMovableFolderLogic) ListFileMovableFolder(req *types.ParentFold
 		folders []*model.Folder
 	)
 
-	if err := engine.Cols("id", "name").Where("parent_id = ?", req.ParentFolderId).
-		And("user_id = ?", userId).Find(&folders); err != nil {
+	if err := engine.Cols("id", "name").
+		Where("parent_id = ?", req.ParentFolderId).
+		And("del_flag = ?", constant.StatusFolderUndeleted).
+		And("user_id = ?", userId).
+		Find(&folders); err != nil {
 		return nil, errors.New("出错了" + err.Error())
 	}
 

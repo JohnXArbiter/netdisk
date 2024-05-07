@@ -37,7 +37,9 @@ func (l *ListFolderMovableFolderLogic) ListFolderMovableFolder(req *types.ListFo
 
 	if err := engine.Cols("id", "name").
 		Where("parent_id = ?", parentFolderId).
-		And("user_id = ?", userId).Find(&folders); err != nil {
+		And("del_flag = ?", constant.StatusFolderUndeleted).
+		And("user_id = ?", userId).
+		Find(&folders); err != nil {
 		return nil, errors.New("出错了" + err.Error())
 	}
 

@@ -31,10 +31,11 @@ func NewSearchLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SearchLogi
 
 func (l *SearchLogic) Search(req *types.SearchReq) (interface{}, error) {
 	var (
-		userId = l.ctx.Value(constant.UserIdKey).(int64)
-		engine = l.svcCtx.Xorm
-		es     = l.svcCtx.Es
-		err    error
+		userId   = l.ctx.Value(constant.UserIdKey).(int64)
+		engine   = l.svcCtx.Xorm
+		minioSvc = l.svcCtx.MinioSvc
+		es       = l.svcCtx.Es
+		err      error
 	)
 
 	defer mqs.LogSend(l.ctx, err, "Search", req.Phrase)
@@ -54,16 +55,26 @@ func (l *SearchLogic) Search(req *types.SearchReq) (interface{}, error) {
 	if err != nil {
 		err = errors.New("Search，搜索ES失败，ERR: " + err.Error())
 	}
+
+	var list []map[string]interface{}
 	if err == nil && len(do.Hits.Hits) > 0 {
 		for _, hit := range do.Hits.Hits {
+			m := map[string]interface{}{}
 			var file model.File
 			if err = json.Unmarshal(hit.Source, &file); err != nil {
 				logx.Errorf("Search，file: [%v] 反序列化失败，ERR: [%v]", file.Id, err)
 				continue
 			}
-			files = append(files, &file)
+			url, err2 := minioSvc.GenUrl(file.ObjectName, file.Name, true)
+			if err2 == nil {
+				m["url"] = url
+			}
+			m["name"] = file.Name
+			m["folderId"] = file.FolderId
+			m["type"] = file.Type
+			list = append(list, m)
 		}
-		return files, nil
+		return list, nil
 	}
 
 	if err = engine.Where("user_id = ?", userId).
@@ -71,5 +82,19 @@ func (l *SearchLogic) Search(req *types.SearchReq) (interface{}, error) {
 		Find(&files); err != nil {
 		err = errors.New("Search，查询数据库失败，ERR: " + err.Error())
 	}
-	return files, nil
+
+	for _, file := range files {
+		m := map[string]interface{}{}
+
+		url, err2 := minioSvc.GenUrl(file.ObjectName, file.Name, true)
+		if err2 == nil {
+			m["url"] = url
+		}
+		m["name"] = file.Name
+		m["folderId"] = file.FolderId
+		m["type"] = file.Type
+		list = append(list, m)
+	}
+
+	return list, nil
 }

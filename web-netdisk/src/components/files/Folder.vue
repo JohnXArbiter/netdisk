@@ -91,12 +91,12 @@
         </template>
     </el-dialog>
 
-    <el-dialog v-model="folderCopyAndMoveDialog" title="选择文件夹">
-        <el-table :data="folderMovableFolderList.arr" highlight-current-row>
-            <el-table-column label="" width="180">
+    <el-dialog v-model="folderCopyAndMoveDialog" title="选择文件夹" width="250">
+        <el-table :data="folderMovableFolderList.arr" highlight-current-row width="200">
+            <el-table-column label="文件夹名" width="200">
                 <template #default="scope">
                     <div style="display: flex; align-items: center">
-                        <div @click="toFolder( scope.row.id, folderCopyAndMoveFlag)">
+                        <div @click="toFolder(scope.row.id, folderCopyAndMoveFlag)">
                             <el-icon>
                                 <FolderOpened/>
                             </el-icon>
@@ -153,9 +153,8 @@ import {
 } from "./folder.ts";
 import File from './File.vue'
 import router from "../../router";
-import {codeOk, promptError, promptSuccess, Resp} from "../../utils/apis/base.ts";
-import {useFileFolderStore} from "../../store/fileFolder.ts";
-import {typeImage} from "../../utils/constant.ts";
+import {codeOk, promptError, promptSuccess, Resp} from "@/utils/apis/base.ts";
+import {useFileFolderStore} from "@/store/fileFolder.ts";
 
 let fileFolderStore = useFileFolderStore()
 let props = defineProps(['folderId']);
@@ -177,12 +176,12 @@ const listFolders = async () => {
 let listFoldersCurrentFolderId = 0
 
 const folderDialogVisible = reactive([false, false, false, false, false, false])
-let createFolderName = ref<string>('')
-let renamingFolder = reactive<any>({})
-let folderCopyAndMoveDialog = ref(false)
-let folderCopyAndMoveFlag: number
-let selectedFolders: Folder[]
-let folderMovableFolderList = reactive<{ arr: Folder[] }>({arr: folderList.arr})
+let createFolderName = ref<string>(''),
+    renamingFolder = reactive<any>({}),
+    folderCopyAndMoveDialog = ref(false),
+    folderCopyAndMoveFlag: number,
+    selectedFolders: Folder[],
+    folderMovableFolderList = reactive<{ arr: Folder[] }>({arr: folderList.arr})
 
 async function toFolder(folderId: number, option: number) {
     let resp: Resp<any>
@@ -194,6 +193,7 @@ async function toFolder(folderId: number, option: number) {
     }
     if (resp && resp.code === 0) {
         folderMovableFolderList.arr = resp.data
+        listFoldersCurrentFolderId = folderId
     }
 }
 
@@ -247,11 +247,17 @@ async function renameFolder(option: number) {
 
 // 复制/移动请求
 async function folderCopyAndMoveConfirm() {
-    const folderIds = selectedFolders.map(folder => folder.id);
+    let resp
+    const folderIds = selectedFolders.map(folder => folder.id)
     if (folderCopyAndMoveFlag === 3) {
-        await moveFolders(listFoldersCurrentFolderId, folderIds)
+        resp = await moveFolders(listFoldersCurrentFolderId, folderIds)
     } else if (folderCopyAndMoveFlag === 4) {
-        await copyFolders(listFoldersCurrentFolderId, folderIds)
+        resp = await copyFolders(listFoldersCurrentFolderId, folderIds)
+    }
+    if (resp.code === codeOk) {
+        promptSuccess('操作成功！')
+        folderCopyAndMoveDialog.value = false
+        await listFolders()
     }
     listFoldersCurrentFolderId = 0
 }
